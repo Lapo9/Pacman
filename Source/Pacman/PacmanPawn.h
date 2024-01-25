@@ -15,7 +15,7 @@ public:
 	APacmanPawn();
 
 	// Called to notify the pawn that it is at the center of the current tile
-	virtual void OnTileCenter(const class ATile& tile);
+	virtual void OnTileCenter(const class ATile& tile) override;
 
 	// Input actions
 

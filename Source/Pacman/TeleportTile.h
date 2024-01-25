@@ -5,6 +5,7 @@
 #include "TeleportTile.generated.h"
 
 
+// A tile which teleports a board pawn interacting with it to a target tile.
 UCLASS()
 class PACMAN_API ATeleportTile : public AWalkableTile
 {

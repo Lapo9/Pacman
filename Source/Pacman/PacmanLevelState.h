@@ -20,9 +20,11 @@ public:
 	// Updates the tile where the specified BoardPawn in the AbstractMap, and returns the new tile.
 	const class ATile& UpdateBoardPawnTile(enum class ECharacterTag tag, const FVector& position);
 
-
 	// Returns the surrounding tiles on the map of the specified pawn.
 	TMap<enum class EMovingDirection, const class ATile*> GetSurroundingTiles(enum class ECharacterTag tag) const;
+
+	// Returns the abstract map itslef.
+	const class UAbstractMap& GetAbstractMap() const;
 
 private:
 	class UAbstractMap* Map;

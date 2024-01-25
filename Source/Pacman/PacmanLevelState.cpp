@@ -12,6 +12,10 @@ void APacmanLevelState::Init() {
 	Map->Init(); // Fill the abstract map based on the tiles in the level
 }
 
+const UAbstractMap& APacmanLevelState::GetAbstractMap() const {
+	return *Map;
+}
+
 
 // Returns the surrounding tiles on the map of the specified pawn.
 TMap<EMovingDirection, const class ATile*> APacmanLevelState::GetSurroundingTiles(ECharacterTag tag) const {
