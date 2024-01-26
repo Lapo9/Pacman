@@ -29,6 +29,7 @@ ABoardPawn::ABoardPawn() {
 
 // Called when the game starts or when spawned
 void ABoardPawn::BeginPlay() {
+	UE_LOG(LogTemp, Display, TEXT("BeginPlay board pawn %s"), *GetName());
 	Super::BeginPlay();
 
 	CurrentTile = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->SpawnTiles[Tag]; //Initialize the current tile
@@ -39,11 +40,14 @@ void ABoardPawn::BeginPlay() {
 	CentralCollider->SetWorldLocation(FVector{ center.X, center.Y, Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->FloorHeight }); //Set the z height to the logical floor
 	CentralCollider->SetSphereRadius(Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->PointLikeTriggersRadius);
 
+	// Call the first event to make the pawn start moving. TODO maybe there is a better way to start moving
+	OnTileCenter(*Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->SpawnTiles[Tag]);
 }
 
 
 // Called to notify the pawn that it entered a new tile.
 void ABoardPawn::OnNewTile(const ATile& tile) {
+	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on new tile %s"), *GetName(), *tile.GetName());
 	// Register the new tile and change speed.
 	CurrentTile = &tile;
 	MovementComponent->SetSpeed(tile.GetType() == ETileType::TUNNEL ? TunnelSpeed : StandardSpeed);
@@ -53,6 +57,12 @@ void ABoardPawn::OnNewTile(const ATile& tile) {
 // Returns the tag of this BoardPawn.
 ECharacterTag ABoardPawn::GetTag() const {
 	return Tag;
+}
+
+
+// Returns the direction this pawn is moving
+EMovingDirection ABoardPawn::GetMovingDirection() const {
+	return MovementComponent->GetMovingDirection();
 }
 
 

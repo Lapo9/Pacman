@@ -6,12 +6,22 @@
 
 // Tags identifying the various characters
 UENUM()
-enum class ECharacterTag { PACMAN, BLINKY, PINKY, INKY, CLYDE };
-
+enum class ECharacterTag {
+	PACMAN UMETA(DisplayName = "PACMAN"),
+	BLINKY UMETA(DisplayName = "BLINKY"),
+	PINKY UMETA(DisplayName = "PINKY"),
+	INKY UMETA(DisplayName = "INKY"),
+	CLYDE UMETA(DisplayName = "CLYDE")
+};
 
 // The 4 directions a BoardPawn can be moving.
 UENUM()
-enum class EMovingDirection { NORTH, EAST, SOUTH, WEST };
+enum class EMovingDirection {
+	NORTH UMETA(DisplayName = "NORTH"),
+	WEST UMETA(DisplayName = "WEST"),
+	SOUTH UMETA(DisplayName = "SOUTH"),
+	EAST UMETA(DisplayName = "EAST")
+};
 
 
 // Any character that can walk on the board.
@@ -38,6 +48,9 @@ public:
 	// Returns the tag of this BoardPawn.
 	ECharacterTag GetTag() const;
 	
+	// Returns the direction this pawn is moving
+	EMovingDirection GetMovingDirection() const;
+
 	// Returns the tile the pawn is onto.
 	const class ATile* GetCurrentTile() const;
 

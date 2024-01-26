@@ -26,6 +26,17 @@ public:
 	// Returns the abstract map itslef.
 	const class UAbstractMap& GetAbstractMap() const;
 
+	// Returns the current pacman
+	class APacmanPawn* GetPacman();
+
+	// Returns the specified board pawn
+	class ABoardPawn* GetBoardPawn(enum class ECharacterTag tag);
+
+	// Returns the map containing the references to the present pawns.
+	const TMap<enum class ECharacterTag, class ABoardPawn*>& GetBoardPawns() const;
+
 private:
 	class UAbstractMap* Map;
+
+	class TMap<enum class ECharacterTag, class ABoardPawn*> BoardPawns;
 };

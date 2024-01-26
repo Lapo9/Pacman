@@ -18,6 +18,7 @@ ATile::ATile() {
 
 // Called when the game starts or when spawned.
 void ATile::BeginPlay() {
+	UE_LOG(LogTemp, Display, TEXT("BeginPlay tile %s"), *GetName());
 	Super::BeginPlay();	
 }
 
@@ -27,6 +28,12 @@ FVector ATile::GetCenter() const {
 	FVector center = GetActorLocation();
 	float floor = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->FloorHeight;
 	return FVector{ center.X, center.Y, floor}; //the height of the center is determined by the floor
+}
+
+
+// Returns the coordinates of the center of the tile (only X and Y).
+FVector2D ATile::GetCenter2D() const {
+	return FVector2D{ GetActorLocation() };
 }
 
 

@@ -10,6 +10,8 @@ class PACMAN_API AGhostPawn : public ABoardPawn
 	GENERATED_BODY()
 
 public:
+	AGhostPawn();
+
 	virtual void BeginPlay() override;
 
 	// Called to notify the pawn that it is at the center of the current tile.
@@ -19,4 +21,7 @@ public:
 
 	// The pawn turns into the specified direction.
 	void TurnDirection(enum class EMovingDirection dir);
+
+protected:
+	class AGhostAiController* AiController;
 };

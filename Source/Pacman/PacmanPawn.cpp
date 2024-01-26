@@ -12,7 +12,7 @@ APacmanPawn::APacmanPawn() {
 
 // Called to notify the pawn that it is at the center of the current tile
 void APacmanPawn::OnTileCenter(const ATile& tile) {
-	UE_LOG(LogTemp, Display, TEXT("Pacman on tile center"));
+	UE_LOG(LogTemp, Display, TEXT("Pacman on tile center %s"), *tile.GetName());
 
 	auto surroundingTiles = Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetSurroundingTiles(Tag);
 	// If the input direction is valid, go in that direction
@@ -43,7 +43,4 @@ void APacmanPawn::TurnDirection(EMovingDirection dir) {
 
 void APacmanPawn::BeginPlay() {
 	Super::BeginPlay();
-	
-	//TODO maybe there is a better way to start moving
-	OnTileCenter(*Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->SpawnTiles[ECharacterTag::PACMAN]);
 }

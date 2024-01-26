@@ -4,6 +4,8 @@
 #include "WallTile.h"
 #include "BoardPawn.h"
 #include "PacmanUtilities.h"
+#include "PacmanSettings.h"
+#include "GenericPlatform/GenericPlatformMath.h"
 
 // Sets default values for this component's properties
 UAbstractMap::UAbstractMap() : MapInfo{} {
@@ -14,6 +16,7 @@ UAbstractMap::UAbstractMap() : MapInfo{} {
 
 // Initializes the component by creating the abstract map and filling the characters starting positions.
 void UAbstractMap::Init() {
+	UE_LOG(LogTemp, Display, TEXT("Initializing abstract map..."));
 	CreateAbstractMap();
 	FillCharactersStartingPositions();
 }
@@ -38,7 +41,7 @@ TMap<EMovingDirection, const ATile*> UAbstractMap::GetSurroundingTiles(ECharacte
 
 
 // Returns the index of the tile the queried character is on.
-UAbstractMap::TileIndex UAbstractMap::GetCharacterTileIndex(ECharacterTag tag) const {
+FTileIndex UAbstractMap::GetCharacterTileIndex(ECharacterTag tag) const {
 	return CharactersPositions[tag];
 }
 
@@ -47,7 +50,7 @@ UAbstractMap::TileIndex UAbstractMap::GetCharacterTileIndex(ECharacterTag tag) c
 const ATile& UAbstractMap::UpdateCharacterTile(ECharacterTag tag, const FVector& position) {
 	auto newTileIndex = PositionToIndex(position);
 	CharactersPositions[tag] = newTileIndex;
-	return *Map[newTileIndex.Key][newTileIndex.Value];
+	return *Map[newTileIndex.Col][newTileIndex.Row];
 }
 
 
@@ -60,7 +63,7 @@ FString UAbstractMap::ToString() const {
 	for (int i = 0; i < sizeY; ++i) {
 		res += "\n";
 		for (int j = 0; j < sizeX; ++j) {
-			auto type = Map[i][j]->GetType();
+			auto type = Map[i][j] ? Map[i][j]->GetType() : ETileType::WALL;
 			res += type == ETileType::WALKABLE ? "O" : type == ETileType::TUNNEL ? "T" : "X";
 		}
 	}
@@ -84,10 +87,10 @@ void UAbstractMap::CreateAbstractMap() {
 
 	// Actually fill the abstract map (empty tiles can be considered just as walls)
 	for (TObjectIterator<ATile> tile; tile; ++tile) {
-		FString name;
 		auto [iCol, iRow] = PositionToIndex(tile->GetCenter());
 		checkf(iCol < sizeX || iRow < sizeY, TEXT("AbstractMap::CreateAbstractMap: out of bounds index."));
 		Map[iCol][iRow] = *tile;
+		tile->Index = { iCol, iRow };
 	}
 
 	UE_LOG(LogTemp, Display, TEXT("%s"), *ToString());
@@ -96,21 +99,24 @@ void UAbstractMap::CreateAbstractMap() {
 
 // Fills the map containing the characters positions.
 void UAbstractMap::FillCharactersStartingPositions() {
-	CharactersPositions = TMap<ECharacterTag, TileIndex>{};
+	CharactersPositions = TMap<ECharacterTag, FTileIndex>{};
+	//TODO this could also be done by iterating on the BoardPawns variable in PacmanLevelState
 	for (TObjectIterator<ABoardPawn> pawn; pawn; ++pawn) {
-		CharactersPositions.Add(pawn->GetTag(), PositionToIndex(pawn->GetActorLocation()));
+		auto pawnIndex = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->SpawnTiles[pawn->GetTag()]->Index;
+		CharactersPositions.Add(pawn->GetTag(), pawnIndex);
+		UE_LOG(LogTemp, Display, TEXT("Abstract map board pawn added: %s - <%i, %i>"), *UEnum::GetValueAsString<ECharacterTag>(pawn->GetTag()), pawnIndex.Col, pawnIndex.Row);
 	}
 }
 
 
 // Given a position, returns the index of the corresponding tile.
-UAbstractMap::TileIndex UAbstractMap::PositionToIndex(const FVector& pos) {
+FTileIndex UAbstractMap::PositionToIndex(const FVector& pos) {
 	checkf(MapInfo.IsInitialized(), TEXT("MapInfo not initialized."));
 
 	int column = (pos.X - MapInfo.Min.X) / MapInfo.TileWidth;
 	int row = (pos.Y - MapInfo.Min.Y) / MapInfo.TileDepth;
 
-	checkf(column < MapInfo.Size().Key && row < MapInfo.Size().Value, TEXT("Position out of bounds."));
+	checkf(column < MapInfo.Size().Col && row < MapInfo.Size().Row, TEXT("Position out of bounds."));
 	return { column, row };
 }
 
@@ -145,8 +151,8 @@ bool UAbstractMap::AbstractMapInfo::IsInitialized() const {
 
 
 // Returns the number of columns and rows of this AbstractMap.
-UAbstractMap::TileIndex UAbstractMap::AbstractMapInfo::Size() const {
+FTileIndex UAbstractMap::AbstractMapInfo::Size() const {
 	auto size = (Max - Min) / FVector2D{ TileWidth, TileDepth };
-	return { size.X, size.Y };
+	return { FMath::RoundToInt32(size.X), FMath::RoundToInt32(size.Y) };
 }
 

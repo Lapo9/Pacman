@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "AbstractMap.h"
+#include "PacmanUtilities.h"
 #include "Tile.generated.h"
 
 // One cell of the map.
@@ -23,6 +24,9 @@ public:
 	// Returns the coordinates of the logical center of the tile.
 	FVector GetCenter() const;
 
+	// Returns the coordinates of the center of the tile (only X and Y).
+	FVector2D GetCenter2D() const;
+
 	// Returns the axis aligned extents of this tile.
 	virtual FVector GetExtents() const;
 
@@ -37,5 +41,5 @@ protected:
 	class UStaticMeshComponent* Mesh;
 
 public:
-	TPair<int, int> Index;
+	FTileIndex Index;
 };

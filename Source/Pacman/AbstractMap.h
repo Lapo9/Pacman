@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PacmanUtilities.h"
 #include "Components/ActorComponent.h"
 #include "AbstractMap.generated.h"
 
@@ -15,8 +16,6 @@ class PACMAN_API UAbstractMap : public UActorComponent {
 	GENERATED_BODY()
 
 public:
-	using TileIndex = TPair<int, int>;
-
 	// Sets default values for this component's properties
 	UAbstractMap();
 
@@ -24,7 +23,7 @@ public:
 	void Init();
 
 	// Returns the index of the tile the queried character is on.
-	TileIndex GetCharacterTileIndex(enum class ECharacterTag tag) const;
+	FTileIndex GetCharacterTileIndex(enum class ECharacterTag tag) const;
 
 	// Returns a constant reference to the tile the queried character is on.
 	const class ATile& GetCharacterTile(enum class ECharacterTag tag) const;
@@ -46,13 +45,13 @@ private:
 	void FillCharactersStartingPositions();
 
 	// Given a position, returns the index of the corresponding tile.
-	TileIndex PositionToIndex(const FVector& pos);
+	FTileIndex PositionToIndex(const FVector& pos);
 
 	// The abstract map
 	TArray<TArray<const ATile*>> Map;
 
 	// Positions of the characters
-	TMap<enum class ECharacterTag, TileIndex> CharactersPositions;
+	TMap<enum class ECharacterTag, FTileIndex> CharactersPositions;
 
 	// The positions of the bottom-left and top-right tiles, and the width and depth of each tile (they should all be the same).
 	struct AbstractMapInfo {
@@ -70,7 +69,7 @@ private:
 		bool IsInitialized() const;
 
 		// Returns the number of columns and rows of this AbstractMap.
-		TileIndex Size() const;
+		FTileIndex Size() const;
 	};
 
 	AbstractMapInfo MapInfo;

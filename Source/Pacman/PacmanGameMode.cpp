@@ -8,7 +8,7 @@ APacmanGameMode::APacmanGameMode() {
 }
 
 void APacmanGameMode::StartPlay() {
-	//Cast<APacmanPlayerController>(GetWorld()->GetPlayerControllerIterator())
+	UE_LOG(LogTemp, Display, TEXT("APacmanGameMode::StartPlay"));
 	Cast<APacmanLevelState>(GameState)->Init(); // Initialize the state
 	Super::StartPlay(); // This will call all the BeginPlay() functions
 }
