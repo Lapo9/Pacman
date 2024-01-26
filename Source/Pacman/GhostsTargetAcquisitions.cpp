@@ -30,6 +30,7 @@ FTileIndex GhostsTargetAcquisitions::Clyde(const UAbstractMap& map, const APacma
 	auto pacmanIndex = map.GetCharacterTileIndex(pacman.GetTag());
 	auto itselfIndex = map.GetCharacterTileIndex(itself.GetTag());
 	float distanceFromPacman = (pacmanIndex - itselfIndex).Length();
+	UE_LOG(LogTemp, Display, TEXT("%s distance from Pacman: %f"), *itself.GetName(), distanceFromPacman);
 
 	// If Clyde is further away from Pacman than more than 8 units, it behaves like Blinky
 	if (distanceFromPacman > 8.f) {

@@ -4,7 +4,7 @@
 #include "BoardPawn.h"
 #include "GhostPawn.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class PACMAN_API AGhostPawn : public ABoardPawn
 {
 	GENERATED_BODY()

@@ -63,7 +63,7 @@ FString UAbstractMap::ToString() const {
 	for (int i = 0; i < sizeY; ++i) {
 		res += "\n";
 		for (int j = 0; j < sizeX; ++j) {
-			auto type = Map[i][j] ? Map[i][j]->GetType() : ETileType::WALL;
+			auto type = Map[j][i] ? Map[j][i]->GetType() : ETileType::WALL;
 			res += type == ETileType::WALKABLE ? "O" : type == ETileType::TUNNEL ? "T" : "X";
 		}
 	}
