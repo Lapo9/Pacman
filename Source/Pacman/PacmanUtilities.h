@@ -56,3 +56,8 @@ public:
 
 using Util = PacmanUtilities;
 
+
+// Custom collision channel names
+constexpr auto ObjectChannel_World2d = ECollisionChannel::ECC_GameTraceChannel1;
+constexpr auto ObjectChannel_BoardPawns = ECollisionChannel::ECC_GameTraceChannel2;
+constexpr auto ObjectChannel_Walls = ECollisionChannel::ECC_GameTraceChannel3;

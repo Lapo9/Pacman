@@ -37,16 +37,16 @@ bool PacmanUtilities::IsTileWalkable(const ATile* tile) {
 FVector PacmanUtilities::MovingDirectionToVector(EMovingDirection dir) {
 	switch (dir) {
 	case EMovingDirection::NORTH:
-		return FVector::RightVector;
+		return FVector::ForwardVector;
 		break;
 	case EMovingDirection::EAST:
-		return FVector::BackwardVector;
+		return FVector::RightVector;
 		break;
 	case EMovingDirection::SOUTH:
-		return FVector::LeftVector;
+		return FVector::BackwardVector;
 		break;
 	case EMovingDirection::WEST:
-		return FVector::ForwardVector;
+		return FVector::LeftVector;
 		break;
 	default:
 		UE_LOG(LogTemp, Error, TEXT("PacmanUtilities::MovingDirectionToVector: unknown EMovingDirection."));

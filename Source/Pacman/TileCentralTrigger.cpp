@@ -9,6 +9,11 @@
 UTileCentralTrigger::UTileCentralTrigger() {
 	OnComponentBeginOverlap.AddDynamic(this, &UTileCentralTrigger::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UTileCentralTrigger::OnEndOverlap);
+
+	// Set up collision channels responses
+	SetCollisionObjectType(ObjectChannel_World2d); // World2d object channel
+	SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
+	SetCollisionResponseToChannel(ObjectChannel_World2d, ECollisionResponse::ECR_Overlap); // enable World2d object channel
 }
 
 
@@ -30,6 +35,7 @@ void UTileCentralTrigger::OnBeginOverlap(UPrimitiveComponent* overlappedComponen
 
 void UTileCentralTrigger::OnEndOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex) {
 	if (auto otherBoardPawn = Cast<ABoardPawn>(otherActor); otherBoardPawn) {
+		
 		Tile->PawnLeftTileCenter(*otherBoardPawn);
 	}
 }

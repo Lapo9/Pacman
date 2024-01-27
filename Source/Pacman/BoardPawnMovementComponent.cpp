@@ -26,7 +26,7 @@ void UBoardPawnMovementComponent::SetMovingDirection(EMovingDirection dir) {
 	FVector distanceFromAxis = tileCenter - pawnCenter; // Distance from the center of the tile
 	float tolerance = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->PointLikeTriggersRadius * 2.f; 
 	bool canMoveOnNewDirection = (dir == EMovingDirection::NORTH || dir == EMovingDirection::SOUTH) ? 
-		FGenericPlatformMath::Abs(distanceFromAxis.X) < tolerance : FGenericPlatformMath::Abs(distanceFromAxis.Y) < tolerance;
+		FGenericPlatformMath::Abs(distanceFromAxis.Y) < tolerance : FGenericPlatformMath::Abs(distanceFromAxis.X) < tolerance;
 	
 	//TODOverifyf(canMoveOnNewDirection, 
 	//		TEXT("UBoardPawnMovementComponent::SetMovingDirection: moving in the specified direction would cause exiting the movement on the grid."));

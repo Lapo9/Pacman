@@ -13,6 +13,8 @@ ATile::ATile() {
 	// Add a mesh
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
+	Mesh->SetCollisionObjectType(ObjectChannel_Walls); // BoardPawns object channel
+	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
 }
 
 

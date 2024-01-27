@@ -23,6 +23,46 @@ void APacmanLevelState::Init() {
 }
 
 
+// Should be called when a standard food is eaten by Pacman.
+void APacmanLevelState::NotifyStandardFoodEaten(unsigned int value) {
+	Points += value;
+	DecreaseStandardFood(); // Decreases the available food by 1 and notifies the game mode.
+	UE_LOG(LogTemp, Display, TEXT("Standard food eaten --> Points: %i - Remaining food: %i"), Points, AvailableStandardFood);
+}
+
+
+// Should be called when a fruit is eaten by Pacman.
+void APacmanLevelState::NotifyFruitEaten(unsigned int value) {
+	Points += value;
+	UE_LOG(LogTemp, Display, TEXT("Fruit eaten --> Points: %i - Remaining food: %i"), Points, AvailableStandardFood);
+}
+
+
+// Should be called when a power pellet food is eaten by Pacman.
+void APacmanLevelState::NotifyPowerPelletEaten(unsigned int value) {
+	// TODO
+}
+
+
+// Should be called when a ghost is eaten by Pacman.
+void APacmanLevelState::NotifyGhostEaten() {
+	// TODO
+}
+
+
+// Increases AvailableStandardFood.
+void APacmanLevelState::AddStandardFood(unsigned int quantity) {
+	AvailableStandardFood += quantity;
+}
+
+
+// Decreases AvailableStandardFood and notify this to the game mode.
+void APacmanLevelState::DecreaseStandardFood(unsigned int quantity) {
+	AvailableStandardFood -= quantity;
+	// TODO notify game mode
+}
+
+
 const UAbstractMap& APacmanLevelState::GetAbstractMap() const {
 	return *Map;
 }

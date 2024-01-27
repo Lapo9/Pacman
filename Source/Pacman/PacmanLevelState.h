@@ -20,6 +20,24 @@ public:
 	// Updates the tile where the specified BoardPawn in the AbstractMap, and returns the new tile.
 	const class ATile& UpdateBoardPawnTile(enum class ECharacterTag tag, const FVector& position);
 
+	// Should be called when a standard food is eaten by Pacman.
+	void NotifyStandardFoodEaten(unsigned int value);
+
+	// Should be called when a fruit is eaten by Pacman.
+	void NotifyFruitEaten(unsigned int value);
+
+	// Should be called when a power pellet food is eaten by Pacman.
+	void NotifyPowerPelletEaten(unsigned int value);
+
+	// Should be called when a ghost is eaten by Pacman.
+	void NotifyGhostEaten();
+
+	// Increases AvailableStandardFood.
+	void AddStandardFood(unsigned int quantity = 1);
+
+
+	// Functions to retrieve information about the level state.
+
 	// Returns the surrounding tiles on the map of the specified pawn.
 	TMap<enum class EMovingDirection, const class ATile*> GetSurroundingTiles(enum class ECharacterTag tag) const;
 
@@ -35,8 +53,20 @@ public:
 	// Returns the map containing the references to the present pawns.
 	const TMap<enum class ECharacterTag, class ABoardPawn*>& GetBoardPawns() const;
 
-private:
+protected:
+	// Decreases AvailableStandardFood and notify this to the game mode.
+	void DecreaseStandardFood(unsigned int quantity = 1);
+
+
+	// Object keeping track of the tiles of the map and the position of the board pawns.
 	class UAbstractMap* Map;
 
+	// List of the board pawns present in the level.
 	class TMap<enum class ECharacterTag, class ABoardPawn*> BoardPawns;
+
+	// Points till now.
+	unsigned int Points;
+
+	// How many items of standard food are still on the board.
+	unsigned int AvailableStandardFood;
 };

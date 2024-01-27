@@ -14,13 +14,20 @@ ABoardPawn::ABoardPawn() {
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 
-	// Add a mesh
+	// Add a mesh and set up mesh collision rules
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
+	Mesh->SetCollisionObjectType(ObjectChannel_BoardPawns); // BoardPawns object channel
+	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
+	Mesh->SetCollisionResponseToChannel(ObjectChannel_BoardPawns, ECollisionResponse::ECR_Overlap); // enable BoardPawns object channel
+	Mesh->SetCollisionResponseToChannel(ObjectChannel_Walls, ECollisionResponse::ECR_Overlap); // enable Walls object channel
 
-	// Add the central collider
+	// Add the central collider and set up collision rules
 	CentralCollider = CreateDefaultSubobject<USphereComponent>(TEXT("CentralCollider"));
 	CentralCollider->SetupAttachment(RootComponent);
+	CentralCollider->SetCollisionObjectType(ObjectChannel_World2d); // World2d object channel
+	CentralCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
+	CentralCollider->SetCollisionResponseToChannel(ObjectChannel_World2d, ECollisionResponse::ECR_Overlap); // enable World2d object channel
 
 	// Add the movement component
 	MovementComponent = CreateDefaultSubobject<UBoardPawnMovementComponent>(TEXT("MovementComponent"));

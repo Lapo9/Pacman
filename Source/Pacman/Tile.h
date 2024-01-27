@@ -31,7 +31,7 @@ public:
 	virtual FVector GetExtents() const;
 
 	// Returns the type of the tile.
-	virtual enum class ETileType GetType() const PURE_VIRTUAL(ATile::StaticClass(), return ETileType::WALL;);
+	virtual enum class ETileType GetType() const PURE_VIRTUAL(ATile::GetType, return ETileType::WALL;);
 
 protected:
 	UPROPERTY() // Component to place this actor on the scene.

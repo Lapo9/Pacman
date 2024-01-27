@@ -2,7 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Tile.h"
+#include "BaseFood.h"
 #include "WalkableTile.generated.h"
+
 
 // A Tile where BoardPawns can walk on. It is responsible to catch if a BoardPawn is on it and notify this event to the pawn itself and the LevelState.
 UCLASS(ClassGroup = Pacman)
@@ -35,9 +37,18 @@ public:
 	virtual void PawnLeftTile(class ABoardPawn& pawn) const;
 	
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Triggers") // Trigger placed on the center of the tile.
+	// Spawns the food item (if required).
+	void SpawnFood() const;
+
+	UPROPERTY(VisibleAnywhere, Category = "Triggers") // Trigger placed on the center of the tile.
 	class UTileCentralTrigger* CentralTrigger; 
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Triggers") // Trigger to detect anithing entering the tile.
+	UPROPERTY(VisibleAnywhere, Category = "Triggers") // Trigger to detect anithing entering the tile.
 	class UTileFullTrigger* FullTrigger; 
+
+	UPROPERTY(EditAnywhere, Category = "Point system") // Which point this tile should spawn.
+	TSubclassOf<ABaseFood> FoodToSpawn;
+
+	UPROPERTY(EditAnywhere, Category = "Point system") // How much the food should be spawned over the tile.
+	float DistanceFromTile;
 };

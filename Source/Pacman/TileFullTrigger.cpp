@@ -7,6 +7,11 @@
 
 UTileFullTrigger::UTileFullTrigger() {
 	OnComponentEndOverlap.AddDynamic(this, &UTileFullTrigger::OnEndOverlap);
+
+	// Set up collision channels responses
+	SetCollisionObjectType(ObjectChannel_World2d); // World2d object channel
+	SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
+	SetCollisionResponseToChannel(ObjectChannel_World2d, ECollisionResponse::ECR_Overlap); // enable World2d object channel
 }
 
 

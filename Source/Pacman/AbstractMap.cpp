@@ -28,13 +28,13 @@ TMap<EMovingDirection, const ATile*> UAbstractMap::GetSurroundingTiles(ECharacte
 	using TT = ETileType;
 	
 	TMap<EMovingDirection, const ATile*> res{};
-	auto [iX, iY] = GetCharacterTileIndex(tag);
-	auto [sizeX, sizeY] = MapInfo.Size();
+	auto [iCol, iRow] = GetCharacterTileIndex(tag);
+	auto [colsQty, rowsQty] = MapInfo.Size();
 
-	res.Add(MD::NORTH, iY < sizeY - 1 ? Map[iX][iY + 1] : nullptr);
-	res.Add(MD::WEST, iX < sizeX - 1 ? Map[iX + 1][iY] : nullptr);
-	res.Add(MD::SOUTH,iY > 0 ? Map[iX][iY - 1] : nullptr);
-	res.Add(MD::EAST, iX > 0 ? Map[iX - 1][iY] : nullptr);
+	res.Add(MD::NORTH, iRow < rowsQty - 1 ? Map[iCol][iRow + 1] : nullptr);
+	res.Add(MD::EAST, iCol < colsQty - 1 ? Map[iCol + 1][iRow] : nullptr);
+	res.Add(MD::SOUTH,iRow > 0 ? Map[iCol][iRow - 1] : nullptr);
+	res.Add(MD::WEST, iCol > 0 ? Map[iCol - 1][iRow] : nullptr);
 
 	return res;
 }
@@ -59,11 +59,11 @@ FString UAbstractMap::ToString() const {
 	if (!MapInfo.IsInitialized()) return "";
 
 	FString res = "Map:";
-	auto [sizeX, sizeY] = MapInfo.Size();
-	for (int i = 0; i < sizeY; ++i) {
+	auto [colsQty, rowsQty] = MapInfo.Size();
+	for (int iRow = rowsQty-1; iRow >= 0; --iRow) {
 		res += "\n";
-		for (int j = 0; j < sizeX; ++j) {
-			auto type = Map[j][i] ? Map[j][i]->GetType() : ETileType::WALL;
+		for (int iCol = 0; iCol < colsQty; ++iCol) {
+			auto type = Map[iCol][iRow] ? Map[iCol][iRow]->GetType() : ETileType::WALL;
 			res += type == ETileType::WALKABLE ? "O" : type == ETileType::TUNNEL ? "T" : "X";
 		}
 	}
@@ -80,15 +80,15 @@ void UAbstractMap::CreateAbstractMap() {
 	}
 
 	// Initialize the abstract map with all walls
-	auto [sizeX, sizeY] = MapInfo.Size();
+	auto [colsQty, rowsQty] = MapInfo.Size();
 	TArray<const ATile*> column;
-	column.Init(nullptr, sizeY);
-	Map.Init(column, sizeX);
+	column.Init(nullptr, rowsQty);
+	Map.Init(column, colsQty);
 
 	// Actually fill the abstract map (empty tiles can be considered just as walls)
 	for (TObjectIterator<ATile> tile; tile; ++tile) {
 		auto [iCol, iRow] = PositionToIndex(tile->GetCenter());
-		checkf(iCol < sizeX || iRow < sizeY, TEXT("AbstractMap::CreateAbstractMap: out of bounds index."));
+		checkf(iCol < colsQty || iRow < rowsQty, TEXT("AbstractMap::CreateAbstractMap: index out of bounds."));
 		Map[iCol][iRow] = *tile;
 		tile->Index = { iCol, iRow };
 	}
@@ -113,8 +113,8 @@ void UAbstractMap::FillCharactersStartingPositions() {
 FTileIndex UAbstractMap::PositionToIndex(const FVector& pos) {
 	checkf(MapInfo.IsInitialized(), TEXT("MapInfo not initialized."));
 
-	int column = (pos.X - MapInfo.Min.X) / MapInfo.TileWidth;
-	int row = (pos.Y - MapInfo.Min.Y) / MapInfo.TileDepth;
+	int row = (pos.X - MapInfo.Min.X) / MapInfo.TileDepth;
+	int column = (pos.Y - MapInfo.Min.Y) / MapInfo.TileWidth;
 
 	checkf(column < MapInfo.Size().Col && row < MapInfo.Size().Row, TEXT("Position out of bounds."));
 	return { column, row };
@@ -135,11 +135,11 @@ void UAbstractMap::AbstractMapInfo::Grow(const ATile& tile) {
 	// Set the extents of the tiles of this abstract map; if they are already set, make sure the current tile has the same extents as the other tiles
 	extents *= 2.f;
 	if (TileWidth < 0 && TileDepth < 0) {
-		TileWidth = extents.X;
-		TileDepth = extents.Y;
+		TileDepth = extents.X;
+		TileWidth = extents.Y;
 	}
 	else {
-		checkf(TileWidth == extents.X && TileDepth == extents.Y, TEXT("All tiles must have the same XY size."));
+		checkf(TileDepth == extents.X && TileWidth == extents.Y, TEXT("All tiles must have the same XY size."));
 	}
 }
 
@@ -152,7 +152,7 @@ bool UAbstractMap::AbstractMapInfo::IsInitialized() const {
 
 // Returns the number of columns and rows of this AbstractMap.
 FTileIndex UAbstractMap::AbstractMapInfo::Size() const {
-	auto size = (Max - Min) / FVector2D{ TileWidth, TileDepth };
-	return { FMath::RoundToInt32(size.X), FMath::RoundToInt32(size.Y) };
+	auto size = (Max - Min) / FVector2D{ TileDepth, TileWidth };
+	return { FMath::RoundToInt32(size.Y), FMath::RoundToInt32(size.X) };
 }
 

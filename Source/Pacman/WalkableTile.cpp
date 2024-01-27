@@ -4,6 +4,8 @@
 #include "AbstractMap.h"
 #include "BoardPawn.h"
 #include "PacmanLevelState.h"
+#include "StandardFood.h"
+
 
 // Sets default values
 AWalkableTile::AWalkableTile() {
@@ -26,6 +28,9 @@ void AWalkableTile::BeginPlay() {
 	// Initialize triggers
 	CentralTrigger->Init(*this);
 	FullTrigger->Init(*this);
+
+	// Spawn the food (if required)
+	SpawnFood();
 }
 
 
@@ -51,6 +56,14 @@ void AWalkableTile::PawnLeftTileCenter(ABoardPawn& pawn) const {
 void AWalkableTile::PawnLeftTile(ABoardPawn& pawn) const {
 	const ATile& newTile = Cast<APacmanLevelState>(GetWorld()->GetGameState())->UpdateBoardPawnTile(pawn.GetTag(), pawn.GetActorLocation()); // Update the map
 	pawn.OnNewTile(newTile); // Notify the pawn
+}
+
+
+// Spawns the food item (if required).
+void AWalkableTile::SpawnFood() const {
+	if (!FoodToSpawn) return;
+	FTransform transform{ GetActorRotation(), GetActorLocation() + FVector{ 0,0, DistanceFromTile }, GetActorScale() }; // Spawn above the tile
+	auto Food = GetWorld()->SpawnActor<ABaseFood>(FoodToSpawn->GetAuthoritativeClass(), transform);
 }
 
 
