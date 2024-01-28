@@ -54,8 +54,14 @@ public:
 	// Returns the tile the pawn is onto.
 	const class ATile* GetCurrentTile() const;
 
+	// Returns the location of the central collider.
+	FVector GetCentralColliderLocation() const;
+
 	// Sets the new location, but leaves the Z component the same.
-	void SetLocation2D(const FVector& newPos);
+	void SetLocation2d(const FVector& newPos);
+
+	// Returns the location in 2D.
+	FVector2D GetLocation2d() const;
 
 protected:
 	UPROPERTY(VisibleAnywhere) // Tag identifying this BoardPawn.

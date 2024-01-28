@@ -8,7 +8,7 @@ ETileType ATeleportTile::GetType() const {
 
 void ATeleportTile::PawnOnTileCenter(ABoardPawn& pawn) const {
 	// Move the pawn to the new tile (only if it didn't get teleported in the last movement, to avoid infinite recursion)
-	if (!pawn.JustTeleported) pawn.SetLocation2D(TeleportToTile->GetCenter());
+	if (!pawn.JustTeleported) pawn.SetLocation2d(TeleportToTile->GetCenter());
 
 	// If the pawn just teleported, don't teleport it again (potentially causing an infinite loop) and act just like a normal walkable tile.
 	else Super::PawnOnTileCenter(pawn);

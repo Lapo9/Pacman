@@ -14,6 +14,13 @@ ABoardPawn::ABoardPawn() {
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 
+	// Add the central collider and set up collision rules
+	CentralCollider = CreateDefaultSubobject<USphereComponent>(TEXT("CentralCollider"));
+	CentralCollider->SetupAttachment(RootComponent);
+	CentralCollider->SetCollisionObjectType(ObjectChannel_World2d); // World2d object channel
+	CentralCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
+	CentralCollider->SetCollisionResponseToChannel(ObjectChannel_World2d, ECollisionResponse::ECR_Overlap); // enable World2d object channel
+	
 	// Add a mesh and set up mesh collision rules
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
@@ -21,13 +28,6 @@ ABoardPawn::ABoardPawn() {
 	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
 	Mesh->SetCollisionResponseToChannel(ObjectChannel_BoardPawns, ECollisionResponse::ECR_Overlap); // enable BoardPawns object channel
 	Mesh->SetCollisionResponseToChannel(ObjectChannel_Walls, ECollisionResponse::ECR_Overlap); // enable Walls object channel
-
-	// Add the central collider and set up collision rules
-	CentralCollider = CreateDefaultSubobject<USphereComponent>(TEXT("CentralCollider"));
-	CentralCollider->SetupAttachment(RootComponent);
-	CentralCollider->SetCollisionObjectType(ObjectChannel_World2d); // World2d object channel
-	CentralCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
-	CentralCollider->SetCollisionResponseToChannel(ObjectChannel_World2d, ECollisionResponse::ECR_Overlap); // enable World2d object channel
 
 	// Add the movement component
 	MovementComponent = CreateDefaultSubobject<UBoardPawnMovementComponent>(TEXT("MovementComponent"));
@@ -40,7 +40,7 @@ void ABoardPawn::BeginPlay() {
 	Super::BeginPlay();
 
 	CurrentTile = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->SpawnTiles[Tag]; //Initialize the current tile
-	SetLocation2D(CurrentTile->GetCenter()); // Move the pawn to the spawn tile center (don't touch Z component)
+	SetLocation2d(CurrentTile->GetCenter()); // Move the pawn to the spawn tile center (don't touch Z component)
 	
 	// Set the position of the trigger, and its radius
 	auto center = GetActorLocation();
@@ -79,9 +79,19 @@ const ATile* ABoardPawn::GetCurrentTile() const {
 }
 
 
+// Returns the location of the central collider.
+FVector ABoardPawn::GetCentralColliderLocation() const {
+	return CentralCollider->GetComponentLocation();
+}
+
+
 // Sets the new location, but leaves the Z component the same.
-void ABoardPawn::SetLocation2D(const FVector& newPos) {
+void ABoardPawn::SetLocation2d(const FVector& newPos) {
 	SetActorLocation(FVector{ newPos.X, newPos.Y, GetActorLocation().Z });
+}
+
+FVector2D ABoardPawn::GetLocation2d() const {
+	return FVector2D{ CentralCollider->GetComponentLocation() };
 }
 
 

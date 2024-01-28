@@ -16,7 +16,7 @@ void APacmanPawn::OnTileCenter(const ATile& tile) {
 
 	auto surroundingTiles = Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetSurroundingTiles(Tag);
 	// If the input direction is valid, go in that direction
-	if (PacmanUtilities::IsTileWalkable(surroundingTiles[InputDirection])) {
+	if (Util::IsTileWalkable(surroundingTiles[InputDirection])) {
 		MovementComponent->SetSpeed(tile.GetType() == ETileType::TUNNEL ? TunnelSpeed : StandardSpeed); // Set the speed of Pacman based on the tile he is on
 		MovementComponent->SetMovingDirection(InputDirection);
 	}

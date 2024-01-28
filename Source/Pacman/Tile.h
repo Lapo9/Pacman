@@ -25,7 +25,7 @@ public:
 	FVector GetCenter() const;
 
 	// Returns the coordinates of the center of the tile (only X and Y).
-	FVector2D GetCenter2D() const;
+	FVector2D GetLocation2d() const;
 
 	// Returns the axis aligned extents of this tile.
 	virtual FVector GetExtents() const;

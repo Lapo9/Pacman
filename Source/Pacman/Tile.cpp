@@ -15,6 +15,7 @@ ATile::ATile() {
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->SetCollisionObjectType(ObjectChannel_Walls); // BoardPawns object channel
 	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
+	Mesh->SetGenerateOverlapEvents(false); // Completely disable overlap events
 }
 
 
@@ -34,7 +35,7 @@ FVector ATile::GetCenter() const {
 
 
 // Returns the coordinates of the center of the tile (only X and Y).
-FVector2D ATile::GetCenter2D() const {
+FVector2D ATile::GetLocation2d() const {
 	return FVector2D{ GetActorLocation() };
 }
 
