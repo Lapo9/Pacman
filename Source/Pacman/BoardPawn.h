@@ -40,10 +40,10 @@ protected:
 
 public:	
 	// Called to notify the pawn that it is at the center of the current tile.
-	virtual void OnTileCenter(const class ATile& tile) PURE_VIRTUAL(ABoardPawn::OnTileCenter, );
+	virtual void OnTileCenter(const class AWalkableTile& tile) PURE_VIRTUAL(ABoardPawn::OnTileCenter, );
 
 	// Called to notify the pawn that it entered a new tile.
-	virtual void OnNewTile(const class ATile& tile);
+	virtual void OnNewTile(const class AWalkableTile& tile);
 
 	// Returns the tag of this BoardPawn.
 	ECharacterTag GetTag() const;
@@ -52,7 +52,7 @@ public:
 	EMovingDirection GetMovingDirection() const;
 
 	// Returns the tile the pawn is onto.
-	const class ATile* GetCurrentTile() const;
+	const class AWalkableTile* GetCurrentTile() const;
 
 	// Returns the location of the central collider.
 	FVector GetCentralColliderLocation() const;
@@ -63,15 +63,23 @@ public:
 	// Returns the location in 2D.
 	FVector2D GetLocation2d() const;
 
+	const class AWalkableTile* GetSpawnTile() const;
+
 protected:
-	UPROPERTY(VisibleAnywhere) // Tag identifying this BoardPawn.
+	UPROPERTY(EditAnywhere, Category = "Initialization parameters") // Where the board pawn spawns
+	class AWalkableTile* SpawnTile;
+
+	UPROPERTY(EditAnywhere, Category = "Initialization parameters") // Tag identifying this BoardPawn.
 	ECharacterTag Tag;
 
 	UPROPERTY(VisibleAnywhere) // Component to place this actor on the scene.
 	class USceneComponent* SceneComponent;
 
-	UPROPERTY(EditAnywhere) // The mesh.
+	UPROPERTY(EditAnywhere) // The mesh component.
 	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere) // The default mesh.
+	class UStaticMesh* DefaultMesh;
 
 	UPROPERTY(VisibleAnywhere) // A sphere collider representing the puntual position of this pawn.
 	class USphereComponent* CentralCollider;
@@ -86,7 +94,7 @@ protected:
 	float TunnelSpeed;
 
 	// Current tile the pawn is on.
-	const ATile* CurrentTile;
+	const AWalkableTile* CurrentTile;
 
 public:
 	// Whether the pawn has just been teleported (it is used to avoid infinte teleportation if the teleporting landing tile is a teleport too).

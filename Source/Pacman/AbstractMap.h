@@ -23,16 +23,16 @@ public:
 	void Init();
 
 	// Returns the index of the tile the queried character is on.
-	FTileIndex GetCharacterTileIndex(enum class ECharacterTag tag) const;
+	FTileIndex GetCharacterTileIndex(const class ABoardPawn& pawn) const;
 
 	// Returns a constant reference to the tile the queried character is on.
-	const class ATile& GetCharacterTile(enum class ECharacterTag tag) const;
+	const class AWalkableTile& GetCharacterTile(const class ABoardPawn& pawn) const;
 
 	// Returns the surrounding tiles of a character.
-	TMap<enum class EMovingDirection, const class ATile*> GetSurroundingTiles(enum class ECharacterTag tag) const;
+	TMap<enum class EMovingDirection, const class ATile*> GetSurroundingTiles(const class ABoardPawn& pawn) const;
 
-	// Updates the index of the tile the specified charater is on, and returns the new tile.
-	const class ATile& UpdateCharacterTile(enum class ECharacterTag tag, const FVector& position);
+	// Updates the index of the tile the specified charater is on, and returns the new tile (it must be a walkable tile).
+	const class AWalkableTile& UpdateCharacterTile(const class ABoardPawn& pawn, const FVector& position);
 
 	// A string representation of the Map.
 	FString ToString() const;
@@ -51,7 +51,7 @@ private:
 	TArray<TArray<const ATile*>> Map;
 
 	// Positions of the characters
-	TMap<enum class ECharacterTag, FTileIndex> CharactersPositions;
+	TMap<const class ABoardPawn*, FTileIndex> CharactersPositions;
 
 	// The positions of the bottom-left and top-right tiles, and the width and depth of each tile (they should all be the same).
 	struct AbstractMapInfo {

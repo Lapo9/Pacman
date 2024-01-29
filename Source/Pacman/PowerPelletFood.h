@@ -2,15 +2,16 @@
 
 #include "CoreMinimal.h"
 #include "BaseFood.h"
-#include "StandardFood.generated.h"
+#include "PowerPelletFood.generated.h"
 
 
+// Power pellets that turn ghosts into frightened mode when eaten.
 UCLASS()
-class PACMAN_API AStandardFood : public ABaseFood {
+class PACMAN_API APowerPelletFood : public ABaseFood
+{
 	GENERATED_BODY()
-	
 public:
-	AStandardFood();
+	APowerPelletFood();
 
 protected:
 	void BeginPlay() override;
@@ -20,4 +21,5 @@ protected:
 
 	// Called when another component starts overlapping with this one.
 	void OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool fromSweep, const FHitResult& sweepResult) override;
+
 };

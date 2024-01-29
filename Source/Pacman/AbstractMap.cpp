@@ -23,12 +23,12 @@ void UAbstractMap::Init() {
 
 
 // Returns the surrounding tiles of a character.
-TMap<EMovingDirection, const ATile*> UAbstractMap::GetSurroundingTiles(ECharacterTag tag) const {
+TMap<EMovingDirection, const ATile*> UAbstractMap::GetSurroundingTiles(const ABoardPawn& pawn) const {
 	using MD = EMovingDirection;
 	using TT = ETileType;
 	
 	TMap<EMovingDirection, const ATile*> res{};
-	auto [iCol, iRow] = GetCharacterTileIndex(tag);
+	auto [iCol, iRow] = GetCharacterTileIndex(pawn);
 	auto [colsQty, rowsQty] = MapInfo.Size();
 
 	res.Add(MD::NORTH, iRow < rowsQty - 1 ? Map[iCol][iRow + 1] : nullptr);
@@ -41,16 +41,27 @@ TMap<EMovingDirection, const ATile*> UAbstractMap::GetSurroundingTiles(ECharacte
 
 
 // Returns the index of the tile the queried character is on.
-FTileIndex UAbstractMap::GetCharacterTileIndex(ECharacterTag tag) const {
-	return CharactersPositions[tag];
+FTileIndex UAbstractMap::GetCharacterTileIndex(const ABoardPawn& pawn) const {
+	return CharactersPositions[&pawn];
 }
 
 
-// Updates the index of the tile the specified charater is on, and returns the new tile.
-const ATile& UAbstractMap::UpdateCharacterTile(ECharacterTag tag, const FVector& position) {
+// Returns a constant reference to the tile the queried character is on.
+const AWalkableTile& UAbstractMap::GetCharacterTile(const ABoardPawn& pawn) const {
+	auto index = GetCharacterTileIndex(pawn);
+	auto tile = Map[index.Col][index.Row];
+	verifyf(tile->IsA(AWalkableTile::StaticClass()), TEXT("Tile where the character is positioned is not walkable"));
+	return *Cast<AWalkableTile>(tile);
+}
+
+
+// Updates the index of the tile the specified charater is on, and returns the new tile (it must be a walkable tile).
+const AWalkableTile& UAbstractMap::UpdateCharacterTile(const ABoardPawn& pawn, const FVector& position) {
 	auto newTileIndex = PositionToIndex(position);
-	CharactersPositions[tag] = newTileIndex;
-	return *Map[newTileIndex.Col][newTileIndex.Row];
+	auto newTile = Map[newTileIndex.Col][newTileIndex.Row];
+	verifyf(newTile->IsA(AWalkableTile::StaticClass()), TEXT("A board pawn tried to go on a non-walkable tile at position <%f, %f>"), position.X, position.Y);
+	CharactersPositions[&pawn] = newTileIndex;
+	return *Cast<AWalkableTile>(newTile);
 }
 
 
@@ -87,6 +98,7 @@ void UAbstractMap::CreateAbstractMap() {
 
 	// Actually fill the abstract map (empty tiles can be considered just as walls)
 	for (TObjectIterator<ATile> tile; tile; ++tile) {
+		if (tile->GetWorld() != GetWorld()) continue; // Skip objects that are not in the actual scene (maybe they were in the editor or somewhere else)
 		auto [iCol, iRow] = PositionToIndex(tile->GetCenter());
 		checkf(iCol < colsQty || iRow < rowsQty, TEXT("AbstractMap::CreateAbstractMap: index out of bounds."));
 		Map[iCol][iRow] = *tile;
@@ -99,11 +111,12 @@ void UAbstractMap::CreateAbstractMap() {
 
 // Fills the map containing the characters positions.
 void UAbstractMap::FillCharactersStartingPositions() {
-	CharactersPositions = TMap<ECharacterTag, FTileIndex>{};
+	CharactersPositions = TMap<const ABoardPawn*, FTileIndex>{};
 	//TODO this could also be done by iterating on the BoardPawns variable in PacmanLevelState
 	for (TObjectIterator<ABoardPawn> pawn; pawn; ++pawn) {
-		auto pawnIndex = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->SpawnTiles[pawn->GetTag()]->Index;
-		CharactersPositions.Add(pawn->GetTag(), pawnIndex);
+		if (pawn->GetWorld() != GetWorld()) continue; // Skip objects that are not in the actual scene (maybe they were in the editor or somewhere else)
+		auto pawnIndex = pawn->GetSpawnTile()->Index;
+		CharactersPositions.Add(*pawn, pawnIndex);
 		UE_LOG(LogTemp, Display, TEXT("Abstract map board pawn added: %s - <%i, %i>"), *UEnum::GetValueAsString<ECharacterTag>(pawn->GetTag()), pawnIndex.Col, pawnIndex.Row);
 	}
 }

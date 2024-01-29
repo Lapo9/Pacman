@@ -18,7 +18,7 @@ public:
 	// These functions are called by other actors to update the game state
 
 	// Updates the tile where the specified BoardPawn in the AbstractMap, and returns the new tile.
-	const class ATile& UpdateBoardPawnTile(enum class ECharacterTag tag, const FVector& position);
+	const class AWalkableTile& UpdateBoardPawnTile(const class ABoardPawn& pawn, const FVector& position);
 
 	// Should be called when a standard food is eaten by Pacman.
 	void NotifyStandardFoodEaten(unsigned int value);
@@ -39,19 +39,19 @@ public:
 	// Functions to retrieve information about the level state.
 
 	// Returns the surrounding tiles on the map of the specified pawn.
-	TMap<enum class EMovingDirection, const class ATile*> GetSurroundingTiles(enum class ECharacterTag tag) const;
+	TMap<enum class EMovingDirection, const class ATile*> GetSurroundingTiles(const class ABoardPawn& pawn) const;
 
 	// Returns the abstract map itslef.
 	const class UAbstractMap& GetAbstractMap() const;
 
-	// Returns the current pacman
-	class APacmanPawn* GetPacman();
+	// Returns the current Pacman
+	class APacmanPawn* GetPacman() const;
 
-	// Returns the specified board pawn
-	class ABoardPawn* GetBoardPawn(enum class ECharacterTag tag);
+	// Returns the first board pawn with the specified tag (if present)
+	class ABoardPawn* GetBoardPawn(enum class ECharacterTag tag) const;
 
 	// Returns the map containing the references to the present pawns.
-	const TMap<enum class ECharacterTag, class ABoardPawn*>& GetBoardPawns() const;
+	const TArray<class ABoardPawn*>& GetBoardPawns() const;
 
 protected:
 	// Decreases AvailableStandardFood and notify this to the game mode.
@@ -62,7 +62,7 @@ protected:
 	class UAbstractMap* Map;
 
 	// List of the board pawns present in the level.
-	class TMap<enum class ECharacterTag, class ABoardPawn*> BoardPawns;
+	class TArray<class ABoardPawn*> BoardPawns;
 
 	// Points till now.
 	unsigned int Points;

@@ -2,11 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "PacmanUtilities.h"
+#include "GhostsTargetAcquisitions.h"
 #include "AIController.h"
 #include "GhostAiController.generated.h"
 
 
-using GhostAcquireNewTargetSignature = struct FTileIndex(const class UAbstractMap& map, const class APacmanPawn& pacman, const class ABoardPawn& itself, const TMap<enum class ECharacterTag, class ABoardPawn*>& otherPawns);
+using GhostAcquireNewTargetSignature = struct FTileIndex(GHOST_TARGET_ACQUISITION_PARAMS);
+
 
 // Decides how a ghost should move.
 UCLASS()
@@ -18,7 +20,10 @@ public:
 	virtual void Init(TFunction<GhostAcquireNewTargetSignature> acquireNewTarget);
 
 	// Should be called when the ghost reaches the center of a tile; it computes where the ghost should go next and tells it to the ghost.
-	virtual void GhostOnTileCenter(const class ATile& tile);
+	virtual void GhostOnTileCenter(const class AWalkableTile& tile);
+
+	// Should be called when the mode changes.
+	virtual void SetMode(const class UGhostModeData& mode);
 
 protected:
 	// Returns the best direction to get to the target tile. In this case it tries all possible surrounding tiles, and goes to the tile with the shortest distance to the target (original Pacman AI).

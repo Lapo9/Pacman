@@ -3,7 +3,8 @@
 #include "PacmanLevelState.h"
 #include "GhostPawn.h"
 #include "PacmanUtilities.h"
-#include "Tile.h"
+#include "WalkableTile.h"
+#include "GhostModeData.h"
 #include "UObject/Class.h"
 
 // Initializes the AI by selecting a target acquisition function.
@@ -13,15 +14,27 @@ void AGhostAiController::Init(TFunction<GhostAcquireNewTargetSignature> acquireN
 
 
 // Should be called when the ghost reaches the center of a tile; it computes where the ghost should go next and tells it to the ghost.
-void AGhostAiController::GhostOnTileCenter(const ATile& tile) {
+void AGhostAiController::GhostOnTileCenter(const AWalkableTile& tile) {
 	auto levelState = Cast<APacmanLevelState>(GetWorld()->GetGameState());
 	auto possessedGhost = Cast<AGhostPawn>(GetPawn());
 
-	Target = AcquireNewTarget(levelState->GetAbstractMap(), *levelState->GetPacman(), *levelState->GetBoardPawn(possessedGhost->GetTag()), levelState->GetBoardPawns());
+	Target = AcquireNewTarget(*levelState, *possessedGhost);
 	auto newDirection = ComputeBestDirection();
 	possessedGhost->TurnDirection(newDirection);
 
 	UE_LOG(LogTemp, Display, TEXT("GhostAI %s new target and direction are: <%i, %i> - %s"), *possessedGhost->GetName(), Target.Col, Target.Row, *UEnum::GetValueAsString<EMovingDirection>(newDirection));
+}
+
+
+void AGhostAiController::SetMode(const UGhostModeData& mode) {
+	// Set the target acquisition function
+	AcquireNewTarget = [&mode](GHOST_TARGET_ACQUISITION_PARAMS) {return mode.TargetAcquisitionClass.GetDefaultObject()->AcquireTarget(levelState, itself); };
+
+	// If the new mode is frightened, invert direction
+	if (mode.Mode == EGhostMode::FRIGHTENED) {
+		auto possessedPawn = Cast<AGhostPawn>(GetPawn());
+		possessedPawn->TurnDirection(Util::Opposite(possessedPawn->GetMovingDirection()));
+	}
 }
 
 
@@ -30,7 +43,7 @@ EMovingDirection AGhostAiController::ComputeBestDirection() const {
 	auto ghost = Cast<AGhostPawn>(GetPawn());
 	auto state = Cast<APacmanLevelState>(GetWorld()->GetGameState());
 
-	auto surroundingTiles = state->GetSurroundingTiles(ghost->GetTag());
+	auto surroundingTiles = state->GetSurroundingTiles(*ghost);
 	auto movingDir = ghost->GetMovingDirection();
 
 	surroundingTiles.FindAndRemoveChecked(Util::Opposite(movingDir)); // The ghost cannot do a U turn

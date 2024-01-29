@@ -52,7 +52,7 @@ EMovingDirection UBoardPawnMovementComponent::GetMovingDirection() const {
 
 
 // Should be called when the pawn reaches the center of a Tile.
-void UBoardPawnMovementComponent::OnTileCenter(const ATile& tile) {
+void UBoardPawnMovementComponent::OnTileCenter(const AWalkableTile& tile) {
 	// 
 	if (OnTileCenterInfo.SkipNextOnTileCenter) return;
 
@@ -67,7 +67,7 @@ void UBoardPawnMovementComponent::OnTileCenter(const ATile& tile) {
 	OnTileCenterInfo.DistFromCenter = deltaToCenter.GetAbsMax() * dirToCenter;
 
 	// If there is an obstacle in the moving direction, stop the pawn
-	auto surroundingTiles = Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetSurroundingTiles(Cast<ABoardPawn>(GetOwner())->GetTag());
+	auto surroundingTiles = Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetSurroundingTiles(*Cast<ABoardPawn>(GetOwner()));
 	if (!PacmanUtilities::IsTileWalkable(surroundingTiles[MovingDirection])) {
 		Speed = 0.f;
 	}

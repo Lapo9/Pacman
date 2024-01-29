@@ -17,7 +17,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()	// Called when another component starts overlapping with this one.
-	virtual void OnBeginOverlap(class AActor* overlappedActor, class AActor* otherActor) PURE_VIRTUAL(ABaseFood::OnBeginOverlap, );
+	virtual void OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool fromSweep, const FHitResult& sweepResult) PURE_VIRTUAL(ABaseFood::OnBeginOverlap, );
 
 	UPROPERTY(EditAnywhere, Category = "Point system") // How many points eating this food gives.
 	unsigned int Value;

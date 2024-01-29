@@ -1,19 +1,23 @@
 #include "BaseFood.h"
 #include "PacmanLevelState.h"
+#include "PacmanUtilities.h"
+#include "Components/SphereComponent.h"
 
 ABaseFood::ABaseFood() {
-	OnActorBeginOverlap.AddDynamic(this, &ABaseFood::OnBeginOverlap);
-
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
+	Mesh->SetCollisionObjectType(ObjectChannel_BoardPawns); // BoardPawns object channel
+	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
+	Mesh->SetCollisionResponseToChannel(ObjectChannel_BoardPawns, ECollisionResponse::ECR_Overlap); // enable BoardPawns object channel
 }
 
 
 void ABaseFood::BeginPlay() {
 	Super::BeginPlay();
 
+	Mesh->OnComponentBeginOverlap.AddDynamic(this, &ABaseFood::OnBeginOverlap); // For whatever reason this must stay here and not in the ctor
 	LevelState = Cast<APacmanLevelState>(GetWorld()->GetGameState());
 }

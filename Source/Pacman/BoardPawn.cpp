@@ -1,5 +1,5 @@
 #include "BoardPawn.h"
-#include "Tile.h"
+#include "WalkableTile.h"
 #include "BoardPawnMovementComponent.h"
 #include "PacmanSettings.h"
 #include "Components/SphereComponent.h"
@@ -39,7 +39,7 @@ void ABoardPawn::BeginPlay() {
 	UE_LOG(LogTemp, Display, TEXT("BeginPlay board pawn %s"), *GetName());
 	Super::BeginPlay();
 
-	CurrentTile = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->SpawnTiles[Tag]; //Initialize the current tile
+	CurrentTile = SpawnTile; //Initialize the current tile
 	SetLocation2d(CurrentTile->GetCenter()); // Move the pawn to the spawn tile center (don't touch Z component)
 	
 	// Set the position of the trigger, and its radius
@@ -48,12 +48,12 @@ void ABoardPawn::BeginPlay() {
 	CentralCollider->SetSphereRadius(Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->PointLikeTriggersRadius);
 
 	// Call the first event to make the pawn start moving. TODO maybe there is a better way to start moving
-	OnTileCenter(*Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->SpawnTiles[Tag]);
+	OnTileCenter(*SpawnTile);
 }
 
 
 // Called to notify the pawn that it entered a new tile.
-void ABoardPawn::OnNewTile(const ATile& tile) {
+void ABoardPawn::OnNewTile(const AWalkableTile& tile) {
 	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on new tile %s"), *GetName(), *tile.GetName());
 	// Register the new tile and change speed.
 	CurrentTile = &tile;
@@ -74,7 +74,7 @@ EMovingDirection ABoardPawn::GetMovingDirection() const {
 
 
 // Returns the tile the pawn is onto.
-const ATile* ABoardPawn::GetCurrentTile() const {
+const AWalkableTile* ABoardPawn::GetCurrentTile() const {
 	return CurrentTile;
 }
 
@@ -92,6 +92,11 @@ void ABoardPawn::SetLocation2d(const FVector& newPos) {
 
 FVector2D ABoardPawn::GetLocation2d() const {
 	return FVector2D{ CentralCollider->GetComponentLocation() };
+}
+
+
+const AWalkableTile* ABoardPawn::GetSpawnTile() const {
+	return SpawnTile;
 }
 
 

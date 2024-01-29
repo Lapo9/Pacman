@@ -31,7 +31,6 @@ struct PACMAN_API FTileIndex {
 	friend FTileIndex operator*(float lhs, FTileIndex rhs);
 	friend FTileIndex operator/(FTileIndex lhs, float rhs);
 	friend FTileIndex operator/(float lhs, FTileIndex rhs);
-
 };
 
 

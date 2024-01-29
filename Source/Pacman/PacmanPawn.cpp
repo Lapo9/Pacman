@@ -1,6 +1,6 @@
 #include "PacmanPawn.h"
 #include "BoardPawnMovementComponent.h"
-#include "Tile.h"
+#include "WalkableTile.h"
 #include "PacmanLevelState.h"
 #include "AbstractMap.h"
 #include "PacmanSettings.h"
@@ -11,10 +11,10 @@ APacmanPawn::APacmanPawn() {
 
 
 // Called to notify the pawn that it is at the center of the current tile
-void APacmanPawn::OnTileCenter(const ATile& tile) {
+void APacmanPawn::OnTileCenter(const AWalkableTile& tile) {
 	UE_LOG(LogTemp, Display, TEXT("Pacman on tile center %s"), *tile.GetName());
 
-	auto surroundingTiles = Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetSurroundingTiles(Tag);
+	auto surroundingTiles = Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetSurroundingTiles(*this);
 	// If the input direction is valid, go in that direction
 	if (Util::IsTileWalkable(surroundingTiles[InputDirection])) {
 		MovementComponent->SetSpeed(tile.GetType() == ETileType::TUNNEL ? TunnelSpeed : StandardSpeed); // Set the speed of Pacman based on the tile he is on

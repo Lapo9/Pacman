@@ -13,9 +13,10 @@ APacmanLevelState::APacmanLevelState() {
 void APacmanLevelState::Init() {
 	UE_LOG(LogTemp, Display, TEXT("Initializing Pacman level state..."));
 	// Set the board pawn present in this level
-	BoardPawns = TMap<ECharacterTag, ABoardPawn*>{};
+	BoardPawns = TArray<ABoardPawn*>{};
 	for (TObjectIterator<ABoardPawn> pawn; pawn; ++pawn) {
-		BoardPawns.Add(pawn->GetTag(), *pawn);
+		if (pawn->GetWorld() != GetWorld()) continue; // Skip objects that are not in the actual scene (maybe they were in the editor or somewhere else)
+		BoardPawns.Add(*pawn);
 		UE_LOG(LogTemp, Display, TEXT("Pacman level board pawn added: %s - %s"), *UEnum::GetValueAsString<ECharacterTag>(pawn->GetTag()), *pawn->GetName());
 	}
 
@@ -68,29 +69,32 @@ const UAbstractMap& APacmanLevelState::GetAbstractMap() const {
 }
 
 
-APacmanPawn* APacmanLevelState::GetPacman() {
-	return Cast<APacmanPawn>(BoardPawns[ECharacterTag::PACMAN]);
+// Returns the current Pacman
+APacmanPawn* APacmanLevelState::GetPacman() const {
+	auto pacman = GetBoardPawn(ECharacterTag::PACMAN);
+	return pacman ? Cast<APacmanPawn>(pacman) : nullptr;
 }
 
 
 // Returns the map containing the references to the present pawns.
-const TMap<enum class ECharacterTag, class ABoardPawn*>& APacmanLevelState::GetBoardPawns() const {
+const TArray<ABoardPawn*>& APacmanLevelState::GetBoardPawns() const {
 	return BoardPawns;
 }
 
 
-ABoardPawn* APacmanLevelState::GetBoardPawn(ECharacterTag tag) {
-	return BoardPawns[tag];
+// Returns the first board pawn with the specified tag (if present)
+ABoardPawn* APacmanLevelState::GetBoardPawn(ECharacterTag tag) const {
+	return *BoardPawns.FindByPredicate([tag](auto pawn) {return pawn->GetTag() == tag; });
 }
 
 
 // Returns the surrounding tiles on the map of the specified pawn.
-TMap<EMovingDirection, const class ATile*> APacmanLevelState::GetSurroundingTiles(ECharacterTag tag) const {
-	return Map->GetSurroundingTiles(tag);
+TMap<EMovingDirection, const class ATile*> APacmanLevelState::GetSurroundingTiles(const ABoardPawn& pawn) const {
+	return Map->GetSurroundingTiles(pawn);
 }
 
 
 // Updates the tile of a BoardPawn in the AbstractMap, and returns the new tile.
-const ATile& APacmanLevelState::UpdateBoardPawnTile(ECharacterTag tag, const FVector& position) {
-	return Map->UpdateCharacterTile(tag, position);
+const AWalkableTile& APacmanLevelState::UpdateBoardPawnTile(const ABoardPawn& pawn, const FVector& position) {
+	return Map->UpdateCharacterTile(pawn, position);
 }

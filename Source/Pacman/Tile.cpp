@@ -42,5 +42,7 @@ FVector2D ATile::GetLocation2d() const {
 
 // Returns the axis aligned extents of this tile.
 FVector ATile::GetExtents() const {
-	return Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()))->GetStaticMesh()->GetBounds().BoxExtent;
+	FVector min, max;
+	Mesh->GetLocalBounds(min, max);
+	return (max - min) / 2.f;
 }

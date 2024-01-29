@@ -36,7 +36,7 @@ public:
 	virtual EMovingDirection GetMovingDirection() const;
 
 	// Should be called when the pawn reaches the center of a Tile.
-	virtual void OnTileCenter(const class ATile& tile);
+	virtual void OnTileCenter(const class AWalkableTile& tile);
 
 	// Should be called when the pawn leaves the center of a Tile.
 	virtual void OnLeftTileCenter();
