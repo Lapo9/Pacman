@@ -7,6 +7,8 @@
 APacmanGameMode::APacmanGameMode() {
 	GameStateClass = APacmanLevelState::StaticClass();
 	PlayerControllerClass = APacmanPlayerController::StaticClass();
+
+	TimeModeManager = CreateDefaultSubobject<UTimeModeManager>(TEXT("TimeModeManager"));
 }
 
 
@@ -27,25 +29,10 @@ void APacmanGameMode::NotifyPowerPelletEaten() const {
 }
 
 
-void APacmanGameMode::SetGhostsMode(EGhostMode mode) const {
-	const auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
-	for (auto& pawn : boardPawns) {
-		if (auto ghost = Cast<AGhostPawn>(pawn); ghost != nullptr) {
-			ghost->SetMode(mode);
-		}
-	}
-}
-
-
 // Called when the timer of the power pellet ended, or when all ghosts got eaten.
 void APacmanGameMode::NotifyPowerPelletEnded() const {
 	UE_LOG(LogTemp, Display, TEXT("Power pellet ended"));
-	NotifyChangeOfModeDueToTime();
-}
-
-
-void APacmanGameMode::NotifyChangeOfModeDueToTime() const {
-	//TODO check time passed and select the appropriate mode
+	TimeModeManager->ResumeCurrentMode(); // Resume the current mode for all the ghosts.
 }
 
 
@@ -61,5 +48,20 @@ void APacmanGameMode::NotifyGhostEaten(AGhostPawn& ghost) const {
 	// If all ghosts got eaten, end power pellet activation
 	if (n >= gameState.GetBoardPawns().Num()) {
 		NotifyPowerPelletEnded();
+	}
+}
+
+
+void APacmanGameMode::SetGhostMode(AGhostPawn& ghost, EGhostMode mode) const {
+	ghost.SetMode(mode);
+}
+
+
+void APacmanGameMode::SetGhostsMode(EGhostMode mode) const {
+	const auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
+	for (auto& pawn : boardPawns) {
+		if (auto ghost = Cast<AGhostPawn>(pawn); ghost != nullptr) {
+			SetGhostMode(*ghost, mode);
+		}
 	}
 }

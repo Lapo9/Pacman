@@ -40,7 +40,7 @@ protected:
 
 public:	
 	// Called to notify the pawn that it is at the center of the current tile.
-	virtual void OnTileCenter(const class AWalkableTile& tile) PURE_VIRTUAL(ABoardPawn::OnTileCenter, );
+	virtual void OnTileCenter(const class AWalkableTile& tile);
 
 	// Called to notify the pawn that it left the center of the current tile.
 	virtual void OnLeftTileCenter(const class AWalkableTile& tile);

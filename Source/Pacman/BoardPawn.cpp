@@ -52,6 +52,11 @@ void ABoardPawn::BeginPlay() {
 }
 
 
+void ABoardPawn::OnTileCenter(const AWalkableTile& tile) {
+	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on tile center %s"), *GetName(), *tile.GetName());
+}
+
+
 // Called to notify the pawn that it left the center of the current tile.
 void ABoardPawn::OnLeftTileCenter(const AWalkableTile& tile) {
 	TeleportedFromTile = nullptr; // The pawn can be teleported again.
@@ -95,6 +100,7 @@ FVector ABoardPawn::GetCentralColliderLocation() const {
 void ABoardPawn::SetLocation2d(const FVector& newPos) {
 	SetActorLocation(FVector{ newPos.X, newPos.Y, GetActorLocation().Z });
 }
+
 
 FVector2D ABoardPawn::GetLocation2d() const {
 	return FVector2D{ CentralCollider->GetComponentLocation() };

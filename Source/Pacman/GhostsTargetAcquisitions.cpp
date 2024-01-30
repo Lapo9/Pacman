@@ -11,7 +11,6 @@
 FTileIndex UGhostTargetAcquisitionBlinky::AcquireTarget(GHOST_TARGET_ACQUISITION_PARAMS) const {
 	auto& map = levelState.GetAbstractMap();
 	auto target = map.GetCharacterTileIndex(*levelState.GetPacman());
-	UE_LOG(LogTemp, Warning, TEXT("New target = <%i, %i>"), target.Col, target.Row);
 	return target;
 }
 
@@ -46,7 +45,6 @@ FTileIndex UGhostTargetAcquisitionClyde::AcquireTarget(GHOST_TARGET_ACQUISITION_
 	auto pacmanIndex = map.GetCharacterTileIndex(pacman);
 	auto itselfIndex = map.GetCharacterTileIndex(itself);
 	float distanceFromPacman = (pacmanIndex - itselfIndex).Length();
-	UE_LOG(LogTemp, Display, TEXT("%s distance from Pacman: %f"), *itself.GetName(), distanceFromPacman);
 
 	// If Clyde is further away from Pacman than more than 8 units, it behaves like Blinky
 	if (distanceFromPacman > 8.f) {

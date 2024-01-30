@@ -22,7 +22,6 @@ void AGhostPawn::BeginPlay() {
 
 
 void AGhostPawn::OnTileCenter(const AWalkableTile& tile) {
-	UE_LOG(LogTemp, Display, TEXT("Ghost %s on tile center %s"), *GetName(), *tile.GetName());
 	MovementComponent->SetSpeed(tile.GetType() == ETileType::TUNNEL ? TunnelSpeed : StandardSpeed); // Set the speed of the ghost based on the tile he is on
 	AiController->GhostOnTileCenter(tile);
 	MovementComponent->OnTileCenter(tile);
