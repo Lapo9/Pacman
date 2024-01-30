@@ -42,6 +42,9 @@ public:
 	// Called to notify the pawn that it is at the center of the current tile.
 	virtual void OnTileCenter(const class AWalkableTile& tile) PURE_VIRTUAL(ABoardPawn::OnTileCenter, );
 
+	// Called to notify the pawn that it left the center of the current tile.
+	virtual void OnLeftTileCenter(const class AWalkableTile& tile);
+
 	// Called to notify the pawn that it entered a new tile.
 	virtual void OnNewTile(const class AWalkableTile& tile);
 
@@ -98,5 +101,5 @@ protected:
 
 public:
 	// Whether the pawn has just been teleported (it is used to avoid infinte teleportation if the teleporting landing tile is a teleport too).
-	bool JustTeleported;
+	const class ATeleportTile* TeleportedFromTile;
 };

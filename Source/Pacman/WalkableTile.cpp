@@ -7,8 +7,11 @@
 #include "StandardFood.h"
 
 
+AWalkableTile::AWalkableTile() : AWalkableTile{ ETileType::WALKABLE } {
+}
+
 // Sets default values
-AWalkableTile::AWalkableTile() {
+AWalkableTile::AWalkableTile(ETileType type) : Super{ type } {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -48,7 +51,8 @@ void AWalkableTile::PawnOnTileCenter(ABoardPawn& pawn) const {
 
 // Should be called by the central trigger when a pawn leaves it.
 void AWalkableTile::PawnLeftTileCenter(ABoardPawn& pawn) const {
-	pawn.JustTeleported = false; // The pawn can be teleported again.
+	pawn.OnLeftTileCenter(*this);
+
 }
 
 
@@ -65,10 +69,3 @@ void AWalkableTile::SpawnFood() const {
 	FTransform transform{ GetActorRotation(), GetActorLocation() + FVector{ 0,0, DistanceFromTile }, GetActorScale() }; // Spawn above the tile
 	auto Food = GetWorld()->SpawnActor<ABaseFood>(FoodToSpawn->GetAuthoritativeClass(), transform);
 }
-
-
-// Returns the type of the tile.
-ETileType AWalkableTile::GetType() const {
-	return ETileType::WALKABLE;
-}
-

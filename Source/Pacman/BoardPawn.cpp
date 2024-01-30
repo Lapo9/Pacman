@@ -52,6 +52,12 @@ void ABoardPawn::BeginPlay() {
 }
 
 
+// Called to notify the pawn that it left the center of the current tile.
+void ABoardPawn::OnLeftTileCenter(const AWalkableTile& tile) {
+	TeleportedFromTile = nullptr; // The pawn can be teleported again.
+	MovementComponent->OnLeftTileCenter(); // Notify the movement component that the pawn left the tile center (it uses this event to handle some logic of spurious on tile center events)
+}
+
 // Called to notify the pawn that it entered a new tile.
 void ABoardPawn::OnNewTile(const AWalkableTile& tile) {
 	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on new tile %s"), *GetName(), *tile.GetName());

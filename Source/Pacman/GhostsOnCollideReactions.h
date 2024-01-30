@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GhostsOnCollideReactions.generated.h"
 
-#define GHOST_ON_COLLIDE_REACTION_PARAMS class AActor* collidedWith, class UPrimitiveComponent* collidedWithComponent
+#define GHOST_ON_COLLIDE_REACTION_PARAMS class AGhostPawn* itself, class AActor* collidedWith, class UPrimitiveComponent* collidedWithComponent
 
 
 UCLASS(Abstract)

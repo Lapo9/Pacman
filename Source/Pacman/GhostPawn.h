@@ -32,6 +32,9 @@ protected:
 	UFUNCTION() // Wrapper that executes OnBeginOverlapImpl.
 	virtual void OnBeginOverlap(class UPrimitiveComponent* overlappedComponent, class AActor* otherActor, class UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool fromSweep, const FHitResult& sweepResult);
 
+	// Given a mode tag, returns the corresponding mode data.
+	virtual UGhostModeData* TranslateModeTagToMode(EGhostMode modeTag) const;
+
 	class AGhostAiController* AiController;
 
 	using OnBeginOverlapSignature = void(class AActor* otherActor, class UPrimitiveComponent* otherComponent);
@@ -48,9 +51,6 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	UGhostModeData* HomeMode;
-
-	UPROPERTY(EditAnywhere)
-	UGhostModeData* AngryMode;
 	
 	UPROPERTY(EditAnywhere)
 	UGhostModeData* FrightenedMode;

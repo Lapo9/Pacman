@@ -1,9 +1,13 @@
 #include "Tile.h"
 #include "PacmanSettings.h"
 
+
+ATile::ATile() : ATile{ ETileType::WALKABLE } {
+}
+
 // Sets default values
-ATile::ATile() {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ATile::ATile(ETileType type) : TileType { type } {
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Make this object movable in the scene
@@ -45,4 +49,9 @@ FVector ATile::GetExtents() const {
 	FVector min, max;
 	Mesh->GetLocalBounds(min, max);
 	return (max - min) / 2.f;
+}
+
+
+ETileType ATile::GetType() const {
+	return TileType;
 }

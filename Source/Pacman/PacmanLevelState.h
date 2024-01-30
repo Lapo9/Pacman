@@ -30,10 +30,13 @@ public:
 	void NotifyPowerPelletEaten(unsigned int value);
 
 	// Should be called when a ghost is eaten by Pacman.
-	void NotifyGhostEaten();
+	void NotifyGhostEaten(class AGhostPawn& ghost);
 
 	// Increases AvailableStandardFood.
 	void AddStandardFood(unsigned int quantity = 1);
+
+	// Adds the specified amount of points
+	void AddPoints(unsigned int quantity);
 
 
 	// Functions to retrieve information about the level state.
@@ -53,20 +56,28 @@ public:
 	// Returns the map containing the references to the present pawns.
 	const TArray<class ABoardPawn*>& GetBoardPawns() const;
 
+	// Returns the points
+	unsigned int GetPoints() const;
+
+	// Returns the available food
+	unsigned int GetAvailableFood() const;
+
 protected:
 	// Decreases AvailableStandardFood and notify this to the game mode.
 	void DecreaseStandardFood(unsigned int quantity = 1);
 
 
-	// Object keeping track of the tiles of the map and the position of the board pawns.
-	class UAbstractMap* Map;
+	class UAbstractMap* Map; // Object keeping track of the tiles of the map and the position of the board pawns.
+	class TArray<class ABoardPawn*> BoardPawns; // List of the board pawns present in the level.	
+	unsigned int Points; // Points till now.
+	unsigned int AvailableStandardFood; // How many items of standard food are still on the board.
+	
+	struct PowerPelletActivation {
+		unsigned int GhostsEatenInThisPowerPellet; // How many ghosts got eaten during this power pellet activation
+		FTimerHandle Countdown; // Timer
+	} CurrentPowerPelletActivation;
 
-	// List of the board pawns present in the level.
-	class TArray<class ABoardPawn*> BoardPawns;
-
-	// Points till now.
-	unsigned int Points;
-
-	// How many items of standard food are still on the board.
-	unsigned int AvailableStandardFood;
+public:
+	// Returns the current power pellet activation
+	PowerPelletActivation& GetCurrentPowerPelletActivation();
 };

@@ -53,3 +53,11 @@ class PACMAN_API UGhostTargetAcquisitionScatter final : public UGhostTargetAcqui
 public:
 	FTileIndex AcquireTarget(GHOST_TARGET_ACQUISITION_PARAMS) const;
 };
+
+
+UCLASS()
+class PACMAN_API UGhostTargetAcquisitionRandom final : public UGhostTargetAcquisitionBase {
+	GENERATED_BODY()
+public:
+	FTileIndex AcquireTarget(GHOST_TARGET_ACQUISITION_PARAMS) const;
+};

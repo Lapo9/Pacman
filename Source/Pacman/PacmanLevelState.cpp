@@ -1,7 +1,9 @@
 #include "PacmanLevelState.h"
 #include "BoardPawn.h"
+#include "GhostPawn.h"
 #include "PacmanPawn.h"
 #include "AbstractMap.h"
+#include "PacmanGameMode.h"
 #include "UObject/Class.h"
 
 APacmanLevelState::APacmanLevelState() {
@@ -41,19 +43,31 @@ void APacmanLevelState::NotifyFruitEaten(unsigned int value) {
 
 // Should be called when a power pellet food is eaten by Pacman.
 void APacmanLevelState::NotifyPowerPelletEaten(unsigned int value) {
-	// TODO
+	Points += value;
+	CurrentPowerPelletActivation.GhostsEatenInThisPowerPellet = 0; // Reset count
+	Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyPowerPelletEaten();
+	UE_LOG(LogTemp, Display, TEXT("Power pellet eaten --> Points: %i - Remaining food: %i"), Points, AvailableStandardFood);
 }
 
 
 // Should be called when a ghost is eaten by Pacman.
-void APacmanLevelState::NotifyGhostEaten() {
-	// TODO
+void APacmanLevelState::NotifyGhostEaten(AGhostPawn& ghost) {
+	CurrentPowerPelletActivation.GhostsEatenInThisPowerPellet++;
+	Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyGhostEaten(ghost);
+
+	UE_LOG(LogTemp, Display, TEXT("Ghost %s eaten --> Points: %i - Remaining food: %i"), *ghost.GetName(), Points, AvailableStandardFood);
 }
 
 
 // Increases AvailableStandardFood.
 void APacmanLevelState::AddStandardFood(unsigned int quantity) {
 	AvailableStandardFood += quantity;
+}
+
+
+// Adds the specified amount of points
+void APacmanLevelState::AddPoints(unsigned int quantity) {
+	Points += quantity;
 }
 
 
@@ -79,6 +93,23 @@ APacmanPawn* APacmanLevelState::GetPacman() const {
 // Returns the map containing the references to the present pawns.
 const TArray<ABoardPawn*>& APacmanLevelState::GetBoardPawns() const {
 	return BoardPawns;
+}
+
+
+// Returns the points
+unsigned int APacmanLevelState::GetPoints() const {
+	return Points;
+}
+
+
+// Returns the available food
+unsigned int APacmanLevelState::GetAvailableFood() const {
+	return AvailableStandardFood;
+}
+
+
+APacmanLevelState::PowerPelletActivation& APacmanLevelState::GetCurrentPowerPelletActivation() {
+	return CurrentPowerPelletActivation;
 }
 
 

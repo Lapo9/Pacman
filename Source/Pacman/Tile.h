@@ -12,8 +12,8 @@ class PACMAN_API ATile : public AActor {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties.
 	ATile();
+	ATile(ETileType type);
 
 protected:
 	// Called when the game starts or when spawned.
@@ -31,7 +31,7 @@ public:
 	virtual FVector GetExtents() const;
 
 	// Returns the type of the tile.
-	virtual enum class ETileType GetType() const PURE_VIRTUAL(ATile::GetType, return ETileType::WALL;);
+	enum class ETileType GetType() const;
 
 protected:
 	UPROPERTY() // Component to place this actor on the scene.
@@ -39,6 +39,9 @@ protected:
 
 	UPROPERTY(EditAnywhere) // The mesh.
 	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere, meta = (ValidEnumValues = "WALKABLE, TUNNEL", EditCondition = "TileType == ETileType::WALKABLE || TileType == ETileType::TUNNEL"))
+	ETileType TileType;
 
 public:
 	FTileIndex Index;

@@ -8,6 +8,7 @@
 AGhostPawn::AGhostPawn() {
 }
 
+
 void AGhostPawn::BeginPlay() {
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AGhostPawn::OnBeginOverlap); // Register how to react to overlap
 
@@ -38,37 +39,39 @@ void AGhostPawn::OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor
 }
 
 
-void AGhostPawn::SetMode(EGhostMode mode) {
-	UGhostModeData* modeData;
-	switch (mode) {
+UGhostModeData* AGhostPawn::TranslateModeTagToMode(EGhostMode modeTag) const {
+	switch (modeTag) {
 	case EGhostMode::HOME:
-		modeData = HomeMode;
+		return HomeMode;
 		break;
 	case EGhostMode::SCATTER:
-		modeData = ScatterMode;
+		return ScatterMode;
 		break;
 	case EGhostMode::STANDARD:
-		modeData = StandardMode;
+		return StandardMode;
 		break;
 	case EGhostMode::FRIGHTENED:
-		modeData = FrightenedMode;
+		return FrightenedMode;
 		break;
 	case EGhostMode::DEAD:
-		modeData = DeadMode;
-		break;
-	case EGhostMode::ANGRY:
-		modeData = AngryMode;
+		return DeadMode;
 		break;
 	default:
 		UE_LOG(LogTemp, Error, TEXT("AGhostPawn::SetMode unknown mode"));
-		return;
+		return nullptr;
 	}
+}
+
+
+void AGhostPawn::SetMode(EGhostMode mode) {
+	UGhostModeData* modeData = TranslateModeTagToMode(mode);
+	if (modeData == nullptr) return;
 
 	AiController->SetMode(*modeData);
 	StandardSpeed = modeData->StandardSpeed;
 	TunnelSpeed = modeData->TunnelSpeed;
-	OnBeginOverlapImpl = [&modeData](AActor* otherActor, UPrimitiveComponent* otherComponent) 
-		{ return modeData->OnCollideReactionClass.GetDefaultObject()->React(otherActor, otherComponent); };
+	OnBeginOverlapImpl = [modeData, this](AActor* otherActor, UPrimitiveComponent* otherComponent) 
+		{ return modeData->OnCollideReactionClass.GetDefaultObject()->React(this, otherActor, otherComponent); };
 	 
 	// Set the mesh (if it is nullptr use the default mesh)
 	if (modeData->Mesh == nullptr) Mesh->SetStaticMesh(DefaultMesh);

@@ -34,6 +34,9 @@ public:
 	// Updates the index of the tile the specified charater is on, and returns the new tile (it must be a walkable tile).
 	const class AWalkableTile& UpdateCharacterTile(const class ABoardPawn& pawn, const FVector& position);
 
+	// Returns the size of the map.
+	FTileIndex GetSize() const;
+
 	// A string representation of the Map.
 	FString ToString() const;
 

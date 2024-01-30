@@ -65,6 +65,12 @@ const AWalkableTile& UAbstractMap::UpdateCharacterTile(const ABoardPawn& pawn, c
 }
 
 
+// Returns the size of the map.
+FTileIndex UAbstractMap::GetSize() const {
+	return MapInfo.Size();
+}
+
+
 // A string representation of the Map.
 FString UAbstractMap::ToString() const {
 	if (!MapInfo.IsInitialized()) return "";

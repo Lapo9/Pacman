@@ -17,9 +17,4 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:
-
-	// Returns the type of the tile.
-	virtual enum class ETileType GetType() const override;
 };

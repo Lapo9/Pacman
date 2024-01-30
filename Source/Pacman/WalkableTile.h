@@ -15,6 +15,7 @@ class PACMAN_API AWalkableTile : public ATile
 public:
 	// Sets default values for this actor's properties.
 	AWalkableTile();
+	AWalkableTile(ETileType type);
 
 protected:
 	// Called when the game starts or when spawned.
@@ -24,9 +25,6 @@ protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:
-	// Returns the type of the tile.
-	virtual enum class ETileType GetType() const override;
-
 	// Should be called by the central trigger when a pawn hit it.
 	virtual void PawnOnTileCenter(class ABoardPawn& pawn) const;
 

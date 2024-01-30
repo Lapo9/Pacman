@@ -63,3 +63,11 @@ FTileIndex UGhostTargetAcquisitionClyde::AcquireTarget(GHOST_TARGET_ACQUISITION_
 FTileIndex UGhostTargetAcquisitionScatter::AcquireTarget(GHOST_TARGET_ACQUISITION_PARAMS) const {
 	return itself.GetScatterTile()->Index;
 }
+
+
+FTileIndex UGhostTargetAcquisitionRandom::AcquireTarget(GHOST_TARGET_ACQUISITION_PARAMS) const {
+	auto size = levelState.GetAbstractMap().GetSize();
+	int randCol = FMath::RandRange(0, size.Col - 1);
+	int randRow = FMath::RandRange(0, size.Row - 1);
+	return { randCol, randRow };
+}
