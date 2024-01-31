@@ -148,6 +148,8 @@ FVector UBoardPawnMovementComponent::OnTileCenterRecovery(float deltaTime, FVect
 
 // Moves the pawn based on speed and direction.
 void UBoardPawnMovementComponent::TickComponent(float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) {
+	if (!CanMove) return;
+
 	auto rootComponent = GetOwner()->GetRootComponent();
 	FVector delta = ComputeDeltaMovement(deltaTime);
 	delta = OnTileCenterRecovery(deltaTime, delta); // Check whether we missed a hit due to big deltaTime, and react to it.

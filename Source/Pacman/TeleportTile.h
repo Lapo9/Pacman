@@ -20,6 +20,6 @@ public:
 	virtual void PawnLeftTileCenter(class ABoardPawn& pawn) const override;
 
 protected:
-	UPROPERTY(EditAnywhere) // Where the teleport ends.
+	UPROPERTY(EditInstanceOnly, Category = "Pacman|Movement") // Where the teleport ends.
 	AWalkableTile* TeleportToTile;
 };

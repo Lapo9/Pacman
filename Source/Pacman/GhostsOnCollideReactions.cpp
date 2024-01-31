@@ -6,7 +6,7 @@
 
 void UGhostOnCollideReactionKillPacman::React(GHOST_ON_COLLIDE_REACTION_PARAMS) const {
 	if (collidedWith->IsA<APacmanPawn>()) {
-
+		Cast<APacmanLevelState>(itself->GetWorld()->GetGameState())->NotifyPacmanDead();
 	}
 }
 

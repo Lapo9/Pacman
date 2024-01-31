@@ -22,7 +22,8 @@ void AGhostPawn::BeginPlay() {
 
 
 void AGhostPawn::OnTileCenter(const AWalkableTile& tile) {
-	MovementComponent->SetSpeed(tile.GetType() == ETileType::TUNNEL ? TunnelSpeed : StandardSpeed); // Set the speed of the ghost based on the tile he is on
+	Super::OnTileCenter(tile);
+
 	AiController->GhostOnTileCenter(tile);
 	MovementComponent->OnTileCenter(tile);
 }
@@ -30,6 +31,21 @@ void AGhostPawn::OnTileCenter(const AWalkableTile& tile) {
 
 const ATile* AGhostPawn::GetScatterTile() const {
 	return ScatterTile;
+}
+
+
+const ATile* AGhostPawn::GetHomeTile() const {
+	return HomeTile;
+}
+
+
+const EGhostMode AGhostPawn::GetMode() const {
+	return CurrentMode;
+}
+
+
+const FString AGhostPawn::GetId() const {
+	return UniqueId;
 }
 
 
@@ -66,9 +82,9 @@ void AGhostPawn::SetMode(EGhostMode mode) {
 	UGhostModeData* modeData = TranslateModeTagToMode(mode);
 	if (modeData == nullptr) return;
 
+	CurrentMode = mode;
 	AiController->SetMode(*modeData);
-	StandardSpeed = modeData->StandardSpeed;
-	TunnelSpeed = modeData->TunnelSpeed;
+	ModeSpeedMultiplier = modeData->SpeedMultiplier;
 	OnBeginOverlapImpl = [modeData, this](AActor* otherActor, UPrimitiveComponent* otherComponent) 
 		{ return modeData->OnCollideReactionClass.GetDefaultObject()->React(this, otherActor, otherComponent); };
 	 

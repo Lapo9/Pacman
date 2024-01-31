@@ -22,10 +22,7 @@ public:
 	EGhostMode Mode;
 
 	UPROPERTY(EditAnywhere)
-	float StandardSpeed;
-
-	UPROPERTY(EditAnywhere)
-	float TunnelSpeed;
+	float SpeedMultiplier;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGhostTargetAcquisitionBase> TargetAcquisitionClass;

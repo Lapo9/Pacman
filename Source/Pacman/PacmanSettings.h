@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BoardPawn.h"
+#include "TimeModeManager.h"
 #include "GameFramework/WorldSettings.h"
 #include "PacmanSettings.generated.h"
 
@@ -20,4 +20,7 @@ public:
 
 	UPROPERTY(EditAnywhere) // The size of the central triggers (the smaller the better, but we don't want to miss collisions).
 	float PointLikeTriggersRadius;
+
+	UPROPERTY(EditAnywhere)
+	TArray<ULevelSettings*> LevelsSettings;
 };

@@ -3,6 +3,7 @@
 #include "GhostPawn.h"
 #include "PacmanPawn.h"
 #include "AbstractMap.h"
+#include "PacmanGameInstance.h"
 #include "PacmanGameMode.h"
 #include "UObject/Class.h"
 
@@ -14,6 +15,9 @@ APacmanLevelState::APacmanLevelState() {
 // Initializes the level state. Should be called before the start of the game. We cannot use BeginPlay because the call order is not defined, and the game state must be initialized before any other actor.
 void APacmanLevelState::Init() {
 	UE_LOG(LogTemp, Display, TEXT("Initializing Pacman level state..."));
+	// Get the game instance
+	GameInstance = Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance());
+
 	// Set the board pawn present in this level
 	BoardPawns = TArray<ABoardPawn*>{};
 	for (TObjectIterator<ABoardPawn> pawn; pawn; ++pawn) {
@@ -28,25 +32,25 @@ void APacmanLevelState::Init() {
 
 // Should be called when a standard food is eaten by Pacman.
 void APacmanLevelState::NotifyStandardFoodEaten(unsigned int value) {
-	Points += value;
+	GameInstance->AddPoints(value);
 	DecreaseStandardFood(); // Decreases the available food by 1 and notifies the game mode.
-	UE_LOG(LogTemp, Display, TEXT("Standard food eaten --> Points: %i - Remaining food: %i"), Points, AvailableStandardFood);
+	UE_LOG(LogTemp, Display, TEXT("Standard food eaten --> Remaining food: %i"), AvailableStandardFood);
 }
 
 
 // Should be called when a fruit is eaten by Pacman.
 void APacmanLevelState::NotifyFruitEaten(unsigned int value) {
-	Points += value;
-	UE_LOG(LogTemp, Display, TEXT("Fruit eaten --> Points: %i - Remaining food: %i"), Points, AvailableStandardFood);
+	GameInstance->AddPoints(value);
+	UE_LOG(LogTemp, Display, TEXT("Fruit eaten --> Remaining food: %i"), AvailableStandardFood);
 }
 
 
 // Should be called when a power pellet food is eaten by Pacman.
 void APacmanLevelState::NotifyPowerPelletEaten(unsigned int value) {
-	Points += value;
+	GameInstance->AddPoints(value);
 	CurrentPowerPelletActivation.GhostsEatenInThisPowerPellet = 0; // Reset count
 	Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyPowerPelletEaten();
-	UE_LOG(LogTemp, Display, TEXT("Power pellet eaten --> Points: %i - Remaining food: %i"), Points, AvailableStandardFood);
+	UE_LOG(LogTemp, Display, TEXT("Power pellet eaten --> Remaining food: %i"), AvailableStandardFood);
 }
 
 
@@ -55,7 +59,17 @@ void APacmanLevelState::NotifyGhostEaten(AGhostPawn& ghost) {
 	CurrentPowerPelletActivation.GhostsEatenInThisPowerPellet++;
 	Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyGhostEaten(ghost);
 
-	UE_LOG(LogTemp, Display, TEXT("Ghost %s eaten --> Points: %i - Remaining food: %i"), *ghost.GetName(), Points, AvailableStandardFood);
+	UE_LOG(LogTemp, Display, TEXT("Ghost %s eaten --> Remaining food: %i"), *ghost.GetName(), AvailableStandardFood);
+}
+
+
+void APacmanLevelState::NotifyPacmanDead() {
+	if (--GameInstance->Lives == 0) {
+		Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyGameOver();
+	}
+	else {
+		Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyPacmanDead();
+	}
 }
 
 
@@ -67,7 +81,7 @@ void APacmanLevelState::AddStandardFood(unsigned int quantity) {
 
 // Adds the specified amount of points
 void APacmanLevelState::AddPoints(unsigned int quantity) {
-	Points += quantity;
+	GameInstance->AddPoints(quantity);
 }
 
 
@@ -93,12 +107,6 @@ APacmanPawn* APacmanLevelState::GetPacman() const {
 // Returns the map containing the references to the present pawns.
 const TArray<ABoardPawn*>& APacmanLevelState::GetBoardPawns() const {
 	return BoardPawns;
-}
-
-
-// Returns the points
-unsigned int APacmanLevelState::GetPoints() const {
-	return Points;
 }
 
 

@@ -3,9 +3,8 @@
 void ABlinkyGhostPawn::SetMode(EGhostMode mode) {
 	Super::SetMode(mode);
 
-	// Increase speed by 5%
-	StandardSpeed *= 1.05;
-	TunnelSpeed *= 1.05;
+	// Increase the speed by 5%
+	if (mode == EGhostMode::STANDARD) ModeSpeedMultiplier = 1.05;
 }
 
 

@@ -28,6 +28,15 @@ public:
 	// Returns the scatter tile.
 	const class ATile* GetScatterTile() const;
 
+	// Returns the home tile.
+	const class ATile* GetHomeTile() const;
+
+	// Returns the current mode of the ghost
+	const EGhostMode GetMode() const;
+
+	// Returns the unique identifier.
+	const FString GetId() const;
+
 protected:
 	UFUNCTION() // Wrapper that executes OnBeginOverlapImpl.
 	virtual void OnBeginOverlap(class UPrimitiveComponent* overlappedComponent, class AActor* otherActor, class UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool fromSweep, const FHitResult& sweepResult);
@@ -40,21 +49,30 @@ protected:
 	using OnBeginOverlapSignature = void(class AActor* otherActor, class UPrimitiveComponent* otherComponent);
 	TFunction<OnBeginOverlapSignature> OnBeginOverlapImpl; // How to react to an overlap with another object
 
-	UPROPERTY(EditAnywhere, Category = "Initialization parameters")
+	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related")
 	class ATile* ScatterTile;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related")
+	class ATile* HomeTile;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
 	UGhostModeData* StandardMode;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
 	UGhostModeData* ScatterMode;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
 	UGhostModeData* HomeMode;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
 	UGhostModeData* FrightenedMode;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
 	UGhostModeData* DeadMode;
+
+	UPROPERTY(VisibleAnywhere, Category = "Pacman|Real-time info")
+	EGhostMode CurrentMode;
+
+	UPROPERTY(EditInstanceOnly, Category = "Pacman") // A unique identifier to reference this ghost from the world settings
+	FString UniqueId;
 };

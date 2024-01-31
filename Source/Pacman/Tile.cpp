@@ -3,9 +3,10 @@
 
 
 ATile::ATile() : ATile{ ETileType::WALKABLE } {
+	// This ctor is mandatory by UE
 }
 
-// Sets default values
+
 ATile::ATile(ETileType type) : TileType { type } {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -52,6 +53,7 @@ FVector ATile::GetExtents() const {
 }
 
 
+// Returns the type of the tile.
 ETileType ATile::GetType() const {
 	return TileType;
 }

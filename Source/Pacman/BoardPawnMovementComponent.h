@@ -81,4 +81,8 @@ protected:
 		}
 
 	} OnTileCenterInfo;
+
+public:
+	UPROPERTY(VisibleAnywhere, Category = "Real-time info")
+	bool CanMove; // Whether the pawn can move or not.
 };

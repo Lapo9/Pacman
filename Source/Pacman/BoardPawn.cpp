@@ -6,7 +6,7 @@
 #include "PacmanSettings.h"
 
 // Sets default values
-ABoardPawn::ABoardPawn() {
+ABoardPawn::ABoardPawn() : ModeSpeedMultiplier{ 1 } {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -52,8 +52,10 @@ void ABoardPawn::BeginPlay() {
 }
 
 
+// Called to notify to the pawn that it is at the center of the current tile.
 void ABoardPawn::OnTileCenter(const AWalkableTile& tile) {
 	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on tile center %s"), *GetName(), *tile.GetName());
+	MovementComponent->SetSpeed(GetActualSpeed(tile)); // Set the speed of the ghost based on the tile he is on
 }
 
 
@@ -63,12 +65,25 @@ void ABoardPawn::OnLeftTileCenter(const AWalkableTile& tile) {
 	MovementComponent->OnLeftTileCenter(); // Notify the movement component that the pawn left the tile center (it uses this event to handle some logic of spurious on tile center events)
 }
 
+
 // Called to notify the pawn that it entered a new tile.
 void ABoardPawn::OnNewTile(const AWalkableTile& tile) {
 	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on new tile %s"), *GetName(), *tile.GetName());
 	// Register the new tile and change speed.
 	CurrentTile = &tile;
-	MovementComponent->SetSpeed(tile.GetType() == ETileType::TUNNEL ? TunnelSpeed : StandardSpeed);
+	MovementComponent->SetSpeed(GetActualSpeed(tile));
+}
+
+
+// The pawn can now move.
+void ABoardPawn::StartMoving() {
+	MovementComponent->CanMove = true;
+}
+
+
+// The pawn cannot move anymore.
+void ABoardPawn::StopMoving() {
+	MovementComponent->CanMove = false;
 }
 
 
@@ -102,13 +117,27 @@ void ABoardPawn::SetLocation2d(const FVector& newPos) {
 }
 
 
+// Returns the location in 2D.
 FVector2D ABoardPawn::GetLocation2d() const {
 	return FVector2D{ CentralCollider->GetComponentLocation() };
 }
 
 
+// Returns the tile where this BoardPawn spawns in the maze.
 const AWalkableTile* ABoardPawn::GetSpawnTile() const {
 	return SpawnTile;
+}
+
+
+// Sets the base speed of this BoardPawn.
+void ABoardPawn::SetBaseSpeed(float speed) {
+	BaseSpeed = speed;
+}
+
+
+// Returns the actual speed of the pawn, including the multipliers.
+float ABoardPawn::GetActualSpeed(const AWalkableTile& tile) const {
+	return BaseSpeed * tile.GetSpeedMultiplier() * ModeSpeedMultiplier;
 }
 
 

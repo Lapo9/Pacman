@@ -12,10 +12,11 @@ APacmanPawn::APacmanPawn() {
 
 // Called to notify the pawn that it is at the center of the current tile
 void APacmanPawn::OnTileCenter(const AWalkableTile& tile) {
+	Super::OnTileCenter(tile);
+
 	auto surroundingTiles = Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetSurroundingTiles(*this);
 	// If the input direction is valid, go in that direction
 	if (Util::IsTileWalkable(surroundingTiles[InputDirection])) {
-		MovementComponent->SetSpeed(tile.GetType() == ETileType::TUNNEL ? TunnelSpeed : StandardSpeed); // Set the speed of Pacman based on the tile he is on
 		MovementComponent->SetMovingDirection(InputDirection);
 	}
 	// Notify to the movement component that the pawn reached the center of the tile

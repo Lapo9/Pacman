@@ -1,7 +1,10 @@
 #include "PacmanGameMode.h"
 #include "PacmanLevelState.h"
+#include "PacmanSettings.h"
 #include "GhostPawn.h"
 #include "GhostModeData.h"
+#include "PacmanPawn.h"
+#include "PacmanGameInstance.h"
 #include "PacmanPlayerController.h"
 
 APacmanGameMode::APacmanGameMode() {
@@ -15,13 +18,30 @@ APacmanGameMode::APacmanGameMode() {
 void APacmanGameMode::StartPlay() {
 	UE_LOG(LogTemp, Display, TEXT("APacmanGameMode::StartPlay"));
 	Cast<APacmanLevelState>(GameState)->Init(); // Initialize the state
+	
+	// Set the settings for this level, based on the level number we are into
+	auto& levelsSettings = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->LevelsSettings;
+	auto levelSettings = levelsSettings[FMath::Max(levelsSettings.Num() - 1, (int)Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->GetLevel())];
+	TimeModeManager->SetSettings(levelSettings);
+	
+	// Activate all board pawns and set their speeds
+	for (auto& pawnItem : levelSettings->GhostsSchedule) {
+		pawnItem.Ghost->SetBaseSpeed(pawnItem.BaseSpeed);
+	}
+	const auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
+	for (auto& pawn : boardPawns) {
+		pawn->StartMoving(); // Resume gameplay
+		if (pawn->IsA(APacmanPawn::StaticClass())) pawn->SetBaseSpeed(levelSettings->PacmanBaseSpeed);
+	}
+
 	Super::StartPlay(); // This will call all the BeginPlay() functions
+	TimeModeManager->Start(); // Start play
 }
 
 
-// Called when Pacman eats a power pellet, turns all ghosts into frightened mode.
+// Called when Pacman eats a power pellet, turns all ghosts into FRIGHTENED mode (unless they are in DEAD or HOME mode).
 void APacmanGameMode::NotifyPowerPelletEaten() const {
-	SetGhostsMode(EGhostMode::FRIGHTENED);
+	SetGhostsModeUnless(EGhostMode::FRIGHTENED, { EGhostMode::DEAD, EGhostMode::HOME });
 
 	// Set the timer for this power pellet
 	auto& timer = Cast<APacmanLevelState>(GameState)->GetCurrentPowerPelletActivation().Countdown;
@@ -32,7 +52,7 @@ void APacmanGameMode::NotifyPowerPelletEaten() const {
 // Called when the timer of the power pellet ended, or when all ghosts got eaten.
 void APacmanGameMode::NotifyPowerPelletEnded() const {
 	UE_LOG(LogTemp, Display, TEXT("Power pellet ended"));
-	TimeModeManager->ResumeCurrentMode(); // Resume the current mode for all the ghosts.
+	SetGhostsModeUnless(TimeModeManager->GetCurrentMode(), { EGhostMode::DEAD, EGhostMode::HOME }); // Resume the current mode for all the ghosts (unless they are in DEAD or HOME mode)
 }
 
 
@@ -52,16 +72,39 @@ void APacmanGameMode::NotifyGhostEaten(AGhostPawn& ghost) const {
 }
 
 
-void APacmanGameMode::SetGhostMode(AGhostPawn& ghost, EGhostMode mode) const {
-	ghost.SetMode(mode);
+void APacmanGameMode::NotifyPacmanDead() {
+	// Stop all pawns
+	const auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
+	for (auto& pawn : boardPawns) {
+		pawn->StopMoving();
+	}
+	//TODO Pacman and ghosts should play an animation/sound + something should appear on screen
+
+	auto restart = [&boardPawns]() {
+		for (auto& pawn : boardPawns) {
+			pawn->SetLocation2d(pawn->GetSpawnTile()->GetActorLocation()); // Place the pawn at the spawn
+			pawn->StartMoving(); // Resume gameplay
+		}};
+
+	FTimerHandle timer;
+	GetWorld()->GetTimerManager().SetTimer(timer, restart, 3, false); // Set a timer to respart gameplay in 3 seconds
 }
 
 
-void APacmanGameMode::SetGhostsMode(EGhostMode mode) const {
+void APacmanGameMode::NotifyGameOver() {
+}
+
+
+void APacmanGameMode::SetGhostModeUnless(AGhostPawn& ghost, EGhostMode mode, const TArray<EGhostMode>& dontChange) const {
+	if (!dontChange.Contains(ghost.GetMode())) ghost.SetMode(mode);
+}
+
+
+void APacmanGameMode::SetGhostsModeUnless(EGhostMode mode, const TArray<EGhostMode>& dontChange) const {
 	const auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
 	for (auto& pawn : boardPawns) {
 		if (auto ghost = Cast<AGhostPawn>(pawn); ghost != nullptr) {
-			SetGhostMode(*ghost, mode);
+			SetGhostModeUnless(*ghost, mode, dontChange);
 		}
 	}
 }

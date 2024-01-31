@@ -23,6 +23,6 @@ public:
 protected:
 	void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, Category = "Real-time info") // The direction Pacman wants to move.
+	UPROPERTY(VisibleAnywhere, Category = "Pacman|Real-time info") // The direction Pacman wants to move.
 	EMovingDirection InputDirection;
 };

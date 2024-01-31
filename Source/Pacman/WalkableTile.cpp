@@ -8,6 +8,7 @@
 
 
 AWalkableTile::AWalkableTile() : AWalkableTile{ ETileType::WALKABLE } {
+	// Reuired by UE
 }
 
 // Sets default values
@@ -37,22 +38,15 @@ void AWalkableTile::BeginPlay() {
 }
 
 
-// Called when the object is placed in the editor, or its properties change, or gameplay starts.
-void AWalkableTile::OnConstruction(const FTransform& transform) {
-	Super::OnConstruction(transform);
-}
-
-
 // Should be called by the central trigger when a pawn hit it.
 void AWalkableTile::PawnOnTileCenter(ABoardPawn& pawn) const {
-	pawn.OnTileCenter(*this);
+	pawn.OnTileCenter(*this); // Notify the pawn
 }
 
 
 // Should be called by the central trigger when a pawn leaves it.
 void AWalkableTile::PawnLeftTileCenter(ABoardPawn& pawn) const {
-	pawn.OnLeftTileCenter(*this);
-
+	pawn.OnLeftTileCenter(*this); // Notify the pawn
 }
 
 
@@ -60,6 +54,12 @@ void AWalkableTile::PawnLeftTileCenter(ABoardPawn& pawn) const {
 void AWalkableTile::PawnLeftTile(ABoardPawn& pawn) const {
 	const AWalkableTile& newTile = Cast<APacmanLevelState>(GetWorld()->GetGameState())->UpdateBoardPawnTile(pawn, pawn.GetActorLocation()); // Update the map
 	pawn.OnNewTile(newTile); // Notify the pawn
+}
+
+
+// Returns the value to increase or decrease the speed of a BoardPawn on this tile.
+float AWalkableTile::GetSpeedMultiplier() const {
+	return SpeedMultiplier;
 }
 
 

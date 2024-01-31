@@ -16,7 +16,6 @@ public:
 	ATile(ETileType type);
 
 protected:
-	// Called when the game starts or when spawned.
 	virtual void BeginPlay() override;
 
 public:	
@@ -34,15 +33,16 @@ public:
 	enum class ETileType GetType() const;
 
 protected:
-	UPROPERTY() // Component to place this actor on the scene.
+	UPROPERTY(VisibleAnywhere) // Component to place this actor on the scene.
 	class USceneComponent* SceneComponent;
 
 	UPROPERTY(EditAnywhere) // The mesh.
 	class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(EditAnywhere, meta = (ValidEnumValues = "WALKABLE, TUNNEL", EditCondition = "TileType == ETileType::WALKABLE || TileType == ETileType::TUNNEL"))
+	UPROPERTY(EditDefaultsOnly, Category = "Pacman", meta = (ValidEnumValues = "WALKABLE, TUNNEL", EditCondition = "TileType == ETileType::WALKABLE || TileType == ETileType::TUNNEL"))
 	ETileType TileType;
 
 public:
+	UPROPERTY(VisibleAnywhere, Category = "Pacman")
 	FTileIndex Index;
 };
