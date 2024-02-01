@@ -14,4 +14,7 @@ class PACMAN_API ABlinkyGhostPawn : public AGhostPawn
 	
 protected:
 	virtual UGhostModeData* TranslateModeTagToMode(EGhostMode modeTag) const override;
+
+	UPROPERTY(EditAnywhere, Category = "Pacman|Movement", meta = (ClampMin = "0", ClampMax = "500")) // How much food must remain to activate cruise elroy mode.
+	unsigned int CruiseElroyFoodThreshold;
 };

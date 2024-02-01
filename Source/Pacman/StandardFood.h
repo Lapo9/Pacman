@@ -9,14 +9,8 @@ UCLASS()
 class PACMAN_API AStandardFood : public ABaseFood {
 	GENERATED_BODY()
 	
-public:
-	AStandardFood();
-
 protected:
 	void BeginPlay() override;
-
-	// Destroys this actor (with an animation/particle effect)
-	void AutoDestroy();
 
 	// Called when another component starts overlapping with this one.
 	void OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool fromSweep, const FHitResult& sweepResult) override;

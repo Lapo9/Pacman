@@ -16,6 +16,7 @@ UBoardPawnMovementComponent::UBoardPawnMovementComponent() {
 	PrimaryComponentTick.bStartWithTickEnabled = true;
 }
 
+
 void UBoardPawnMovementComponent::BeginPlay() {
 	PointLikeTolerance = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->PointLikeTriggersRadius;
 }

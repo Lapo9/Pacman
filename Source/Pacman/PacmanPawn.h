@@ -5,7 +5,11 @@
 #include "PacmanPawn.generated.h"
 
 
-// The Pacman on the maze.
+// The Pacman on the maze, subclass of BoardPawn.
+// Pacman receives the input direction by a human player virtually at every frame, but it will try to change direction only in 3 cases:
+// 1) When he receives the OnTileCenter event from a WalkableTile;
+// 2) When the new direction is the opposite of the current one;
+// 3) If Pacman is standing still (speed = 0) on a Tile.
 UCLASS()
 class PACMAN_API APacmanPawn : public ABoardPawn
 {

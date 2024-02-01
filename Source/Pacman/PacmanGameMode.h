@@ -19,11 +19,11 @@ public:
 	// Called when Pacman eats a power pellet, turns all ghosts into FRIGHTENED mode (unless they are in DEAD or HOME mode).
 	virtual void NotifyPowerPelletEaten() const;
 
-	// Called when the timer of the power pellet ended, or when all ghosts got eaten.
-	virtual void NotifyPowerPelletEnded() const;
-
 	// Called when a ghost gets eaten
 	virtual void NotifyGhostEaten(class AGhostPawn& ghost) const;
+
+	// Called when a standard food gets eaten
+	virtual void NotifyAvailableFoodDecreasedBy1(unsigned int remainingFood) const;
 
 	// Called when Pacman dies, but it's not game over.
 	virtual void NotifyPacmanDead();

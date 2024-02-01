@@ -6,7 +6,10 @@
 #include "PacmanUtilities.h"
 #include "Tile.generated.h"
 
-// One cell of the map.
+
+// A Tile is the base class for one cell of the Pacman maze.
+// Subclasses can be placed on the level to make up the maze, that is then managed by the AbstractMap.
+// All the Tiles in the level must have the same dimensions in the X and Y directions.
 UCLASS(Abstract)
 class PACMAN_API ATile : public AActor {
 	GENERATED_BODY()

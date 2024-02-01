@@ -6,6 +6,9 @@
 #include "GhostPawn.generated.h"
 
 
+// A GhostPawn is a BoardPawn controlled by a basic AI algorithm.
+// GhostPawn AI decision making is triggered when the BoardPawn receives the OnTileCenter event from a WalkableTile; at this point the GhostPawn will choose a new direction where to go.
+// A GhostPawn can be placed in different modes by the TimeModeManager. Each mode has a different decision making algorithm.
 UCLASS()
 class PACMAN_API AGhostPawn : public ABoardPawn
 {
@@ -55,20 +58,20 @@ protected:
 	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related")
 	class ATile* HomeTile;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
-	UGhostModeData* StandardMode;
+	UPROPERTY(EditAnywhere, Category = "Pacman|Ghost modes")
+	UGhostModeData* ChaseModeSettings;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
-	UGhostModeData* ScatterMode;
+	UPROPERTY(EditAnywhere, Category = "Pacman|Ghost modes")
+	UGhostModeData* ScatterModeSettings;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
-	UGhostModeData* HomeMode;
+	UPROPERTY(EditAnywhere, Category = "Pacman|Ghost modes")
+	UGhostModeData* HomeModeSettings;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
-	UGhostModeData* FrightenedMode;
+	UPROPERTY(EditAnywhere, Category = "Pacman|Ghost modes")
+	UGhostModeData* FrightenedModeSettings;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Ghost modes")
-	UGhostModeData* DeadMode;
+	UPROPERTY(EditAnywhere, Category = "Pacman|Ghost modes")
+	UGhostModeData* DeadModeSettings;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pacman|Real-time info")
 	EGhostMode CurrentMode;

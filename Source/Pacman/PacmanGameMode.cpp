@@ -41,18 +41,7 @@ void APacmanGameMode::StartPlay() {
 
 // Called when Pacman eats a power pellet, turns all ghosts into FRIGHTENED mode (unless they are in DEAD or HOME mode).
 void APacmanGameMode::NotifyPowerPelletEaten() const {
-	SetGhostsModeUnless(EGhostMode::FRIGHTENED, { EGhostMode::DEAD, EGhostMode::HOME });
-
-	// Set the timer for this power pellet
-	auto& timer = Cast<APacmanLevelState>(GameState)->GetCurrentPowerPelletActivation().Countdown;
-	GetWorldTimerManager().SetTimer(timer, this, &APacmanGameMode::NotifyPowerPelletEnded, 10.f, false);
-}
-
-
-// Called when the timer of the power pellet ended, or when all ghosts got eaten.
-void APacmanGameMode::NotifyPowerPelletEnded() const {
-	UE_LOG(LogTemp, Display, TEXT("Power pellet ended"));
-	SetGhostsModeUnless(TimeModeManager->GetCurrentMode(), { EGhostMode::DEAD, EGhostMode::HOME }); // Resume the current mode for all the ghosts (unless they are in DEAD or HOME mode)
+	TimeModeManager->NotifyPowerPelletEaten();
 }
 
 
@@ -67,8 +56,12 @@ void APacmanGameMode::NotifyGhostEaten(AGhostPawn& ghost) const {
 
 	// If all ghosts got eaten, end power pellet activation
 	if (n >= gameState.GetBoardPawns().Num()) {
-		NotifyPowerPelletEnded();
+		TimeModeManager->NotifyPowerPelletEnded();
 	}
+}
+
+void APacmanGameMode::NotifyAvailableFoodDecreasedBy1(unsigned int remainingFood) const {
+	TimeModeManager->NotifyStandardFoodDecreasedBy1(remainingFood);
 }
 
 

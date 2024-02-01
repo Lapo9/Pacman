@@ -3,6 +3,7 @@
 #include "BoardPawnMovementComponent.h"
 #include "GhostsTargetAcquisitions.h"
 #include "WalkableTile.h"
+#include "UObject/Class.h"
 
 
 AGhostPawn::AGhostPawn() {
@@ -15,7 +16,10 @@ void AGhostPawn::BeginPlay() {
 	// Spawn a new AI controller and make it possess this pawn
 	AiController = Cast<AGhostAiController>(GetWorld()->SpawnActor(AGhostAiController::StaticClass()));
 	AiController->Possess(this);
-	SetMode(EGhostMode::STANDARD); // Ghosts start in home mode TODO
+
+	// Apply the default mesh and material (they will later be changed when mode changes)
+	Mesh->SetStaticMesh(DefaultMesh);
+	Mesh->SetMaterial(0, DefaultMaterial);
 
 	Super::BeginPlay();
 }
@@ -57,19 +61,19 @@ void AGhostPawn::OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor
 UGhostModeData* AGhostPawn::TranslateModeTagToMode(EGhostMode modeTag) const {
 	switch (modeTag) {
 	case EGhostMode::HOME:
-		return HomeMode;
+		return HomeModeSettings;
 		break;
 	case EGhostMode::SCATTER:
-		return ScatterMode;
+		return ScatterModeSettings;
 		break;
-	case EGhostMode::STANDARD:
-		return StandardMode;
+	case EGhostMode::CHASE:
+		return ChaseModeSettings;
 		break;
 	case EGhostMode::FRIGHTENED:
-		return FrightenedMode;
+		return FrightenedModeSettings;
 		break;
 	case EGhostMode::DEAD:
-		return DeadMode;
+		return DeadModeSettings;
 		break;
 	default:
 		UE_LOG(LogTemp, Error, TEXT("AGhostPawn::SetMode unknown mode"));
@@ -79,6 +83,7 @@ UGhostModeData* AGhostPawn::TranslateModeTagToMode(EGhostMode modeTag) const {
 
 
 void AGhostPawn::SetMode(EGhostMode mode) {
+	UE_LOG(LogTemp, Display, TEXT("Setting ghost %s to mode %s"), *GetName(), *UEnum::GetValueAsString<EGhostMode>(mode));
 	UGhostModeData* modeData = TranslateModeTagToMode(mode);
 	if (modeData == nullptr) return;
 
@@ -89,7 +94,10 @@ void AGhostPawn::SetMode(EGhostMode mode) {
 		{ return modeData->OnCollideReactionClass.GetDefaultObject()->React(this, otherActor, otherComponent); };
 	 
 	// Set the mesh (if it is nullptr use the default mesh)
-	if (modeData->Mesh == nullptr) Mesh->SetStaticMesh(DefaultMesh);
+	if (modeData->Mesh == nullptr) {
+		Mesh->SetStaticMesh(DefaultMesh);
+		Mesh->SetMaterial(0, DefaultMaterial);
+	}
 	else Mesh->SetStaticMesh(modeData->Mesh);
 }
 

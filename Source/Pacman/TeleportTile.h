@@ -5,7 +5,8 @@
 #include "TeleportTile.generated.h"
 
 
-// A tile which teleports a board pawn interacting with it to a target tile.
+// A TeleportTile is a WalkableTile that teleports any BoardPawn interacting with its center to a target tile.
+// In order to avoid possible infinite teleport loops (e.g. A -> B -> C -> ... -> A -> ...), when a BoardPawn is teleported to a new WalkableTile, it won't teleport the BoardPawn again until it leaves and re-enters the center.
 UCLASS()
 class PACMAN_API ATeleportTile : public AWalkableTile {
 	GENERATED_BODY()

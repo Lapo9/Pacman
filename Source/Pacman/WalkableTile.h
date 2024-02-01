@@ -6,7 +6,12 @@
 #include "WalkableTile.generated.h"
 
 
-// A Tile where BoardPawns can walk on. It is responsible to catch if a BoardPawn is on it and notify this event to the pawn itself and the LevelState.
+// A Tile where BoardPawns can walk on. 
+// It is responsible to detect 2 events:
+// 1) When a BoardPawn leaves the WalkableTile, it notifies this event to the AbstractMap and to the BoardPawn itself.
+// 2) When a BoardPawn entrs the center of the WalkableTile, it notifies this event to the BoardPawn itself.
+// The collider to represent the center of the WalkableTile is a sphere, whose radius is governed by the PointLikeTriggersRadius variable in PacmanSettings.
+// WalkableTiles can be placed at any height on the Z coordinate, but their "logical height" (the height of the colliders) is determined by the FloorHeight variable in PacmanSettings.
 UCLASS(ClassGroup = Pacman)
 class PACMAN_API AWalkableTile : public ATile
 {
@@ -44,12 +49,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Pacman|Triggers") // Trigger to detect anithing entering the tile.
 	class UTileFullTrigger* FullTrigger; 
 
-	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Point system") // Which point this tile should spawn.
+	UPROPERTY(EditAnywhere, Category = "Pacman|Point system") // Which point this tile should spawn.
 	TSubclassOf<ABaseFood> FoodToSpawn;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Point system") // How much the food should be spawned over the tile.
+	UPROPERTY(EditAnywhere, Category = "Pacman|Point system") // How much the food should be spawned over the tile.
 	float DistanceFromTile;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Pacman|Movement", meta = (ClampMin = "0", ClampMax = "3")) // Increases or decreases the speed of the board pawns on this tile
+	UPROPERTY(EditAnywhere, Category = "Pacman|Movement", meta = (ClampMin = "0", ClampMax = "3")) // Increases or decreases the speed of the board pawns on this tile
 	float SpeedMultiplier;
 };

@@ -10,7 +10,7 @@
 using GhostAcquireNewTargetSignature = struct FTileIndex(GHOST_TARGET_ACQUISITION_PARAMS);
 
 
-// Decides how a ghost should move.
+// Responsible to decide how a GhostPawn moves on the maze.
 UCLASS()
 class PACMAN_API AGhostAiController : public AAIController {
 	GENERATED_BODY()
@@ -32,7 +32,7 @@ protected:
 	// Funtion to decide the target.
 	TFunction<GhostAcquireNewTargetSignature> AcquireNewTarget;
 
-	UPROPERTY(VisibleAnywhere, Category = "Real-time info") // Tile the ghost aims to.
+	UPROPERTY(VisibleAnywhere, Category = "Pacman|Real-time info") // Tile the ghost aims to.
 	FTileIndex Target;
 };
 

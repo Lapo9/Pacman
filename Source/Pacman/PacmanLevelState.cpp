@@ -17,6 +17,7 @@ void APacmanLevelState::Init() {
 	UE_LOG(LogTemp, Display, TEXT("Initializing Pacman level state..."));
 	// Get the game instance
 	GameInstance = Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance());
+	GameMode = Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode());
 
 	// Set the board pawn present in this level
 	BoardPawns = TArray<ABoardPawn*>{};
@@ -49,7 +50,7 @@ void APacmanLevelState::NotifyFruitEaten(unsigned int value) {
 void APacmanLevelState::NotifyPowerPelletEaten(unsigned int value) {
 	GameInstance->AddPoints(value);
 	CurrentPowerPelletActivation.GhostsEatenInThisPowerPellet = 0; // Reset count
-	Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyPowerPelletEaten();
+	GameMode->NotifyPowerPelletEaten();
 	UE_LOG(LogTemp, Display, TEXT("Power pellet eaten --> Remaining food: %i"), AvailableStandardFood);
 }
 
@@ -57,7 +58,7 @@ void APacmanLevelState::NotifyPowerPelletEaten(unsigned int value) {
 // Should be called when a ghost is eaten by Pacman.
 void APacmanLevelState::NotifyGhostEaten(AGhostPawn& ghost) {
 	CurrentPowerPelletActivation.GhostsEatenInThisPowerPellet++;
-	Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyGhostEaten(ghost);
+	GameMode->NotifyGhostEaten(ghost);
 
 	UE_LOG(LogTemp, Display, TEXT("Ghost %s eaten --> Remaining food: %i"), *ghost.GetName(), AvailableStandardFood);
 }
@@ -65,10 +66,10 @@ void APacmanLevelState::NotifyGhostEaten(AGhostPawn& ghost) {
 
 void APacmanLevelState::NotifyPacmanDead() {
 	if (--GameInstance->Lives == 0) {
-		Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyGameOver();
+		GameMode->NotifyGameOver();
 	}
 	else {
-		Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->NotifyPacmanDead();
+		GameMode->NotifyPacmanDead();
 	}
 }
 
@@ -88,7 +89,7 @@ void APacmanLevelState::AddPoints(unsigned int quantity) {
 // Decreases AvailableStandardFood and notify this to the game mode.
 void APacmanLevelState::DecreaseStandardFood(unsigned int quantity) {
 	AvailableStandardFood -= quantity;
-	// TODO notify game mode
+	GameMode->NotifyAvailableFoodDecreasedBy1(AvailableStandardFood);
 }
 
 

@@ -77,6 +77,7 @@ protected:
 	} CurrentPowerPelletActivation;
 
 	class UPacmanGameInstance* GameInstance; // The game instance
+	class APacmanGameMode* GameMode; // The game mode
 
 public:
 	// Returns the current power pellet activation

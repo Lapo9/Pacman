@@ -17,14 +17,18 @@ enum class ECharacterTag {
 // The 4 directions a BoardPawn can be moving.
 UENUM()
 enum class EMovingDirection {
-	NORTH UMETA(DisplayName = "NORTH"),
-	WEST UMETA(DisplayName = "WEST"),
-	SOUTH UMETA(DisplayName = "SOUTH"),
-	EAST UMETA(DisplayName = "EAST")
+	NORTH UMETA(DisplayName = "NORTH"), // {1,0,0}
+	WEST UMETA(DisplayName = "WEST"), // {0,-1,0}
+	SOUTH UMETA(DisplayName = "SOUTH"), // {-1,0,0}
+	EAST UMETA(DisplayName = "EAST") // {0,1,0}
 };
 
 
-// Any character that can walk on the board.
+// A BoardPawn is any character that can walk on the maze.
+// A BoardPawn has a sphere collider at its center, whose radius is controlled by the PointLikeTriggerRadius variable, and whose height on the Z coordinate is determined by the FloorHeight variable in PacmanSettings.
+// Since the BoardPawn is logically at the same height of the WalkableTiles, it will overlap with them. The WalkableTiles will then notify the BoardPawn if he is on the center of the tile, or it he is on a new tile.
+// Thanks to these notifications the BoardPawn can decide how to act based on the position on the maze he is onto. 
+// BoardPawns can also be referred to as "characters" in the codebase.
 UCLASS(Abstract)
 class PACMAN_API ABoardPawn : public APawn
 {
@@ -85,17 +89,20 @@ protected:
 	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related") // Where the board pawn spawns
 	class AWalkableTile* SpawnTile;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Pacman") // Tag identifying this BoardPawn.
+	UPROPERTY(EditAnywhere, Category = "Pacman") // Tag identifying this BoardPawn.
 	ECharacterTag Tag;
 
 	UPROPERTY(VisibleAnywhere) // Component to place this actor on the scene.
-	class USceneComponent* SceneComponent;
+	USceneComponent* SceneComponent;
 
 	UPROPERTY(EditAnywhere) // The mesh component.
-	class UStaticMeshComponent* Mesh;
+	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, Category = "Pacman") // The default mesh.
-	class UStaticMesh* DefaultMesh;
+	UStaticMesh* DefaultMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Pacman") // The default material.
+	UMaterial* DefaultMaterial;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pacman|2D world") // A sphere collider representing the puntual position of this pawn.
 	class USphereComponent* CentralCollider;

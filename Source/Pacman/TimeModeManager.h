@@ -7,6 +7,8 @@
 #include "TimeModeManager.generated.h"
 
 
+// Class responsible to change modes, activate ghosts and spawn fruits based on the time passed in the level.
+// Before using this object it is important to bind a LevelSettings object via SetSettings.
 UCLASS()
 class PACMAN_API UTimeModeManager : public UActorComponent {
 	GENERATED_BODY()
@@ -26,8 +28,14 @@ public:
 	// Should be called when a ghost dies.
 	virtual void NotifyGhostDied(AGhostPawn& ghost);
 
-	// +1 on the food eaten in this level. If a fruit threshold is reached, the fruit is spawned.
-	virtual void NotifyFoodEaten();
+	//  If a fruit threshold is reached, the fruit is spawned.
+	virtual void NotifyStandardFoodDecreasedBy1(unsigned int remainingFood);
+
+	// Should be called when Pacman eats a power pellet, turns all ghosts into FRIGHTENED mode (unless they are in DEAD or HOME mode).
+	virtual void NotifyPowerPelletEaten();
+
+	// Should be called when a power pellet ends (due to time or becasue all ghosts got eaten).
+	virtual void NotifyPowerPelletEnded();
 
 protected:
 	// Called when the game starts
@@ -42,7 +50,7 @@ protected:
 	// Activates the specified ghost in the current mode.
 	virtual void ActivateGhost(AGhostPawn& ghost);
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleInstanceOnly, Category = "Pacman|Real-time info")
 	ULevelSettings* CurrentLevelSettings;
 
 	FTimerHandle ModeTimer;	
@@ -50,10 +58,12 @@ protected:
 
 	FTimerHandle GhostTimer;
 	unsigned int CurrentGhostIndex;
-	
-	unsigned int FoodEaten;
 
 	TMap<AGhostPawn*, FTimerHandle> GhostRespawnTimers;
 
+	FTimerHandle PowerPelletTimer;
+
 	bool Started;
+
+	class APacmanGameMode* GameMode;
 };
