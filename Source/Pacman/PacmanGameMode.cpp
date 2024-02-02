@@ -30,8 +30,11 @@ void APacmanGameMode::StartPlay() {
 	}
 	const auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
 	for (auto& pawn : boardPawns) {
-		pawn->StartMoving(); // Resume gameplay
-		if (pawn->IsA(APacmanPawn::StaticClass())) pawn->SetBaseSpeed(levelSettings->PacmanBaseSpeed);
+		pawn->StartMoving(); // Start gameplay
+		if (pawn->IsA(APacmanPawn::StaticClass())) {
+			pawn->SetBaseSpeed(levelSettings->PacmanBaseSpeed);
+			//pawn->StartMoving(); // TODO debug
+		}
 	}
 
 	Super::StartPlay(); // This will call all the BeginPlay() functions

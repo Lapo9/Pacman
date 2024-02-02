@@ -7,11 +7,6 @@
 #include "GhostModeData.h"
 #include "UObject/Class.h"
 
-// Initializes the AI by selecting a target acquisition function.
-void AGhostAiController::Init(TFunction<GhostAcquireNewTargetSignature> acquireNewTarget) {
-	AcquireNewTarget = acquireNewTarget;
-}
-
 
 // Should be called when the ghost reaches the center of a tile; it computes where the ghost should go next and tells it to the ghost.
 void AGhostAiController::GhostOnTileCenter(const AWalkableTile& tile) {

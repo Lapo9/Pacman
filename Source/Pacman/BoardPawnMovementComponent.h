@@ -51,11 +51,17 @@ protected:
 	// Detects if there was an overlap with a tile center that wasn't detected by Unreal Engine because the pawn skipped over the tile central trigger due to a too high delta time between 2 frames.
 	virtual FVector OnTileCenterRecovery(float deltaTime, FVector delta);
 
-	UPROPERTY(VisibleAnywhere, Category = "Real-time info") // Direction where the pawn is moving.
+	// Rotates the root component towards the movement direction smoothly.
+	virtual void RotateTowardsMovement(float deltaTime);
+
+	UPROPERTY(VisibleAnywhere, Category = "Pacman|Real-time info") // Direction where the pawn is moving.
 	EMovingDirection MovingDirection;
 
-	UPROPERTY(VisibleAnywhere, Category = "Real-time info") // The current speed of the pawn.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pacman|Real-time info") // The current speed of the pawn.
 	float Speed;
+
+	UPROPERTY(EditAnywhere, Category = "Pacman|Movement") // How fast the character rotates (in affects only appeareance).
+	float RotationalSpeed;
 
 	// Central triggers represent points, but are little spheres: this is 2 times the radius of these spheres.
 	float PointLikeTolerance;
@@ -83,6 +89,6 @@ protected:
 	} OnTileCenterInfo;
 
 public:
-	UPROPERTY(VisibleAnywhere, Category = "Real-time info")
+	UPROPERTY(VisibleAnywhere, Category = "Pacman|Real-time info")
 	bool CanMove; // Whether the pawn can move or not.
 };

@@ -3,23 +3,23 @@
 #include "BoardPawnMovementComponent.h"
 #include "GhostsTargetAcquisitions.h"
 #include "WalkableTile.h"
+#include "Components/SphereComponent.h"
 #include "UObject/Class.h"
 
 
-AGhostPawn::AGhostPawn() {
+AGhostPawn::AGhostPawn() : OnBeginOverlapImpl{ [](AActor* otherActor, UPrimitiveComponent* otherComponent) {} } {
+	ModeIndicator = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ModeIndicator"));
+	ModeIndicator->SetupAttachment(Mesh, TEXT("ModeIndicatorSocket"));
 }
 
 
 void AGhostPawn::BeginPlay() {
-	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AGhostPawn::OnBeginOverlap); // Register how to react to overlap
+	FullCollider->OnComponentBeginOverlap.AddDynamic(this, &AGhostPawn::OnBeginOverlap); // Register how to react to overlap
 
 	// Spawn a new AI controller and make it possess this pawn
 	AiController = Cast<AGhostAiController>(GetWorld()->SpawnActor(AGhostAiController::StaticClass()));
+	AiController->SetMode(*HomeModeSettings); // Set home as first default mode (it will be immediately changed by the TimeModeManager component)
 	AiController->Possess(this);
-
-	// Apply the default mesh and material (they will later be changed when mode changes)
-	Mesh->SetStaticMesh(DefaultMesh);
-	Mesh->SetMaterial(0, DefaultMaterial);
 
 	Super::BeginPlay();
 }
@@ -95,10 +95,16 @@ void AGhostPawn::SetMode(EGhostMode mode) {
 	 
 	// Set the mesh (if it is nullptr use the default mesh)
 	if (modeData->Mesh == nullptr) {
-		Mesh->SetStaticMesh(DefaultMesh);
-		Mesh->SetMaterial(0, DefaultMaterial);
+		Mesh->SetSkeletalMesh(DefaultMesh);
+		for (int i = 0; i < DefaultMaterials.Num(); ++i) Mesh->SetMaterial(i, DefaultMaterials[i]);
 	}
-	else Mesh->SetStaticMesh(modeData->Mesh);
+	else {
+		Mesh->SetSkeletalMesh(modeData->Mesh);
+		for (int i = 0; i < modeData->Materials.Num(); ++i) Mesh->SetMaterial(i, modeData->Materials[i]);
+	}
+
+	// Show additional meshes
+	ModeIndicator->SetStaticMesh(modeData->ModeIndicatorMesh);
 }
 
 

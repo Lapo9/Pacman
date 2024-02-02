@@ -16,9 +16,6 @@ class PACMAN_API AGhostAiController : public AAIController {
 	GENERATED_BODY()
 
 public:
-	// Initializes the AI by selecting a target acquisition function.
-	virtual void Init(TFunction<GhostAcquireNewTargetSignature> acquireNewTarget);
-
 	// Should be called when the ghost reaches the center of a tile; it computes where the ghost should go next and tells it to the ghost.
 	virtual void GhostOnTileCenter(const class AWalkableTile& tile);
 

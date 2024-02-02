@@ -35,11 +35,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGhostTargetAcquisitionBase> TargetAcquisitionClass;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (EditCondition = "Mode != EGhostMode::CHASE", EditConditionHides))
-	UStaticMesh* Mesh;
+	UPROPERTY(EditAnywhere, Category = "Mode indicator")
+	UStaticMesh* ModeIndicatorMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (EditCondition = "Mode != EGhostMode::CHASE", EditConditionHides))
-	UMaterial* Material;
+	USkeletalMesh* Mesh;
+
+	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (EditCondition = "Mode != EGhostMode::CHASE", EditConditionHides))
+	TArray<UMaterial*> Materials;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGhostOnCollideReactionBase> OnCollideReactionClass;

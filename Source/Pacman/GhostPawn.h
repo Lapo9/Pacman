@@ -78,4 +78,7 @@ protected:
 
 	UPROPERTY(EditInstanceOnly, Category = "Pacman") // A unique identifier to reference this ghost from the world settings
 	FString UniqueId;
+
+	UPROPERTY(EditAnywhere, Category = "Pacman") // An additional mesh that can be placed abve the ghost to indicate its mode.
+	UStaticMeshComponent* ModeIndicator;
 };

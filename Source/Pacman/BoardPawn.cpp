@@ -14,20 +14,23 @@ ABoardPawn::ABoardPawn() : ModeSpeedMultiplier{ 1 } {
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 
-	// Add the central collider and set up collision rules
+	// Add the central and full colliders and set up collision rules
 	CentralCollider = CreateDefaultSubobject<USphereComponent>(TEXT("CentralCollider"));
 	CentralCollider->SetupAttachment(RootComponent);
 	CentralCollider->SetCollisionObjectType(ObjectChannel_World2d); // World2d object channel
 	CentralCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
 	CentralCollider->SetCollisionResponseToChannel(ObjectChannel_World2d, ECollisionResponse::ECR_Overlap); // enable World2d object channel
 	
+	FullCollider = CreateDefaultSubobject<USphereComponent>(TEXT("FullCollider"));
+	FullCollider->SetupAttachment(RootComponent);
+	FullCollider->SetCollisionObjectType(ObjectChannel_BoardPawns); // BoardPawns object channel
+	FullCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
+	FullCollider->SetCollisionResponseToChannel(ObjectChannel_BoardPawns, ECollisionResponse::ECR_Overlap); // enable BoardPawns object channel
+	FullCollider->SetCollisionResponseToChannel(ObjectChannel_Walls, ECollisionResponse::ECR_Overlap); // enable Walls object channel
+
 	// Add a mesh and set up mesh collision rules
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
-	Mesh->SetCollisionObjectType(ObjectChannel_BoardPawns); // BoardPawns object channel
-	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); // Disable all collisions
-	Mesh->SetCollisionResponseToChannel(ObjectChannel_BoardPawns, ECollisionResponse::ECR_Overlap); // enable BoardPawns object channel
-	Mesh->SetCollisionResponseToChannel(ObjectChannel_Walls, ECollisionResponse::ECR_Overlap); // enable Walls object channel
 
 	// Add the movement component
 	MovementComponent = CreateDefaultSubobject<UBoardPawnMovementComponent>(TEXT("MovementComponent"));
@@ -38,6 +41,10 @@ ABoardPawn::ABoardPawn() : ModeSpeedMultiplier{ 1 } {
 void ABoardPawn::BeginPlay() {
 	UE_LOG(LogTemp, Display, TEXT("BeginPlay board pawn %s"), *GetName());
 	Super::BeginPlay();
+
+	// Store the default mesh and material
+	DefaultMesh = Mesh->GetSkeletalMeshAsset();
+	DefaultMaterials = Mesh->GetMaterials();
 
 	CurrentTile = SpawnTile; //Initialize the current tile
 	SetLocation2d(CurrentTile->GetCenter()); // Move the pawn to the spawn tile center (don't touch Z component)

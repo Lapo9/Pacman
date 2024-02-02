@@ -96,18 +96,22 @@ protected:
 	USceneComponent* SceneComponent;
 
 	UPROPERTY(EditAnywhere) // The mesh component.
-	UStaticMeshComponent* Mesh;
+	USkeletalMeshComponent* Mesh;
 
-	UPROPERTY(EditAnywhere, Category = "Pacman") // The default mesh.
-	UStaticMesh* DefaultMesh;
+	// The default mesh.
+	USkeletalMesh* DefaultMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Pacman") // The default material.
-	UMaterial* DefaultMaterial;
+	// The default material.
+	TArray<UMaterialInterface*> DefaultMaterials;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pacman|2D world") // A sphere collider representing the puntual position of this pawn.
 	class USphereComponent* CentralCollider;
 
+	UPROPERTY(EditAnywhere, Category = "Pacman") // The collider for the full board pawn.
+	class USphereComponent* FullCollider;
+
 	// Component responsible to move the pawn.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UBoardPawnMovementComponent* MovementComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pacman|Movement") // The standard speed of this pawn.

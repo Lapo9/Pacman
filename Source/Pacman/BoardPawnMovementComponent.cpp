@@ -147,9 +147,30 @@ FVector UBoardPawnMovementComponent::OnTileCenterRecovery(float deltaTime, FVect
 }
 
 
+// Rotates the root component towards the movement direction smoothly.
+void UBoardPawnMovementComponent::RotateTowardsMovement(float deltaTime) {
+	USkeletalMeshComponent& mesh = *GetOwner()->GetComponentByClass<USkeletalMeshComponent>();
+	FVector2D movDir = FVector2D{ Util::MovingDirectionToVector(MovingDirection) };
+	FVector2D forward = FVector2D{ mesh.GetRightVector() };
+
+	float dot = FVector2D::DotProduct(movDir, forward);
+	// If the board pawn is already facing the moving direction, do nothing
+	if (FMath::IsNearlyEqual(dot, 1.f, 0.001f)) return;
+
+	float angleBetweenForwardAndDir = FMath::RadiansToDegrees(FMath::Atan2(movDir.Y * forward.X - movDir.X * forward.Y, movDir.X * forward.X + movDir.Y * forward.Y));
+	float isClockwise = FMath::Sign(angleBetweenForwardAndDir); isClockwise = isClockwise = 0 ? 1 : isClockwise; // 1 = clockwise, -1 = counterclockwise
+
+	float angle = RotationalSpeed * deltaTime; 
+	angle = FMath::Min(angle, FMath::Abs(angleBetweenForwardAndDir)); // Don't rotate more than necessary
+	angle = dot < -0.9f ? 180.f : angle * isClockwise; // If the character must do a U turn, do it right away (no smoothing)
+	mesh.AddLocalRotation(FRotator{ 0.f, angle, 0.f });
+}
+
+
 // Moves the pawn based on speed and direction.
 void UBoardPawnMovementComponent::TickComponent(float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) {
 	if (!CanMove) return;
+	if (deltaTime > 0.1f) { UE_LOG(LogTemp, Warning, TEXT("Slow frame skipped: %f seconds"), deltaTime); return; }
 
 	auto rootComponent = GetOwner()->GetRootComponent();
 	FVector delta = ComputeDeltaMovement(deltaTime);
@@ -163,6 +184,8 @@ void UBoardPawnMovementComponent::TickComponent(float deltaTime, ELevelTick tick
 	}
 	FVector newPos =  currentPawnPosition + delta;
 	rootComponent->SetWorldLocation(newPos);
+
+	RotateTowardsMovement(deltaTime); // Rotate towards the moving direction
 }
 
 
