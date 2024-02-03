@@ -33,12 +33,28 @@ void AGhostPawn::OnTileCenter(const AWalkableTile& tile) {
 }
 
 
+void AGhostPawn::OnNewTile(const AWalkableTile& tile) {
+	Super::OnNewTile(tile);
+
+	// If the ghost was in DEAD mode, and reached its respawn tile, go in HOME mode and teleport to the home tile
+	if (CurrentMode == EGhostMode::DEAD && &tile == RespawnTile) {
+		SetLocation2d(HomeTile->GetCenter());
+		SetMode(EGhostMode::HOME);
+	}
+}
+
+
 const ATile* AGhostPawn::GetScatterTile() const {
 	return ScatterTile;
 }
 
 
-const ATile* AGhostPawn::GetHomeTile() const {
+const AWalkableTile* AGhostPawn::GetRespawnTile() const {
+	return RespawnTile;
+}
+
+
+const AWalkableTile* AGhostPawn::GetHomeTile() const {
 	return HomeTile;
 }
 
@@ -87,6 +103,10 @@ void AGhostPawn::SetMode(EGhostMode mode) {
 	UGhostModeData* modeData = TranslateModeTagToMode(mode);
 	if (modeData == nullptr) return;
 
+	// If the ghost was in HOME mode, and now the mode is anything bu HOME, teleport to the respawn tile (in order to leave the home)
+	if(CurrentMode == EGhostMode::HOME && mode != EGhostMode::HOME) SetLocation2d(RespawnTile->GetCenter());
+
+	// Set the new mode parameters
 	CurrentMode = mode;
 	AiController->SetMode(*modeData);
 	ModeSpeedMultiplier = modeData->SpeedMultiplier;

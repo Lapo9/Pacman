@@ -37,6 +37,9 @@ public:
 	// Should be called when a power pellet ends (due to time or becasue all ghosts got eaten).
 	virtual void NotifyPowerPelletEnded();
 
+	// Should be called when the level ends, for whatever reason.
+	virtual void NotifyLevelEnded();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

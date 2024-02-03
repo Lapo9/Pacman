@@ -90,6 +90,7 @@ void APacmanLevelState::AddPoints(unsigned int quantity) {
 void APacmanLevelState::DecreaseStandardFood(unsigned int quantity) {
 	AvailableStandardFood -= quantity;
 	GameMode->NotifyAvailableFoodDecreasedBy1(AvailableStandardFood);
+	if (AvailableStandardFood <= 0) GameMode->NotifyLevelCleared();
 }
 
 

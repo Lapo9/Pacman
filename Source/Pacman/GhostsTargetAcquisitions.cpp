@@ -74,3 +74,8 @@ FTileIndex UGhostTargetAcquisitionRandom::AcquireTarget(GHOST_TARGET_ACQUISITION
 	int randRow = FMath::RandRange(0, size.Row - 1);
 	return { randCol, randRow };
 }
+
+
+FTileIndex UGhostTargetAcquisitionDead::AcquireTarget(GHOST_TARGET_ACQUISITION_PARAMS) const {
+	return itself.GetRespawnTile()->Index;
+}

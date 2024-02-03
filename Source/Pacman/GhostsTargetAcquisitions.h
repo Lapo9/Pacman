@@ -64,6 +64,14 @@ public:
 
 
 UCLASS()
+class PACMAN_API UGhostTargetAcquisitionDead final : public UGhostTargetAcquisitionBase {
+	GENERATED_BODY()
+public:
+	FTileIndex AcquireTarget(GHOST_TARGET_ACQUISITION_PARAMS) const;
+};
+
+
+UCLASS()
 class PACMAN_API UGhostTargetAcquisitionHome final : public UGhostTargetAcquisitionBase {
 	GENERATED_BODY()
 public:

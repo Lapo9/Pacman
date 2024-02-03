@@ -1,5 +1,6 @@
 #include "TimeModeManager.h"
 #include "PacmanGameMode.h"
+#include "PacmanLevelState.h"
 #include "GhostPawn.h"
 #include "UObject/Class.h"
 
@@ -73,7 +74,7 @@ void UTimeModeManager::NotifyGhostDied(AGhostPawn& ghost) {
 
 // Called when the game starts
 void UTimeModeManager::BeginPlay() {
-	
+	GhostRespawnTimers.Reserve(Cast<APacmanLevelState>(GameMode->GameState)->GetBoardPawns().Num()); // At most we need this number of timers (pretty rare to have all allocated)
 }
 
 
@@ -120,6 +121,18 @@ void UTimeModeManager::NotifyPowerPelletEaten() {
 void UTimeModeManager::NotifyPowerPelletEnded() {
 	UE_LOG(LogTemp, Display, TEXT("Power pellet ended"));
 	GameMode->SetGhostsModeUnless(GetCurrentMode(), { EGhostMode::DEAD, EGhostMode::HOME }); // Resume the current mode for all the ghosts (unless they are in DEAD or HOME mode)
+}
+
+
+// Should be called when the level ends, for whatever reason.
+void UTimeModeManager::NotifyLevelEnded() {
+	// Clear all the timers
+	auto& timerManager = GetWorld()->GetTimerManager();
+	timerManager.ClearTimer(GhostTimer);
+	timerManager.ClearTimer(ModeTimer);
+	timerManager.ClearTimer(PowerPelletTimer);
+	for (auto& timer : GhostRespawnTimers) timerManager.ClearTimer(timer.Value);
+	GhostRespawnTimers.Empty();
 }
 
 

@@ -49,6 +49,7 @@ void APacmanGameMode::NotifyPowerPelletEaten() const {
 
 void APacmanGameMode::NotifyGhostEaten(AGhostPawn& ghost) const {
 	ghost.SetMode(EGhostMode::DEAD);
+	TimeModeManager->NotifyGhostDied(ghost);
 	
 	auto& gameState = *Cast<APacmanLevelState>(GameState);
 	auto& currentPowerPellet = gameState.GetCurrentPowerPelletActivation();
@@ -61,6 +62,7 @@ void APacmanGameMode::NotifyGhostEaten(AGhostPawn& ghost) const {
 		TimeModeManager->NotifyPowerPelletEnded();
 	}
 }
+
 
 void APacmanGameMode::NotifyAvailableFoodDecreasedBy1(unsigned int remainingFood) const {
 	TimeModeManager->NotifyStandardFoodDecreasedBy1(remainingFood);
@@ -87,6 +89,18 @@ void APacmanGameMode::NotifyPacmanDead() {
 
 
 void APacmanGameMode::NotifyGameOver() {
+	TimeModeManager->NotifyLevelEnded(); // Basically stops all timers
+	auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
+	for (auto pawn : boardPawns) pawn->StopMoving();
+	//TODO
+	// Show point screen
+}
+
+
+void APacmanGameMode::NotifyLevelCleared() {
+	TimeModeManager->NotifyLevelEnded(); // Basically stops all timers
+	// TODO
+	// Load next level
 }
 
 

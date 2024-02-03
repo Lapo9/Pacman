@@ -89,6 +89,6 @@ protected:
 	} OnTileCenterInfo;
 
 public:
-	UPROPERTY(VisibleAnywhere, Category = "Pacman|Real-time info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pacman|Real-time info")
 	bool CanMove; // Whether the pawn can move or not.
 };

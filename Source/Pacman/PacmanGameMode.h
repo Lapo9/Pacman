@@ -31,6 +31,9 @@ public:
 	// Called when Pacman dies and there are no lives left.
 	virtual void NotifyGameOver();
 
+	// Called when Pacman eats all the food.
+	virtual void NotifyLevelCleared();
+
 	// Sets all the ghosts to the specified mode. The new mode will only be applied to ghosts that are not in the modes specified in the second parameter.
 	virtual void SetGhostsModeUnless(enum class EGhostMode mode, const TArray<enum class EGhostMode>& dontChange = {}) const;
 

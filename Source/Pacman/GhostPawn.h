@@ -22,6 +22,9 @@ public:
 	// Called to notify the pawn that it is at the center of the current tile.
 	virtual void OnTileCenter(const class AWalkableTile& tile) override;
 
+	// Called to notify the pawn that it entered a new tile.
+	virtual void OnNewTile(const class AWalkableTile& tile) override;
+
 	// Sets the mode.
 	virtual void SetMode(EGhostMode mode);
 
@@ -31,8 +34,11 @@ public:
 	// Returns the scatter tile.
 	const class ATile* GetScatterTile() const;
 
+	// Returns the respawn tile (if a ghost overlaps this tile while DEAD, it will be teleported to the home tile)
+	const class AWalkableTile* GetRespawnTile() const;	
+	
 	// Returns the home tile.
-	const class ATile* GetHomeTile() const;
+	const class AWalkableTile* GetHomeTile() const;
 
 	// Returns the current mode of the ghost
 	const EGhostMode GetMode() const;
@@ -52,11 +58,14 @@ protected:
 	using OnBeginOverlapSignature = void(class AActor* otherActor, class UPrimitiveComponent* otherComponent);
 	TFunction<OnBeginOverlapSignature> OnBeginOverlapImpl; // How to react to an overlap with another object
 
-	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related")
-	class ATile* ScatterTile;
+	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related") // The tile that the ghost targets when he is in scatter mode.
+	class ATile* ScatterTile;	
+	
+	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related") // Where the pawn respawns to get out of the ghost home.
+	class AWalkableTile* RespawnTile;
 
-	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related")
-	class ATile* HomeTile;
+	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related") // It should be any tile inside the ghost home.
+	class AWalkableTile* HomeTile;
 
 	UPROPERTY(EditAnywhere, Category = "Pacman|Ghost modes")
 	UGhostModeData* ChaseModeSettings;
