@@ -47,6 +47,10 @@ FVector2D ATile::GetLocation2d() const {
 
 // Returns the axis aligned extents of this tile.
 FVector ATile::GetExtents() const {
+	if (Mesh == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("Mesh of %s is nullptr"), *GetName());
+		return FVector{ 50.f,50.f,10.f }; // TODO
+	}
 	FVector min, max;
 	Mesh->GetLocalBounds(min, max);
 	return (max - min) / 2.f;

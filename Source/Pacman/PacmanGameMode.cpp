@@ -33,11 +33,10 @@ void APacmanGameMode::StartPlay() {
 		pawn->StartMoving(); // Start gameplay
 		if (pawn->IsA(APacmanPawn::StaticClass())) {
 			pawn->SetBaseSpeed(levelSettings->PacmanBaseSpeed);
-			//pawn->StartMoving(); // TODO debug
 		}
 	}
-
 	Super::StartPlay(); // This will call all the BeginPlay() functions
+
 	TimeModeManager->Start(); // Start play
 }
 

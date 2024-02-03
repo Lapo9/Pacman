@@ -10,6 +10,10 @@
 UCLASS()
 class PACMAN_API AFruitFood : public ABaseFood {
 	GENERATED_BODY()
+
+	AFruitFood();
+
+	virtual void Tick(float deltaTime) override;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -20,6 +24,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Pacman|Point system", meta = (ClampMin = "1", ClampMax = "30"))
 	unsigned int Duration;
+
+	UPROPERTY(EditAnywhere, Category = "Pacman|Cosmetic", meta = (ClampMin = "0"))
+	float RotationSpeed;
 
 	FTimerHandle Timer;
 };

@@ -3,6 +3,17 @@
 #include "PacmanLevelState.h"
 
 
+AFruitFood::AFruitFood() {
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+}
+
+
+void AFruitFood::Tick(float deltaTime) {
+	AddActorLocalRotation(FRotator{ 0.f, deltaTime * RotationSpeed, 0.f }); // Rotate the fruit (just an animation)
+}
+
+
 void AFruitFood::BeginPlay() {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Display, TEXT("New food spawned for %i seconds"), Duration);
