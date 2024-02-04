@@ -50,8 +50,8 @@ public:
 
 protected:
 	void LoadLevelSettings();
-
-	// Starts the level (e.g. starts the timers, pawn start moving, ...)
+	
+	UFUNCTION(BlueprintCallable) // Starts the level (e.g. starts the timers, pawn start moving, ...)
 	void Start();
 
 	UPROPERTY(EditAnywhere, Category = "Time mode manager")

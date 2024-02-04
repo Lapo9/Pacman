@@ -19,10 +19,6 @@ void APacmanGameMode::StartPlay() {
 	UE_LOG(LogTemp, Display, TEXT("APacmanGameMode::StartPlay called"));
 	Super::StartPlay(); // This will call all the BeginPlay() functions
 	Init(); // Initialize the state and the mode manager (here we are sure that BeginPlay has already been executed on everything)
-	
-	//TODO will receive input from menu
-	FTimerHandle startTimer;
-	GetWorld()->GetTimerManager().SetTimer(startTimer, this, &APacmanGameMode::Start, 5.f, false);
 }
 
 
@@ -80,10 +76,11 @@ void APacmanGameMode::NotifyPacmanDead() {
 	}
 	//TODO Pacman and ghosts should play an animation/sound + something should appear on screen
 
-	auto restart = [&boardPawns]() {
-		for (auto& pawn : boardPawns) {
+	auto restart = [&boardPawns, this]() {
+		for (auto pawn : boardPawns) {
 			pawn->Start(); // Resume gameplay
 			pawn->SetLocation2d(pawn->GetSpawnTile()->GetActorLocation()); // Place the pawn at the spawn
+			if (auto ghost = Cast<AGhostPawn>(pawn); ghost) TimeModeManager->ActivateGhost(*ghost);
 		}};
 
 	FTimerHandle timer;

@@ -29,6 +29,8 @@ public:
 
 	virtual void Init() override;
 
+	virtual void Start() override;
+
 	// Called to notify the pawn that it is at the center of the current tile.
 	virtual void OnTileCenter(const AWalkableTile& tile) override;
 

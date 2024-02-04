@@ -16,9 +16,13 @@ public:
 
 	virtual void AddPoints(unsigned int value);
 
-	unsigned int Lives = 2; // Remaining lives.
+	UPROPERTY(BlueprintReadOnly)
+	int Lives = 2; // Remaining lives.
 
 protected:
-	unsigned int CurrentLevel;
-	unsigned int Points; // Points till now.
+	UPROPERTY(BlueprintReadOnly)
+	int CurrentLevel;
+
+	UPROPERTY(BlueprintReadOnly)
+	int Points; // Points till now.
 };

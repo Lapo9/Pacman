@@ -26,7 +26,12 @@ void AGhostPawn::BeginPlay() {
 
 void AGhostPawn::Init() {
 	Super::Init();
+	SetMode(EGhostMode::HOME); // Set home as first default mode (it will be immediately changed by the TimeModeManager component)
+}
 
+
+void AGhostPawn::Start() {
+	Super::Start();
 	SetMode(EGhostMode::HOME); // Set home as first default mode (it will be immediately changed by the TimeModeManager component)
 }
 

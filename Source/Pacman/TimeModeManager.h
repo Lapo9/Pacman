@@ -45,6 +45,8 @@ public:
 	// Should be called when the level ends, for whatever reason.
 	virtual void NotifyLevelEnded();
 
+	// Activates the specified ghost in the current mode.
+	virtual void ActivateGhost(AGhostPawn& ghost);
 
 protected:
 	// Resets all the timers and counters in the level.
@@ -55,9 +57,6 @@ protected:
 
 	// Starts the next timer for the ghosts.
 	virtual void StartNextGhostTimer();
-
-	// Activates the specified ghost in the current mode.
-	virtual void ActivateGhost(AGhostPawn& ghost);
 	
 	UPROPERTY(VisibleInstanceOnly, Category = "Pacman|Real-time info")
 	ULevelSettings* CurrentLevelSettings;

@@ -12,7 +12,6 @@ APacmanPawn::APacmanPawn() {
 
 void APacmanPawn::Init() {
 	Super::Init();
-	InputDirection = EMovingDirection::EAST;
 }
 
 
