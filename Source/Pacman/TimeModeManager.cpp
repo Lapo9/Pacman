@@ -2,6 +2,7 @@
 #include "PacmanGameMode.h"
 #include "PacmanLevelState.h"
 #include "GhostPawn.h"
+#include "PacmanPawn.h"
 #include "UObject/Class.h"
 
 
@@ -17,40 +18,37 @@ EGhostMode UTimeModeManager::GetCurrentMode() {
 }
 
 
-// Binds the ghost, fruit and modes schedule to this component.
-void UTimeModeManager::SetSettings(ULevelSettings* settings) {
-	verifyf(!Started, TEXT("Cannot change the settings after level started")); // If the level already started it's not allowed to change settings
+// Resets the component and loads the specified settings to the ghosts, Pacman and initializes the schedules. Doesn't start the timers.
+void UTimeModeManager::Init(ULevelSettings* settings) {
+	verifyf(!bStarted, TEXT("Cannot change the settings after level started")); // If the level already started it's not allowed to change settings
+	Reset();
 	GameMode = Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode()); // Get the game mode
-
-	// Reset
-	GetWorld()->GetTimerManager().ClearTimer(GhostTimer);
-	CurrentGhostIndex = 0;
-	GetWorld()->GetTimerManager().ClearTimer(ModeTimer);
-	CurrentModeIndex = 0;
+	GhostRespawnTimers.Reserve(Cast<APacmanLevelState>(GameMode->GameState)->GetBoardPawns().Num()); // At most we need this number of timers (pretty rare to have all allocated)
 
 	CurrentLevelSettings = settings;
 	CurrentLevelSettings->FruitsSchedule.Sort(); // Sort by how many food items to activate
 
-	// Find the ghosts by their name
-	for (auto& ghostItem : CurrentLevelSettings->GhostsSchedule) {
-		for (TObjectIterator<AGhostPawn> ghost; ghost; ++ghost) {
-			if (ghost->GetWorld() != GetWorld()) continue; // Skip objects that are not in the actual scene (maybe they were in the editor or somewhere else)
-			if (ghost->GetId() == ghostItem.GhostId) {
-				ghostItem.Ghost = *ghost;
-				break;
-			}
+	// Find the ghosts by their name and set their speeds, also set Pacman speed
+	for (TObjectIterator<ABoardPawn> pawn; pawn; ++pawn) {
+		if (pawn->GetWorld() != GetWorld()) continue; // Skip objects that are not in the actual scene (maybe they were in the editor or somewhere else)
+		// If the pawn is a ghost...
+		if (auto ghost = Cast<AGhostPawn>(*pawn); ghost) {
+			auto ghostItem = CurrentLevelSettings->GhostsSchedule.FindByPredicate([&ghost](const auto& ghostItem) { return ghostItem.GhostId == ghost->GetId(); });
+			verifyf(ghostItem, TEXT("Cannot find a ghost with UniqueId = %s"), *ghost->GetId());
+			ghostItem->Ghost = ghost;
+			ghost->SetBaseSpeed(ghostItem->BaseSpeed);
 		}
-		verifyf(ghostItem.Ghost != nullptr, TEXT("Cannot find a ghost with UniqueId = %s"), *ghostItem.GhostId);
+		else if (auto pacman = Cast<APacmanPawn>(*pawn); pacman) pacman->SetBaseSpeed(CurrentLevelSettings->PacmanBaseSpeed);
 	}
 
-	UE_LOG(LogTemp, Display, TEXT("New settings bound"));
+	UE_LOG(LogTemp, Display, TEXT("New settings loaded"));
 }
 
 
 // Starts the level.
 void UTimeModeManager::Start() {
-	UE_LOG(LogTemp, Display, TEXT("Starting level..."));
-	Started = true;
+	UE_LOG(LogTemp, Display, TEXT("Starting schedules..."));
+	bStarted = true;
 
 	// Start the first timer for mode and ghosts
 	StartNextModeTimer();
@@ -69,12 +67,6 @@ void UTimeModeManager::NotifyGhostDied(AGhostPawn& ghost) {
 		ActivateGhost(ghost); // Activate the ghost
 		GhostRespawnTimers.FindAndRemoveChecked(&ghost); // Remove the timer from the pool
 										   }, cooldown, false);
-}
-
-
-// Called when the game starts
-void UTimeModeManager::BeginPlay() {
-	GhostRespawnTimers.Reserve(Cast<APacmanLevelState>(GameMode->GameState)->GetBoardPawns().Num()); // At most we need this number of timers (pretty rare to have all allocated)
 }
 
 
@@ -126,6 +118,12 @@ void UTimeModeManager::NotifyPowerPelletEnded() {
 
 // Should be called when the level ends, for whatever reason.
 void UTimeModeManager::NotifyLevelEnded() {
+	Reset();
+}
+
+
+// Resets all the timers and counters in the level.
+void UTimeModeManager::Reset() {
 	// Clear all the timers
 	auto& timerManager = GetWorld()->GetTimerManager();
 	timerManager.ClearTimer(GhostTimer);
@@ -133,6 +131,12 @@ void UTimeModeManager::NotifyLevelEnded() {
 	timerManager.ClearTimer(PowerPelletTimer);
 	for (auto& timer : GhostRespawnTimers) timerManager.ClearTimer(timer.Value);
 	GhostRespawnTimers.Empty();
+
+	// Reset all counters
+	CurrentGhostIndex = 0;
+	CurrentModeIndex = 0;
+	CurrentLevelSettings = nullptr;
+	bStarted = false;
 }
 
 

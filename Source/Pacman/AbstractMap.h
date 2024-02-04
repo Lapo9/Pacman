@@ -6,6 +6,12 @@
 #include "AbstractMap.generated.h"
 
 
+// Forward declatarions
+class ABoardPawn;
+class ATile;
+class AWalkableTile;
+
+
 // The types a tile can be.
 UENUM()
 enum class ETileType { WALKABLE, WALL, TUNNEL, TELEPORT, HUT };
@@ -23,16 +29,16 @@ public:
 	void Init();
 
 	// Returns the index of the tile the queried character is on.
-	FTileIndex GetCharacterTileIndex(const class ABoardPawn& pawn) const;
+	FTileIndex GetCharacterTileIndex(const ABoardPawn& pawn) const;
 
 	// Returns a constant reference to the tile the queried character is on.
-	const class AWalkableTile& GetCharacterTile(const class ABoardPawn& pawn) const;
+	const AWalkableTile& GetCharacterTile(const ABoardPawn& pawn) const;
 
 	// Returns the surrounding tiles of a character.
-	TMap<enum class EMovingDirection, const class ATile*> GetSurroundingTiles(const class ABoardPawn& pawn) const;
+	TMap<enum EMovingDirection, const ATile*> GetSurroundingTiles(const ABoardPawn& pawn) const;
 
 	// Updates the index of the tile the specified charater is on, and returns the new tile (it must be a walkable tile).
-	const class AWalkableTile& UpdateCharacterTile(const class ABoardPawn& pawn, const FVector& position);
+	const AWalkableTile& UpdateCharacterTile(const ABoardPawn& pawn, const FVector& position);
 
 	// Returns the size of the map.
 	FTileIndex GetSize() const;
@@ -40,7 +46,13 @@ public:
 	// A string representation of the Map.
 	FString ToString() const;
 
+	// Given a position, returns the corresponding tile.
+	const ATile* PositionToTile(const FVector& pos) const;
+
 private:
+	// Empties the abstract map
+	void Reset();
+
 	// Iterates through all the tiles on the current level and generates the abstract map.
 	void CreateAbstractMap();
 
@@ -48,13 +60,13 @@ private:
 	void FillCharactersStartingPositions();
 
 	// Given a position, returns the index of the corresponding tile.
-	FTileIndex PositionToIndex(const FVector& pos);
+	FTileIndex PositionToIndex(const FVector& pos) const;
 
 	// The abstract map
 	TArray<TArray<const ATile*>> Map;
 
 	// Positions of the characters
-	TMap<const class ABoardPawn*, FTileIndex> CharactersPositions;
+	TMap<const ABoardPawn*, FTileIndex> CharactersPositions;
 
 	// The positions of the bottom-left and top-right tiles, and the width and depth of each tile (they should all be the same).
 	struct AbstractMapInfo {

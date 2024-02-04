@@ -3,6 +3,10 @@
 #include "CoreMinimal.h"
 #include "PacmanUtilities.generated.h"
 
+// Forward declarations
+class ATile;
+enum class EMovingDirection;
+
 
 USTRUCT()
 struct PACMAN_API FTileIndex {
@@ -41,16 +45,16 @@ public:
 	// Tile utilities
 
 	// Returns whether a pawn can walk on a specific tile.
-	static bool IsTileWalkable(const class ATile*);
+	static bool IsTileWalkable(const ATile*);
 
 
 	// Moving direction utilities
 
 	// Transforms a EMovingDirection into a vector.
-	static FVector MovingDirectionToVector(enum class EMovingDirection dir);
+	static FVector MovingDirectionToVector(EMovingDirection dir);
 
 	// Returns the opposite direction.
-	static enum class EMovingDirection Opposite(enum class EMovingDirection dir);
+	static EMovingDirection Opposite(EMovingDirection dir);
 };
 
 using Util = PacmanUtilities;
@@ -60,3 +64,33 @@ using Util = PacmanUtilities;
 constexpr auto ObjectChannel_World2d = ECollisionChannel::ECC_GameTraceChannel1;
 constexpr auto ObjectChannel_BoardPawns = ECollisionChannel::ECC_GameTraceChannel2;
 constexpr auto ObjectChannel_Walls = ECollisionChannel::ECC_GameTraceChannel3;
+
+
+
+// Interfaces
+
+UINTERFACE()
+class UInitializable : public UInterface {
+	GENERATED_BODY()
+};
+
+class PACMAN_API IInitializable {
+	GENERATED_BODY()
+
+public:
+	virtual void Init() = 0;
+};
+
+
+UINTERFACE()
+class UStartableStoppable : public UInterface {
+	GENERATED_BODY()
+};
+
+class PACMAN_API IStartableStoppable {
+	GENERATED_BODY()
+
+public:
+	virtual void Start() = 0;
+	virtual void Stop() = 0;
+};

@@ -17,8 +17,17 @@ UAbstractMap::UAbstractMap() : MapInfo{} {
 // Initializes the component by creating the abstract map and filling the characters starting positions.
 void UAbstractMap::Init() {
 	UE_LOG(LogTemp, Display, TEXT("Initializing abstract map..."));
+	Reset();
 	CreateAbstractMap();
 	FillCharactersStartingPositions();
+}
+
+
+// Empties the abstract map
+void UAbstractMap::Reset() {
+	MapInfo = AbstractMapInfo{};
+	Map.Empty();
+	CharactersPositions.Empty();
 }
 
 
@@ -81,10 +90,21 @@ FString UAbstractMap::ToString() const {
 		res += "\n";
 		for (int iCol = 0; iCol < colsQty; ++iCol) {
 			auto type = Map[iCol][iRow] ? Map[iCol][iRow]->GetType() : ETileType::WALL;
-			res += type == ETileType::WALKABLE ? "O" : type == ETileType::TUNNEL ? "T" : "X";
+			res += type == ETileType::WALKABLE ? "." : type == ETileType::TUNNEL ? "-" : "X";
 		}
 	}
 	return res;
+}
+
+
+// Given a position, returns the corresponding tile.
+const ATile* UAbstractMap::PositionToTile(const FVector& pos) const {
+	auto [colsQty, rowsQty] = MapInfo.Size();
+	auto [iCol, iRow] = PositionToIndex(pos);
+	if (iCol >= 0 && iCol < colsQty && iRow >= 0 && iRow < rowsQty) {
+		return Map[iCol][iRow];
+	}
+	return nullptr;
 }
 
 
@@ -92,25 +112,22 @@ FString UAbstractMap::ToString() const {
 void UAbstractMap::CreateAbstractMap() {
 	// Compute the extents of the map and the tile size
 	MapInfo = AbstractMapInfo{};
-	for (TObjectIterator<ATile> tile; tile; ++tile) {
-		MapInfo.Grow(**tile);
-	}
+	for (TObjectIterator<ATile> tile; tile; ++tile) MapInfo.Grow(**tile);
 
-	// Initialize the abstract map with all walls
+	// Initialize the abstract map (with all walls)
 	auto [colsQty, rowsQty] = MapInfo.Size();
 	TArray<const ATile*> column;
 	column.Init(nullptr, rowsQty);
 	Map.Init(column, colsQty);
 
-	// Actually fill the abstract map (empty tiles can be considered just as walls)
+	// Actually fill the abstract map (empty tiles will be considered just as walls)
 	for (TObjectIterator<ATile> tile; tile; ++tile) {
 		if (tile->GetWorld() != GetWorld()) continue; // Skip objects that are not in the actual scene (maybe they were in the editor or somewhere else)
 		auto [iCol, iRow] = PositionToIndex(tile->GetCenter());
-		checkf(iCol < colsQty || iRow < rowsQty, TEXT("AbstractMap::CreateAbstractMap: index out of bounds."));
+		verifyf(iCol < colsQty || iRow < rowsQty, TEXT("AbstractMap::CreateAbstractMap: index out of bounds."));
 		Map[iCol][iRow] = *tile;
 		tile->Index = { iCol, iRow };
 	}
-
 	UE_LOG(LogTemp, Display, TEXT("%s"), *ToString());
 }
 
@@ -118,7 +135,6 @@ void UAbstractMap::CreateAbstractMap() {
 // Fills the map containing the characters positions.
 void UAbstractMap::FillCharactersStartingPositions() {
 	CharactersPositions = TMap<const ABoardPawn*, FTileIndex>{};
-	//TODO this could also be done by iterating on the BoardPawns variable in PacmanLevelState
 	for (TObjectIterator<ABoardPawn> pawn; pawn; ++pawn) {
 		if (pawn->GetWorld() != GetWorld()) continue; // Skip objects that are not in the actual scene (maybe they were in the editor or somewhere else)
 		auto pawnIndex = pawn->GetSpawnTile()->Index;
@@ -129,7 +145,7 @@ void UAbstractMap::FillCharactersStartingPositions() {
 
 
 // Given a position, returns the index of the corresponding tile.
-FTileIndex UAbstractMap::PositionToIndex(const FVector& pos) {
+FTileIndex UAbstractMap::PositionToIndex(const FVector& pos) const {
 	checkf(MapInfo.IsInitialized(), TEXT("MapInfo not initialized."));
 
 	int row = (pos.X - MapInfo.Min.X) / MapInfo.TileDepth;

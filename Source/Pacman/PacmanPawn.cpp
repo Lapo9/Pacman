@@ -10,6 +10,12 @@ APacmanPawn::APacmanPawn() {
 }
 
 
+void APacmanPawn::Init() {
+	Super::Init();
+	InputDirection = EMovingDirection::EAST;
+}
+
+
 // Called to notify the pawn that it is at the center of the current tile
 void APacmanPawn::OnTileCenter(const AWalkableTile& tile) {
 	Super::OnTileCenter(tile);
@@ -40,6 +46,3 @@ void APacmanPawn::TurnDirection(EMovingDirection dir) {
 
 
 
-void APacmanPawn::BeginPlay() {
-	Super::BeginPlay();
-}

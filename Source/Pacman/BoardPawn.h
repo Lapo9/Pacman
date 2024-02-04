@@ -1,8 +1,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PacmanUtilities.h"
 #include "GameFramework/Pawn.h"
 #include "BoardPawn.generated.h"
+
+
+// Forward declarations
+class AWalkableTile;
+class ATeleportTile;
+class USphereComponent;
+class UBoardPawnMovementComponent;
+
 
 // Tags identifying the various characters
 UENUM()
@@ -30,8 +39,7 @@ enum class EMovingDirection {
 // Thanks to these notifications the BoardPawn can decide how to act based on the position on the maze he is onto. 
 // BoardPawns can also be referred to as "characters" in the codebase.
 UCLASS(Abstract)
-class PACMAN_API ABoardPawn : public APawn
-{
+class PACMAN_API ABoardPawn : public APawn, public IInitializable, public IStartableStoppable {
 	GENERATED_BODY()
 
 public:
@@ -42,20 +50,20 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	virtual void Init() override;
+
+	virtual void Start() override;
+
+	virtual void Stop() override;
+
 	// Called to notify to the pawn that it is at the center of the current tile.
-	virtual void OnTileCenter(const class AWalkableTile& tile);
+	virtual void OnTileCenter(const AWalkableTile& tile);
 
 	// Called to notify the pawn that it left the center of the current tile.
-	virtual void OnLeftTileCenter(const class AWalkableTile& tile);
+	virtual void OnLeftTileCenter(const AWalkableTile& tile);
 
 	// Called to notify the pawn that it entered a new tile.
-	virtual void OnNewTile(const class AWalkableTile& tile);
-
-	// The pawn can now move.
-	virtual void StartMoving();
-
-	// The pawn cannot move anymore.
-	virtual void StopMoving();
+	virtual void OnNewTile(const AWalkableTile& tile);
 
 	// Returns the tag of this BoardPawn.
 	ECharacterTag GetTag() const;
@@ -64,7 +72,7 @@ public:
 	EMovingDirection GetMovingDirection() const;
 
 	// Returns the tile the pawn is onto.
-	const class AWalkableTile* GetCurrentTile() const;
+	const AWalkableTile* GetCurrentTile() const;
 
 	// Returns the location of the central collider.
 	FVector GetCentralColliderLocation() const;
@@ -73,7 +81,7 @@ public:
 	FVector2D GetLocation2d() const;
 
 	// Returns the tile where this BoardPawn spawns in the maze.
-	const class AWalkableTile* GetSpawnTile() const;
+	const AWalkableTile* GetSpawnTile() const;
 
 	// Sets the new location, but leaves the Z component the same.
 	void SetLocation2d(const FVector& newPos);
@@ -82,12 +90,11 @@ public:
 	void SetBaseSpeed(float speed);
 
 protected:
-
 	// Returns the actual speed of the pawn, including the multipliers.
 	virtual float GetActualSpeed(const AWalkableTile& tile) const;
 
 	UPROPERTY(EditInstanceOnly, Category = "Pacman|Maze related") // Where the board pawn spawns
-	class AWalkableTile* SpawnTile;
+	AWalkableTile* SpawnTile;
 
 	UPROPERTY(EditAnywhere, Category = "Pacman") // Tag identifying this BoardPawn.
 	ECharacterTag Tag;
@@ -98,21 +105,18 @@ protected:
 	UPROPERTY(EditAnywhere) // The mesh component.
 	USkeletalMeshComponent* Mesh;
 
-	// The default mesh.
-	USkeletalMesh* DefaultMesh;
-
-	// The default material.
-	TArray<UMaterialInterface*> DefaultMaterials;
+	USkeletalMesh* DefaultMesh; // The default mesh.
+	TArray<UMaterialInterface*> DefaultMaterials; // The default material.
 
 	UPROPERTY(VisibleAnywhere, Category = "Pacman|2D world") // A sphere collider representing the puntual position of this pawn.
-	class USphereComponent* CentralCollider;
+	USphereComponent* CentralCollider;
 
 	UPROPERTY(EditAnywhere, Category = "Pacman") // The collider for the full board pawn.
-	class USphereComponent* FullCollider;
+	USphereComponent* FullCollider;
 
 	// Component responsible to move the pawn.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class UBoardPawnMovementComponent* MovementComponent;
+	UBoardPawnMovementComponent* MovementComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pacman|Movement") // The standard speed of this pawn.
 	float BaseSpeed;
@@ -124,5 +128,5 @@ protected:
 
 public:
 	// Whether the pawn has just been teleported (it is used to avoid infinte teleportation if the teleporting landing tile is a teleport too).
-	const class ATeleportTile* TeleportedFromTile;
+	const ATeleportTile* TeleportedFromTile;
 };

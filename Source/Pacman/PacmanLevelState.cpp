@@ -15,19 +15,22 @@ APacmanLevelState::APacmanLevelState() {
 // Initializes the level state. Should be called before the start of the game. We cannot use BeginPlay because the call order is not defined, and the game state must be initialized before any other actor.
 void APacmanLevelState::Init() {
 	UE_LOG(LogTemp, Display, TEXT("Initializing Pacman level state..."));
-	// Get the game instance
+
+	// Get the game instance and mode for faster access
 	GameInstance = Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance());
 	GameMode = Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode());
 
-	// Set the board pawn present in this level
-	BoardPawns = TArray<ABoardPawn*>{};
-	for (TObjectIterator<ABoardPawn> pawn; pawn; ++pawn) {
-		if (pawn->GetWorld() != GetWorld()) continue; // Skip objects that are not in the actual scene (maybe they were in the editor or somewhere else)
-		BoardPawns.Add(*pawn);
-		UE_LOG(LogTemp, Display, TEXT("Pacman level board pawn added: %s - %s"), *UEnum::GetValueAsString<ECharacterTag>(pawn->GetTag()), *pawn->GetName());
-	}
-
 	Map->Init(); // Fill the abstract map based on the tiles in the level
+
+	// Initialize all the actors that registered during BeginPlay
+	for (auto toInitialize : ActorsToInitialize) toInitialize->Init();
+}
+
+
+// Starts the level by calling Start on all the actors that registered during BeginPlay.
+void APacmanLevelState::Start() {
+	UE_LOG(LogTemp, Display, TEXT("Starting Pacman level state..."))
+	for (auto toStart : ActorsToStart) toStart->Start();
 }
 
 
@@ -115,6 +118,24 @@ const TArray<ABoardPawn*>& APacmanLevelState::GetBoardPawns() const {
 // Returns the available food
 unsigned int APacmanLevelState::GetAvailableFood() const {
 	return AvailableStandardFood;
+}
+
+
+void APacmanLevelState::RegisterForInitialization(IInitializable& actor, bool unregister) const {
+	if (unregister)	ActorsToInitialize.Remove(&actor);
+	else ActorsToInitialize.Add(&actor);
+}
+
+
+void APacmanLevelState::RegisterForStartAndStop(IStartableStoppable& actor, bool unregister) const {
+	if (unregister) ActorsToStart.Remove(&actor);
+	else ActorsToStart.Add(&actor);
+}
+
+
+void APacmanLevelState::RegisterBoardPawn(ABoardPawn& boardPawn) {
+	BoardPawns.Add(&boardPawn);
+	UE_LOG(LogTemp, Display, TEXT("Board pawn registered to level state: %s - %s"), *UEnum::GetValueAsString<ECharacterTag>(boardPawn.GetTag()), *boardPawn.GetName());
 }
 
 

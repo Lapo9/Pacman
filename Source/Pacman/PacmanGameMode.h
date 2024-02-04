@@ -6,6 +6,11 @@
 #include "PacmanGameMode.generated.h"
 
 
+// Forward declarations
+class AGhostPawn;
+enum class EGhostMode;
+
+
 UCLASS()
 class PACMAN_API APacmanGameMode : public AGameModeBase {
 	GENERATED_BODY()
@@ -13,14 +18,17 @@ class PACMAN_API APacmanGameMode : public AGameModeBase {
 public:
 	APacmanGameMode();
 
-	// Called before BeginPlay on each component.
+	// Calls BeginPlay on everything (itself included).
 	virtual void StartPlay() override;
+
+	// Initializes the games state and the mode manager.
+	virtual void Init();
 
 	// Called when Pacman eats a power pellet, turns all ghosts into FRIGHTENED mode (unless they are in DEAD or HOME mode).
 	virtual void NotifyPowerPelletEaten() const;
 
 	// Called when a ghost gets eaten
-	virtual void NotifyGhostEaten(class AGhostPawn& ghost) const;
+	virtual void NotifyGhostEaten(AGhostPawn& ghost) const;
 
 	// Called when a standard food gets eaten
 	virtual void NotifyAvailableFoodDecreasedBy1(unsigned int remainingFood) const;
@@ -35,12 +43,17 @@ public:
 	virtual void NotifyLevelCleared();
 
 	// Sets all the ghosts to the specified mode. The new mode will only be applied to ghosts that are not in the modes specified in the second parameter.
-	virtual void SetGhostsModeUnless(enum class EGhostMode mode, const TArray<enum class EGhostMode>& dontChange = {}) const;
+	virtual void SetGhostsModeUnless(EGhostMode mode, const TArray<EGhostMode>& dontChange = {}) const;
 
 	// Sets a specific ghost to the specified mode, unless the ghost is in one of the modes specified in the second parameter.
-	virtual void SetGhostModeUnless(class AGhostPawn& ghost, enum class EGhostMode mode, const TArray<enum class EGhostMode>& dontChange = {}) const;
+	virtual void SetGhostModeUnless(AGhostPawn& ghost, EGhostMode mode, const TArray<EGhostMode>& dontChange = {}) const;
 
 protected:
+	void LoadLevelSettings();
+
+	// Starts the level (e.g. starts the timers, pawn start moving, ...)
+	void Start();
+
 	UPROPERTY(EditAnywhere, Category = "Time mode manager")
 	UTimeModeManager* TimeModeManager;
 };

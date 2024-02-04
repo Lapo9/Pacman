@@ -169,7 +169,7 @@ void UBoardPawnMovementComponent::RotateTowardsMovement(float deltaTime) {
 
 // Moves the pawn based on speed and direction.
 void UBoardPawnMovementComponent::TickComponent(float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) {
-	if (!CanMove) return;
+	if (!bCanMove) return;
 	if (deltaTime > 0.1f) { UE_LOG(LogTemp, Warning, TEXT("Slow frame skipped: %f seconds"), deltaTime); return; }
 
 	auto rootComponent = GetOwner()->GetRootComponent();

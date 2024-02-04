@@ -2,6 +2,7 @@
 #include "WalkableTile.h"
 #include "BoardPawnMovementComponent.h"
 #include "PacmanSettings.h"
+#include "PacmanLevelState.h"
 #include "Components/SphereComponent.h"
 #include "PacmanSettings.h"
 
@@ -40,22 +41,61 @@ ABoardPawn::ABoardPawn() : ModeSpeedMultiplier{ 1 } {
 // Called when the game starts or when spawned
 void ABoardPawn::BeginPlay() {
 	UE_LOG(LogTemp, Display, TEXT("BeginPlay board pawn %s"), *GetName());
-	Super::BeginPlay();
 
 	// Store the default mesh and material
 	DefaultMesh = Mesh->GetSkeletalMeshAsset();
 	DefaultMaterials = Mesh->GetMaterials();
-
-	CurrentTile = SpawnTile; //Initialize the current tile
-	SetLocation2d(CurrentTile->GetCenter()); // Move the pawn to the spawn tile center (don't touch Z component)
 	
 	// Set the position of the trigger, and its radius
 	auto center = GetActorLocation();
 	CentralCollider->SetWorldLocation(FVector{ center.X, center.Y, Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->FloorHeight }); //Set the z height to the logical floor
 	CentralCollider->SetSphereRadius(Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->PointLikeTriggersRadius);
 
-	// Call the first event to make the pawn start moving. TODO maybe there is a better way to start moving
-	OnTileCenter(*SpawnTile);
+	// Disable triggers
+	CentralCollider->SetGenerateOverlapEvents(false);
+	FullCollider->SetGenerateOverlapEvents(false);
+	MovementComponent->bCanMove = false; // Don't move
+
+	auto& levelState = *Cast<APacmanLevelState>(GetWorld()->GetGameState());
+	levelState.RegisterForInitialization(*Cast<IInitializable>(this)); // Register to receive the initialization call
+	levelState.RegisterForStartAndStop(*Cast<IStartableStoppable>(this)); // Register to receive the start call
+	levelState.RegisterBoardPawn(*this);
+
+	Super::BeginPlay();
+}
+
+
+void ABoardPawn::Init() {
+	UE_LOG(LogTemp, Display, TEXT("Initializing board pawn %s"), *GetName());
+	CurrentTile = SpawnTile;
+	TeleportedFromTile = nullptr;
+	ModeSpeedMultiplier = 1.f;
+	Mesh->SetSkeletalMesh(DefaultMesh);
+	for (int i = 0; auto material : DefaultMaterials) Mesh->SetMaterial(i++, material);
+
+	// Disable triggers
+	CentralCollider->SetGenerateOverlapEvents(false);
+	FullCollider->SetGenerateOverlapEvents(false);
+	MovementComponent->bCanMove = false;
+
+	SetLocation2d(CurrentTile->GetCenter()); // Move the pawn to the spawn tile center (don't touch Z component)
+}
+
+
+void ABoardPawn::Start() {
+	UE_LOG(LogTemp, Display, TEXT("Starting board pawn %s"), *GetName());
+	// Enable triggers
+	CentralCollider->SetGenerateOverlapEvents(true);
+	FullCollider->SetGenerateOverlapEvents(true);
+	MovementComponent->bCanMove = true;
+}
+
+
+void ABoardPawn::Stop() {
+	// Disable triggers
+	CentralCollider->SetGenerateOverlapEvents(false);
+	FullCollider->SetGenerateOverlapEvents(false);
+	MovementComponent->bCanMove = false;
 }
 
 
@@ -79,18 +119,6 @@ void ABoardPawn::OnNewTile(const AWalkableTile& tile) {
 	// Register the new tile and change speed.
 	CurrentTile = &tile;
 	MovementComponent->SetSpeed(GetActualSpeed(tile));
-}
-
-
-// The pawn can now move.
-void ABoardPawn::StartMoving() {
-	MovementComponent->CanMove = true;
-}
-
-
-// The pawn cannot move anymore.
-void ABoardPawn::StopMoving() {
-	MovementComponent->CanMove = false;
 }
 
 
@@ -120,6 +148,10 @@ FVector ABoardPawn::GetCentralColliderLocation() const {
 
 // Sets the new location, but leaves the Z component the same.
 void ABoardPawn::SetLocation2d(const FVector& newPos) {
+	CurrentTile = Cast<AWalkableTile>(Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetAbstractMap().PositionToTile(newPos));
+	verifyf(CurrentTile != nullptr, TEXT("Board pawn %s teleported to non-walkable tile"), *GetName());
+	Cast<APacmanLevelState>(GetWorld()->GetGameState())->UpdateBoardPawnTile(*this, newPos);
+	OnNewTile(*CurrentTile);
 	SetActorLocation(FVector{ newPos.X, newPos.Y, GetActorLocation().Z });
 }
 

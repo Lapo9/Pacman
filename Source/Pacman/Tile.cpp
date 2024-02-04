@@ -1,5 +1,6 @@
 #include "Tile.h"
 #include "PacmanSettings.h"
+#include "PacmanLevelState.h"
 
 
 ATile::ATile() : ATile{ ETileType::WALKABLE } {
@@ -27,7 +28,14 @@ ATile::ATile(ETileType type) : TileType { type } {
 // Called when the game starts or when spawned.
 void ATile::BeginPlay() {
 	UE_LOG(LogTemp, Display, TEXT("BeginPlay tile %s"), *GetName());
-	Super::BeginPlay();	
+	auto& levelState = *Cast<APacmanLevelState>(GetWorld()->GetGameState());
+	levelState.RegisterForInitialization(*this); // Register to receive the initialization call
+	Super::BeginPlay();
+}
+
+
+void ATile::Init() {
+	UE_LOG(LogTemp, Display, TEXT("Initializing tile %s"), *GetName());
 }
 
 

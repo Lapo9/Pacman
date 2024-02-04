@@ -6,8 +6,7 @@
 
 // A Tile not accessible by BoardPawns.
 UCLASS(ClassGroup = Pacman)
-class PACMAN_API AWallTile : public ATile
-{
+class PACMAN_API AWallTile : public ATile {
 	GENERATED_BODY()
 	
 public:

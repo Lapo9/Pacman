@@ -4,6 +4,11 @@
 #include "Components/SphereComponent.h"
 #include "TileCentralTrigger.generated.h"
 
+
+// Forward declarations
+class AWalkableTile;
+
+
 // Trigger responsible to detect when a BoardPawn has reached the center of the Tile.
 UCLASS(ClassGroup = Pacman)
 class PACMAN_API UTileCentralTrigger : public USphereComponent {
@@ -17,11 +22,11 @@ public:
 
 protected:
 	UFUNCTION()	// Called when another component starts overlapping with this one.
-	void OnBeginOverlap(class UPrimitiveComponent* overlappedComponent, class AActor* otherActor, class UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool fromSweep, const FHitResult& sweepResult);
+	void OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool fromSweep, const FHitResult& sweepResult);
 
 	UFUNCTION() // Called when another component ends overlapping with this one.
-	void OnEndOverlap(class UPrimitiveComponent* overlappedComponent, class AActor* otherActor, class UPrimitiveComponent* otherComponent, int32 otherBodyIndex);
+	void OnEndOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex);
 
 private:
-	const class AWalkableTile* Tile; // The tile this trigger is on
+	const AWalkableTile* Tile; // The tile this trigger is on
 };

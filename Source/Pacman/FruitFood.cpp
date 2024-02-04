@@ -1,6 +1,7 @@
 #include "FruitFood.h"
 #include "PacmanPawn.h"
 #include "PacmanLevelState.h"
+#include "PacmanUtilities.h"
 
 
 AFruitFood::AFruitFood() {
@@ -11,6 +12,12 @@ AFruitFood::AFruitFood() {
 
 void AFruitFood::Tick(float deltaTime) {
 	AddActorLocalRotation(FRotator{ 0.f, deltaTime * RotationSpeed, 0.f }); // Rotate the fruit (just an animation)
+}
+
+
+void AFruitFood::AutoDestroy() {
+	GetWorld()->GetTimerManager().ClearTimer(Timer);
+	Super::AutoDestroy();
 }
 
 

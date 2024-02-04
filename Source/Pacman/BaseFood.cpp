@@ -16,10 +16,9 @@ ABaseFood::ABaseFood() {
 
 
 void ABaseFood::BeginPlay() {
-	Super::BeginPlay();
-
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &ABaseFood::OnBeginOverlap); // For whatever reason this must stay here and not in the ctor
 	LevelState = Cast<APacmanLevelState>(GetWorld()->GetGameState());
+	Super::BeginPlay();
 }
 
 void ABaseFood::AutoDestroy() {

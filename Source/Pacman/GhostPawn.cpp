@@ -14,14 +14,20 @@ AGhostPawn::AGhostPawn() : OnBeginOverlapImpl{ [](AActor* otherActor, UPrimitive
 
 
 void AGhostPawn::BeginPlay() {
+	Super::BeginPlay();
 	FullCollider->OnComponentBeginOverlap.AddDynamic(this, &AGhostPawn::OnBeginOverlap); // Register how to react to overlap
 
 	// Spawn a new AI controller and make it possess this pawn
 	AiController = Cast<AGhostAiController>(GetWorld()->SpawnActor(AGhostAiController::StaticClass()));
 	AiController->SetMode(*HomeModeSettings); // Set home as first default mode (it will be immediately changed by the TimeModeManager component)
 	AiController->Possess(this);
+}
 
-	Super::BeginPlay();
+
+void AGhostPawn::Init() {
+	Super::Init();
+
+	SetMode(EGhostMode::HOME); // Set home as first default mode (it will be immediately changed by the TimeModeManager component)
 }
 
 
@@ -99,7 +105,7 @@ UGhostModeData* AGhostPawn::TranslateModeTagToMode(EGhostMode modeTag) const {
 
 
 void AGhostPawn::SetMode(EGhostMode mode) {
-	UE_LOG(LogTemp, Display, TEXT("Setting ghost %s to mode %s"), *GetName(), *UEnum::GetValueAsString<EGhostMode>(mode));
+	UE_LOG(LogTemp, Display, TEXT("Setting ghost %s to mode %s (from mode %s)"), *GetName(), *UEnum::GetValueAsString<EGhostMode>(mode), *UEnum::GetValueAsString<EGhostMode>(CurrentMode));
 	UGhostModeData* modeData = TranslateModeTagToMode(mode);
 	if (modeData == nullptr) return;
 

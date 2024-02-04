@@ -2,16 +2,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "AbstractMap.h"
 #include "PacmanUtilities.h"
+#include "AbstractMap.h"
 #include "Tile.generated.h"
+
+
+// Forward declarations
+enum class ETileType;
 
 
 // A Tile is the base class for one cell of the Pacman maze.
 // Subclasses can be placed on the level to make up the maze, that is then managed by the AbstractMap.
 // All the Tiles in the level must have the same dimensions in the X and Y directions.
 UCLASS(Abstract)
-class PACMAN_API ATile : public AActor {
+class PACMAN_API ATile : public AActor, public IInitializable {
 	GENERATED_BODY()
 	
 public:	
@@ -22,6 +26,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	virtual void Init() override;
 
 	// Returns the coordinates of the logical center of the tile.
 	FVector GetCenter() const;
@@ -33,7 +38,7 @@ public:
 	virtual FVector GetExtents() const;
 
 	// Returns the type of the tile.
-	enum class ETileType GetType() const;
+	ETileType GetType() const;
 
 protected:
 	UPROPERTY(VisibleAnywhere) // Component to place this actor on the scene.

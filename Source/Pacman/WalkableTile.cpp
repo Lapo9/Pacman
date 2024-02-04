@@ -32,8 +32,13 @@ void AWalkableTile::BeginPlay() {
 	// Initialize triggers
 	CentralTrigger->Init(*this);
 	FullTrigger->Init(*this);
+}
 
+
+void AWalkableTile::Init() {
+	Super::Init();
 	// Spawn the food (if required)
+	if(SpawnedFood) SpawnedFood->AutoDestroy();
 	SpawnFood();
 }
 
@@ -67,5 +72,5 @@ float AWalkableTile::GetSpeedMultiplier() const {
 void AWalkableTile::SpawnFood() const {
 	if (!FoodToSpawn) return;
 	FTransform transform{ GetActorRotation(), GetActorLocation() + FVector{ 0,0, DistanceFromTile }, GetActorScale() }; // Spawn above the tile
-	auto Food = GetWorld()->SpawnActor<ABaseFood>(FoodToSpawn->GetAuthoritativeClass(), transform);
+	SpawnedFood = GetWorld()->SpawnActor<ABaseFood>(FoodToSpawn->GetAuthoritativeClass(), transform);
 }

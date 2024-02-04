@@ -11,9 +11,12 @@ UCLASS()
 class PACMAN_API AFruitFood : public ABaseFood {
 	GENERATED_BODY()
 
+public:
 	AFruitFood();
 
 	virtual void Tick(float deltaTime) override;
+
+	virtual void AutoDestroy() override;
 	
 protected:
 	virtual void BeginPlay() override;

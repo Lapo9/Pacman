@@ -16,28 +16,31 @@ APacmanGameMode::APacmanGameMode() {
 
 
 void APacmanGameMode::StartPlay() {
-	UE_LOG(LogTemp, Display, TEXT("APacmanGameMode::StartPlay"));
-	Cast<APacmanLevelState>(GameState)->Init(); // Initialize the state
-	
-	// Set the settings for this level, based on the level number we are into
-	auto& levelsSettings = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->LevelsSettings;
-	auto levelSettings = levelsSettings[FMath::Max(levelsSettings.Num() - 1, (int)Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->GetLevel())];
-	TimeModeManager->SetSettings(levelSettings);
-	
-	// Activate all board pawns and set their speeds
-	for (auto& pawnItem : levelSettings->GhostsSchedule) {
-		pawnItem.Ghost->SetBaseSpeed(pawnItem.BaseSpeed);
-	}
-	const auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
-	for (auto& pawn : boardPawns) {
-		pawn->StartMoving(); // Start gameplay
-		if (pawn->IsA(APacmanPawn::StaticClass())) {
-			pawn->SetBaseSpeed(levelSettings->PacmanBaseSpeed);
-		}
-	}
+	UE_LOG(LogTemp, Display, TEXT("APacmanGameMode::StartPlay called"));
 	Super::StartPlay(); // This will call all the BeginPlay() functions
+	Init(); // Initialize the state and the mode manager (here we are sure that BeginPlay has already been executed on everything)
+	
+	//TODO will receive input from menu
+	FTimerHandle startTimer;
+	GetWorld()->GetTimerManager().SetTimer(startTimer, this, &APacmanGameMode::Start, 5.f, false);
+}
 
-	TimeModeManager->Start(); // Start play
+
+// Initializes the games state and the mode manager.
+void APacmanGameMode::Init() {
+	UE_LOG(LogTemp, Display, TEXT("Initializing Pacman game mode..."));
+	Cast<APacmanLevelState>(GameState)->Init();
+	auto& levelsSettings = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->LevelsSettings;
+	TimeModeManager->Init(levelsSettings[FMath::Min(levelsSettings.Num() - 1, (int)Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->GetLevel())]);
+	UE_LOG(LogTemp, Display, TEXT("Initialization done!"));
+}
+
+
+void APacmanGameMode::Start() {
+	UE_LOG(LogTemp, Display, TEXT("Starting Pacman game mode..."));
+	Cast<APacmanLevelState>(GameState)->Start(); // Start the actors
+	TimeModeManager->Start(); // Start the schedules
+	UE_LOG(LogTemp, Display, TEXT("Starting phase done!"));
 }
 
 
@@ -73,14 +76,14 @@ void APacmanGameMode::NotifyPacmanDead() {
 	// Stop all pawns
 	const auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
 	for (auto& pawn : boardPawns) {
-		pawn->StopMoving();
+		pawn->Stop();
 	}
 	//TODO Pacman and ghosts should play an animation/sound + something should appear on screen
 
 	auto restart = [&boardPawns]() {
 		for (auto& pawn : boardPawns) {
+			pawn->Start(); // Resume gameplay
 			pawn->SetLocation2d(pawn->GetSpawnTile()->GetActorLocation()); // Place the pawn at the spawn
-			pawn->StartMoving(); // Resume gameplay
 		}};
 
 	FTimerHandle timer;
@@ -91,16 +94,32 @@ void APacmanGameMode::NotifyPacmanDead() {
 void APacmanGameMode::NotifyGameOver() {
 	TimeModeManager->NotifyLevelEnded(); // Basically stops all timers
 	auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
-	for (auto pawn : boardPawns) pawn->StopMoving();
+	for (auto pawn : boardPawns) pawn->Stop();
 	//TODO
 	// Show point screen
 }
 
 
 void APacmanGameMode::NotifyLevelCleared() {
+	auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
+	for (auto& pawn : boardPawns) {
+		pawn->Stop(); // Resume gameplay
+	}
+
 	TimeModeManager->NotifyLevelEnded(); // Basically stops all timers
-	// TODO
-	// Load next level
+	Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->LevelEnded(true); // Notify the game instance
+
+	// Initialize mew level TODO
+	FTimerHandle timer;
+	GetWorld()->GetTimerManager().SetTimer(timer, [this]() {Init(); Start();}, 2.f, false);
+}
+
+
+void APacmanGameMode::LoadLevelSettings() {
+	// Set the settings for this level, based on the level number we are into
+	auto& levelsSettings = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->LevelsSettings;
+	auto levelSettings = levelsSettings[FMath::Max(levelsSettings.Num() - 1, (int)Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->GetLevel())];
+	TimeModeManager->Init(levelSettings); // Set all the settings in the specified classes (e.g. sets the speed variable in a ghost)
 }
 
 

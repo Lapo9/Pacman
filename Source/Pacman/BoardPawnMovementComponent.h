@@ -90,5 +90,5 @@ protected:
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pacman|Real-time info")
-	bool CanMove; // Whether the pawn can move or not.
+	bool bCanMove; // Whether the pawn can move or not.
 };

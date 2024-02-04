@@ -7,8 +7,12 @@
 #include "TimeModeManager.generated.h"
 
 
+// Forward declarations
+class APacmanGameMode;
+
+
 // Class responsible to change modes, activate ghosts and spawn fruits based on the time passed in the level.
-// Before using this object it is important to bind a LevelSettings object via SetSettings.
+// Before using this object it is important to bind a LevelSettings object via Init.
 UCLASS()
 class PACMAN_API UTimeModeManager : public UActorComponent {
 	GENERATED_BODY()
@@ -19,11 +23,12 @@ public:
 	// Returns the current mode.
 	virtual EGhostMode GetCurrentMode();
 
-	// Binds the ghost, fruit and modes schedule to this component.
-	virtual void SetSettings(ULevelSettings* settings);
+	// Resets the component and loads the specified settings to the ghosts, Pacman and initializes the schedules. Doesn't start the timers.
+	virtual void Init(ULevelSettings* settings);
 
 	// Starts the level.
 	virtual void Start();
+
 
 	// Should be called when a ghost dies.
 	virtual void NotifyGhostDied(AGhostPawn& ghost);
@@ -40,9 +45,10 @@ public:
 	// Should be called when the level ends, for whatever reason.
 	virtual void NotifyLevelEnded();
 
+
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	// Resets all the timers and counters in the level.
+	virtual void Reset();
 
 	// Starts the next timer for the modes.
 	virtual void StartNextModeTimer();
@@ -66,7 +72,7 @@ protected:
 
 	FTimerHandle PowerPelletTimer;
 
-	bool Started;
+	bool bStarted; // Has the level already started?
 
-	class APacmanGameMode* GameMode;
+	APacmanGameMode* GameMode; // The game mode that owns this component
 };

@@ -6,6 +6,12 @@
 #include "WalkableTile.generated.h"
 
 
+// Forward declarations
+class ABoardPawn;
+class UTileCentralTrigger;
+class UTileFullTrigger;
+
+
 // A Tile where BoardPawns can walk on. 
 // It is responsible to detect 2 events:
 // 1) When a BoardPawn leaves the WalkableTile, it notifies this event to the AbstractMap and to the BoardPawn itself.
@@ -27,14 +33,16 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	virtual void Init() override;
+
 	// Should be called by the central trigger when a pawn hit it.
-	virtual void PawnOnTileCenter(class ABoardPawn& pawn) const;
+	virtual void PawnOnTileCenter(ABoardPawn& pawn) const;
 
 	// Should be called by the central trigger when a pawn leaves it.
-	virtual void PawnLeftTileCenter(class ABoardPawn& pawn) const;
+	virtual void PawnLeftTileCenter(ABoardPawn& pawn) const;
 
 	// Should be called by the full trigger when a pawn left the tile.
-	virtual void PawnLeftTile(class ABoardPawn& pawn) const;
+	virtual void PawnLeftTile(ABoardPawn& pawn) const;
 
 	// Returns the value to increase or decrease the speed of a BoardPawn on this tile.
 	float GetSpeedMultiplier() const;
@@ -44,13 +52,14 @@ protected:
 	void SpawnFood() const;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pacman|Triggers") // Trigger placed on the center of the tile.
-	class UTileCentralTrigger* CentralTrigger; 
+	UTileCentralTrigger* CentralTrigger; 
 
 	UPROPERTY(VisibleAnywhere, Category = "Pacman|Triggers") // Trigger to detect anithing entering the tile.
-	class UTileFullTrigger* FullTrigger; 
+	UTileFullTrigger* FullTrigger; 
 
 	UPROPERTY(EditAnywhere, Category = "Pacman|Point system") // Which point this tile should spawn.
 	TSubclassOf<ABaseFood> FoodToSpawn;
+	mutable ABaseFood* SpawnedFood;
 
 	UPROPERTY(EditAnywhere, Category = "Pacman|Point system") // How much the food should be spawned over the tile.
 	float DistanceFromTile;
