@@ -15,6 +15,7 @@ void APacmanPlayerController::BeginPlay() {
 		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()) {
 			if (InputMappingContext) {
 				InputSystem->AddMappingContext(InputMappingContext, 1);
+				
 			}
 		}
 	}

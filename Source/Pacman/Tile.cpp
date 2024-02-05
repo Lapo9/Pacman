@@ -57,7 +57,7 @@ FVector2D ATile::GetLocation2d() const {
 FVector ATile::GetExtents() const {
 	if (Mesh == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("Mesh of %s is nullptr"), *GetName());
-		return FVector{ 50.f,50.f,10.f }; // TODO
+		return FVector{ 50.f,50.f,10.f }; // TODO this line avoids crashes, but it assumes all the tiles are 100x100. With the new Init/Start phase this bug seems gone tho
 	}
 	FVector min, max;
 	Mesh->GetLocalBounds(min, max);
