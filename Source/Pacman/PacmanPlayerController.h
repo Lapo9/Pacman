@@ -17,12 +17,18 @@ public:
 
 	virtual void SetupInputComponent() override;
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeInputMappingContext(UInputMappingContext* context);
 
 protected:
 	void TurnNorth(const struct FInputActionValue& Value);
 	void TurnEast(const struct FInputActionValue& Value);
 	void TurnSouth(const struct FInputActionValue& Value);
 	void TurnWest(const struct FInputActionValue& Value);
+	void PauseGameplay(const struct FInputActionValue& Value);
+	void ResumeGameplay(const struct FInputActionValue& Value);
+	void SkipGameOverScreen(const struct FInputActionValue& Value);
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UInputMappingContext* InputMappingContext;
@@ -38,10 +44,13 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UInputAction* InputToTurnWest;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UInputAction* InputToPause;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UInputAction* InputToResume;
+	class UInputAction* InputToPauseGameplay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UInputAction* InputToResumeGameplay;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UInputAction* InputToSkipGameOverScreen;
 };

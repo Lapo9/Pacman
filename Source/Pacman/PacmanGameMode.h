@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "TimeModeManager.h"
+#include "UiManager.h"
 #include "GameFramework/GameModeBase.h"
 #include "PacmanGameMode.generated.h"
 
@@ -23,6 +24,9 @@ public:
 
 	// Initializes the games state and the mode manager.
 	virtual void Init();
+	
+	// Starts the level (e.g. starts the timers, pawn start moving, ...)
+	virtual void Start();
 
 	// Called when Pacman eats a power pellet, turns all ghosts into FRIGHTENED mode (unless they are in DEAD or HOME mode).
 	virtual void NotifyPowerPelletEaten() const;
@@ -48,12 +52,15 @@ public:
 	// Sets a specific ghost to the specified mode, unless the ghost is in one of the modes specified in the second parameter.
 	virtual void SetGhostModeUnless(AGhostPawn& ghost, EGhostMode mode, const TArray<EGhostMode>& dontChange = {}) const;
 
+	// Returns the UI manager.
+	virtual UUiManager* GetUiManager();
+
 protected:
 	void LoadLevelSettings();
-	
-	UFUNCTION(BlueprintCallable) // Starts the level (e.g. starts the timers, pawn start moving, ...)
-	void Start();
 
 	UPROPERTY(EditAnywhere, Category = "Time mode manager")
 	UTimeModeManager* TimeModeManager;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI manager")
+	UUiManager* UiManager;
 };

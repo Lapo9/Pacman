@@ -65,12 +65,15 @@ const AWalkableTile& UAbstractMap::GetCharacterTile(const ABoardPawn& pawn) cons
 
 
 // Updates the index of the tile the specified charater is on, and returns the new tile (it must be a walkable tile).
-const AWalkableTile& UAbstractMap::UpdateCharacterTile(const ABoardPawn& pawn, const FVector& position) {
+const AWalkableTile* UAbstractMap::UpdateCharacterTile(const ABoardPawn& pawn, const FVector& position) {
 	auto newTileIndex = PositionToIndex(position);
 	auto newTile = Map[newTileIndex.Col][newTileIndex.Row];
-	verifyf(newTile->IsA(AWalkableTile::StaticClass()), TEXT("A board pawn tried to go on a non-walkable tile at position <%f, %f>"), position.X, position.Y);
+	if (!newTile->IsA(AWalkableTile::StaticClass())) {
+		UE_LOG(LogTemp, Error, TEXT("A board pawn tried to go on a non-walkable tile at position <%f, %f>"), position.X, position.Y);
+		return nullptr;
+	}
 	CharactersPositions[&pawn] = newTileIndex;
-	return *Cast<AWalkableTile>(newTile);
+	return Cast<AWalkableTile>(newTile);
 }
 
 

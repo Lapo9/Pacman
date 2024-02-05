@@ -36,7 +36,7 @@ public:
 	// These functions are called by other actors to update the game state
 
 	// Updates the tile where the specified BoardPawn in the AbstractMap, and returns the new tile.
-	const AWalkableTile& UpdateBoardPawnTile(const ABoardPawn& pawn, const FVector& position);
+	const AWalkableTile* UpdateBoardPawnTile(const ABoardPawn& pawn, const FVector& position);
 
 	// Should be called when a standard food is eaten by Pacman.
 	void NotifyStandardFoodEaten(unsigned int value);

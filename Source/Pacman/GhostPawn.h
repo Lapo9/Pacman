@@ -35,7 +35,7 @@ public:
 	virtual void OnTileCenter(const AWalkableTile& tile) override;
 
 	// Called to notify the pawn that it entered a new tile.
-	virtual void OnNewTile(const AWalkableTile& tile) override;
+	virtual void OnNewTile(const AWalkableTile* tile) override;
 
 	// Sets the mode.
 	virtual void SetMode(EGhostMode mode);

@@ -20,3 +20,4 @@ void UPacmanGameInstance::AddPoints(unsigned int value) {
 	Points += value;
 	UE_LOG(LogTemp, Display, TEXT("Points: %i"), Points);
 }
+

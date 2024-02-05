@@ -38,7 +38,7 @@ public:
 	TMap<enum EMovingDirection, const ATile*> GetSurroundingTiles(const ABoardPawn& pawn) const;
 
 	// Updates the index of the tile the specified charater is on, and returns the new tile (it must be a walkable tile).
-	const AWalkableTile& UpdateCharacterTile(const ABoardPawn& pawn, const FVector& position);
+	const AWalkableTile* UpdateCharacterTile(const ABoardPawn& pawn, const FVector& position);
 
 	// Returns the size of the map.
 	FTileIndex GetSize() const;

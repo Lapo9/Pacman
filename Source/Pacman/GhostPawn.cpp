@@ -37,18 +37,16 @@ void AGhostPawn::Start() {
 
 
 void AGhostPawn::OnTileCenter(const AWalkableTile& tile) {
-	Super::OnTileCenter(tile);
-
 	AiController->GhostOnTileCenter(tile);
-	MovementComponent->OnTileCenter(tile);
+	Super::OnTileCenter(tile);
 }
 
 
-void AGhostPawn::OnNewTile(const AWalkableTile& tile) {
+void AGhostPawn::OnNewTile(const AWalkableTile* tile) {
 	Super::OnNewTile(tile);
 
 	// If the ghost was in DEAD mode, and reached its respawn tile, go in HOME mode and teleport to the home tile
-	if (CurrentMode == EGhostMode::DEAD && &tile == RespawnTile) {
+	if (CurrentMode == EGhostMode::DEAD && tile == RespawnTile) {
 		SetLocation2d(HomeTile->GetCenter());
 		SetMode(EGhostMode::HOME);
 	}

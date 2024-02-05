@@ -13,7 +13,6 @@ class PACMAN_API UPacmanGameInstance : public UGameInstance
 public:
 	virtual unsigned int GetLevel() const;
 	virtual void LevelEnded(bool win);
-
 	virtual void AddPoints(unsigned int value);
 
 	UPROPERTY(BlueprintReadOnly)

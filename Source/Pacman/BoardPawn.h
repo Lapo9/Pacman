@@ -63,7 +63,7 @@ public:
 	virtual void OnLeftTileCenter(const AWalkableTile& tile);
 
 	// Called to notify the pawn that it entered a new tile.
-	virtual void OnNewTile(const AWalkableTile& tile);
+	virtual void OnNewTile(const AWalkableTile* tile);
 
 	// Returns the tag of this BoardPawn.
 	ECharacterTag GetTag() const;

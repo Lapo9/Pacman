@@ -12,6 +12,7 @@ APacmanGameMode::APacmanGameMode() {
 	PlayerControllerClass = APacmanPlayerController::StaticClass();
 
 	TimeModeManager = CreateDefaultSubobject<UTimeModeManager>(TEXT("TimeModeManager"));
+	UiManager = CreateDefaultSubobject<UUiManager>(TEXT("UiManager"));
 }
 
 
@@ -121,6 +122,11 @@ void APacmanGameMode::LoadLevelSettings() {
 
 void APacmanGameMode::SetGhostModeUnless(AGhostPawn& ghost, EGhostMode mode, const TArray<EGhostMode>& dontChange) const {
 	if (!dontChange.Contains(ghost.GetMode())) ghost.SetMode(mode);
+}
+
+
+UUiManager* APacmanGameMode::GetUiManager() {
+	return UiManager;
 }
 
 

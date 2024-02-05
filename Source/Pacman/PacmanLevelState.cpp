@@ -157,6 +157,6 @@ TMap<EMovingDirection, const class ATile*> APacmanLevelState::GetSurroundingTile
 
 
 // Updates the tile of a BoardPawn in the AbstractMap, and returns the new tile.
-const AWalkableTile& APacmanLevelState::UpdateBoardPawnTile(const ABoardPawn& pawn, const FVector& position) {
+const AWalkableTile* APacmanLevelState::UpdateBoardPawnTile(const ABoardPawn& pawn, const FVector& position) {
 	return Map->UpdateCharacterTile(pawn, position);
 }

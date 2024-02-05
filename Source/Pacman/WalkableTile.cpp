@@ -57,7 +57,7 @@ void AWalkableTile::PawnLeftTileCenter(ABoardPawn& pawn) const {
 
 // Should be called by the full trigger when a pawn left the tile.
 void AWalkableTile::PawnLeftTile(ABoardPawn& pawn) const {
-	const AWalkableTile& newTile = Cast<APacmanLevelState>(GetWorld()->GetGameState())->UpdateBoardPawnTile(pawn, pawn.GetActorLocation()); // Update the map
+	const AWalkableTile* newTile = Cast<APacmanLevelState>(GetWorld()->GetGameState())->UpdateBoardPawnTile(pawn, pawn.GetActorLocation()); // Update the map
 	pawn.OnNewTile(newTile); // Notify the pawn
 }
 

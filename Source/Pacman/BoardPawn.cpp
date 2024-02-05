@@ -102,23 +102,26 @@ void ABoardPawn::Stop() {
 // Called to notify to the pawn that it is at the center of the current tile.
 void ABoardPawn::OnTileCenter(const AWalkableTile& tile) {
 	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on tile center %s"), *GetName(), *tile.GetName());
-	//MovementComponent->SetSpeed(GetActualSpeed(tile)); // Set the speed of the ghost based on the tile he is on
+	MovementComponent->OnTileCenter(tile); // Notify to the movement component that the pawn reached the center of the tile
 }
 
 
 // Called to notify the pawn that it left the center of the current tile.
 void ABoardPawn::OnLeftTileCenter(const AWalkableTile& tile) {
 	TeleportedFromTile = nullptr; // The pawn can be teleported again.
-	MovementComponent->OnLeftTileCenter(); // Notify the movement component that the pawn left the tile center (it uses this event to handle some logic of spurious on tile center events)
+	MovementComponent->OnLeftTileCenter(); // Notify the movement component that the pawn left the tile center (it uses this event to handle some logic of spurious OnTileCenter events)
 }
 
 
 // Called to notify the pawn that it entered a new tile.
-void ABoardPawn::OnNewTile(const AWalkableTile& tile) {
-	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on new tile %s"), *GetName(), *tile.GetName());
+void ABoardPawn::OnNewTile(const AWalkableTile* tile) {
+	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on new tile %s"), *GetName(), *tile->GetName());
+	// If the new tile is null, it means there was a problem, therefore go back to the last tile
+	if (!tile) SetLocation2d(CurrentTile->GetCenter());
 	// Register the new tile and change speed.
-	CurrentTile = &tile;
-	MovementComponent->SetSpeed(GetActualSpeed(tile));
+	else CurrentTile = tile;
+
+	MovementComponent->SetSpeed(GetActualSpeed(*tile));
 }
 
 
@@ -151,7 +154,7 @@ void ABoardPawn::SetLocation2d(const FVector& newPos) {
 	CurrentTile = Cast<AWalkableTile>(Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetAbstractMap().PositionToTile(newPos));
 	verifyf(CurrentTile != nullptr, TEXT("Board pawn %s teleported to non-walkable tile"), *GetName());
 	Cast<APacmanLevelState>(GetWorld()->GetGameState())->UpdateBoardPawnTile(*this, newPos);
-	OnNewTile(*CurrentTile);
+	OnNewTile(CurrentTile);
 	SetActorLocation(FVector{ newPos.X, newPos.Y, GetActorLocation().Z });
 }
 
