@@ -39,9 +39,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UInputAction* InputToTurnWest;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//class UInputAction* InputToPause;
-	//
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//class UInputAction* InputToResume;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UInputAction* InputToPause;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UInputAction* InputToResume;
 };

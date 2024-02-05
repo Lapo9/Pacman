@@ -102,7 +102,7 @@ void ABoardPawn::Stop() {
 // Called to notify to the pawn that it is at the center of the current tile.
 void ABoardPawn::OnTileCenter(const AWalkableTile& tile) {
 	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on tile center %s"), *GetName(), *tile.GetName());
-	MovementComponent->SetSpeed(GetActualSpeed(tile)); // Set the speed of the ghost based on the tile he is on
+	//MovementComponent->SetSpeed(GetActualSpeed(tile)); // Set the speed of the ghost based on the tile he is on
 }
 
 

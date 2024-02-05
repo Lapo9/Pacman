@@ -23,6 +23,7 @@ void APacmanPawn::OnTileCenter(const AWalkableTile& tile) {
 	// If the input direction is valid, go in that direction
 	if (Util::IsTileWalkable(surroundingTiles[InputDirection])) {
 		MovementComponent->SetMovingDirection(InputDirection);
+		MovementComponent->SetSpeed(GetActualSpeed(tile));
 	}
 	// Notify to the movement component that the pawn reached the center of the tile
 	MovementComponent->OnTileCenter(tile);
