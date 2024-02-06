@@ -12,6 +12,11 @@
 				"Engine",
 				"AIModule"
 			]
+		},
+		{
+			"Name": "PacmanEditor",
+			"Type": "Editor",
+			"LoadingPhase":  "PostEngineInit"
 		}
 	],
 	"Plugins": [
