@@ -31,4 +31,6 @@ public:
 
 private:
     FPathPoint* SelectedPathPoint;
+
+    FVector PathOrigin; // The path points can be in world coordinates or in local coordinates
 };

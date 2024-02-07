@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Components/SceneComponent.h"
 #include "ActorPath.generated.h"
 
 
@@ -24,8 +24,9 @@ struct PACMAN_API FPathPoint {
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float RestTimeOnWayBack; // Same as above, but applied when the actor is on the way back (only relevant if Rewind is true in the corresponding ActorPath).
 
-	UPROPERTY(VisibleAnywhere, Category = "Real-time info")
 	float DistanceToNextPathPoint;
+
+	FVector GetLocation(FVector origin = FVector{0.f,0.f,0.f}) const { return origin + Location; }
 };
 
 
@@ -42,7 +43,13 @@ public:
 	virtual void TickComponent(float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) override;
 
 	const FLinearColor& GetGizmoColor() const;
+
+	FVector GetPathOrigin() const;
 	
+#if WITH_EDITOR
+	void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
+#endif
+
 	UPROPERTY(EditAnywhere)
 	mutable TArray<FPathPoint> PathPoints;
 
@@ -62,6 +69,8 @@ protected:
 	// Called when the actor must move again after he woke up from the rest on a path point
 	virtual void ResumeAfterRest(int index);
 	
+	UPROPERTY(EditAnywhere)
+	bool bInObjectLocalSpace; // Whether the path points are in world space or in local space.
 
 	UPROPERTY(EditAnywhere)
 	bool bRewind; // Should the actor follow the path backwards once he reaches the last point? Or should he be teleported to the first point?
@@ -95,4 +104,8 @@ protected:
 	float PointLikeThreshold; // How close to the next point to consider it an overlap.
 
 	FTimerHandle RestTimer;
+
+	float DistanceToCurrentPathPointLastFrame; // The last distance from the current targeted path point
+
+	FVector PathOrigin; // The origin of the path (can be in local space or in world space)
 };
