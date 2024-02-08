@@ -93,7 +93,8 @@ void APacmanGameMode::NotifyGameOver() {
 	TimeModeManager->NotifyLevelEnded(); // Basically stops all timers
 	auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
 	for (auto pawn : boardPawns) pawn->Stop();
-	//TODO Show point screen
+	
+	UiManager->ShowGameOverScreen();
 }
 
 

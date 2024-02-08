@@ -85,9 +85,9 @@ void ABoardPawn::Init() {
 void ABoardPawn::Start() {
 	UE_LOG(LogTemp, Display, TEXT("Starting board pawn %s"), *GetName());
 	// Enable triggers
+	MovementComponent->bCanMove = true;
 	CentralCollider->SetGenerateOverlapEvents(true);
 	FullCollider->SetGenerateOverlapEvents(true);
-	MovementComponent->bCanMove = true;
 }
 
 

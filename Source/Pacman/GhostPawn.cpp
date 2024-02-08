@@ -33,6 +33,7 @@ void AGhostPawn::Init() {
 void AGhostPawn::Start() {
 	Super::Start();
 	SetMode(EGhostMode::HOME); // Set home as first default mode (it will be immediately changed by the TimeModeManager component)
+	OnNewTile(CurrentTile);
 }
 
 

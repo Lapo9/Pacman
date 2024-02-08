@@ -19,21 +19,28 @@ void UUiManager::BeginPlay() {
 	GameOverScreen = CreateWidget(GetWorld(), GameOverScreenClass);
 
 	if (MainMenu == nullptr) { UE_LOG(LogTemp, Error, TEXT("Couldn't create main menu")); }
-	else MainMenu->AddToViewport();
+	else {
+		MainMenu->AddToViewport();
+		Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController())->bShowMouseCursor = true;
+	}
 }
 
 
 void UUiManager::Play() {
 	MainMenu->RemoveFromParent();
 	Hud->AddToViewport();
-	Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController())->ChangeInputMappingContext(HudContext); // Set the input mapping context
+	auto* playerController = Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController());
+	playerController->ChangeInputMappingContext(HudContext); // Set the input mapping context
+	playerController->bShowMouseCursor = false; // Hide the mouse
 	Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->Start(); // Start play
 }
 
 
 void UUiManager::Pause() {
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
-	Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController())->ChangeInputMappingContext(PauseMenuContext); // Set the input mapping context
+	auto* playerController = Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController());
+	playerController->ChangeInputMappingContext(PauseMenuContext); // Set the input mapping context
+	playerController->bShowMouseCursor = true;
 	Hud->RemoveFromParent();
 	PauseMenu->AddToViewport();
 }
@@ -42,7 +49,9 @@ void UUiManager::Pause() {
 void UUiManager::Resume() {
 	PauseMenu->RemoveFromParent();
 	Hud->AddToViewport();
-	Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController())->ChangeInputMappingContext(HudContext); // Set the input mapping context
+	auto* playerController = Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController());
+	playerController->ChangeInputMappingContext(HudContext); // Set the input mapping context
+	playerController->bShowMouseCursor = false;
 	UGameplayStatics::SetGamePaused(GetWorld(), false);
 }
 
@@ -57,5 +66,7 @@ void UUiManager::ShowGameOverScreen() {
 void UUiManager::ShowMainMenu() {
 	GameOverScreen->RemoveFromParent();
 	MainMenu->AddToViewport();
-	Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController())->ChangeInputMappingContext(MainMenuContext); // Set the input mapping context
+	auto* playerController = Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController());
+	playerController->ChangeInputMappingContext(MainMenuContext); // Set the input mapping context
+	playerController->bShowMouseCursor = true;
 }

@@ -4,7 +4,11 @@
 #include "PacmanUtilities.h"
 #include "GhostsTargetAcquisitions.generated.h"
 
-#define GHOST_TARGET_ACQUISITION_PARAMS const class APacmanLevelState& levelState, const class AGhostPawn& itself
+// Forward declarations
+class APacmanLevelState;
+class AGhostPawn;
+
+#define GHOST_TARGET_ACQUISITION_PARAMS const APacmanLevelState& levelState, const AGhostPawn& itself
 
 
 UCLASS(Abstract)
@@ -77,3 +81,16 @@ class PACMAN_API UGhostTargetAcquisitionHome final : public UGhostTargetAcquisit
 public:
 	FTileIndex AcquireTarget(GHOST_TARGET_ACQUISITION_PARAMS) const;
 };
+
+
+
+namespace TargetAcquisitionFunctions {
+	FTileIndex Blinky(GHOST_TARGET_ACQUISITION_PARAMS);
+	FTileIndex Pinky(GHOST_TARGET_ACQUISITION_PARAMS);
+	FTileIndex Inky(GHOST_TARGET_ACQUISITION_PARAMS);
+	FTileIndex Clyde(GHOST_TARGET_ACQUISITION_PARAMS);
+	FTileIndex Home(GHOST_TARGET_ACQUISITION_PARAMS);
+	FTileIndex Scatter(GHOST_TARGET_ACQUISITION_PARAMS);
+	FTileIndex Dead(GHOST_TARGET_ACQUISITION_PARAMS);
+	FTileIndex Random(GHOST_TARGET_ACQUISITION_PARAMS);
+}
