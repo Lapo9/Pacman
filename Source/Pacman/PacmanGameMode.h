@@ -22,7 +22,7 @@ public:
 	// Calls BeginPlay on everything (itself included).
 	virtual void StartPlay() override;
 
-	// Initializes the games state and the mode manager.
+	// Initializes the game state and the mode manager.
 	virtual void Init();
 	
 	// Starts the level (e.g. starts the timers, pawn start moving, ...)

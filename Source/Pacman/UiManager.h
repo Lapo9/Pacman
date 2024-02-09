@@ -34,24 +34,28 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class TSubclassOf<UUserWidget> MainMenuClass;
+	UPROPERTY() // UPROPERTY is needed to avoid garbage collection
 	class UUserWidget* MainMenu;
 	UPROPERTY(EditAnywhere)
 	class UInputMappingContext* MainMenuContext;
 
 	UPROPERTY(EditAnywhere)
 	class TSubclassOf<UUserWidget> HudClass;
+	UPROPERTY() // UPROPERTY is needed to avoid garbage collection
 	class UUserWidget* Hud;
 	UPROPERTY(EditAnywhere)
 	class UInputMappingContext* HudContext;
 
 	UPROPERTY(EditAnywhere)
 	class TSubclassOf<UUserWidget> PauseMenuClass;
+	UPROPERTY() // UPROPERTY is needed to avoid garbage collection
 	class UUserWidget* PauseMenu;
 	UPROPERTY(EditAnywhere)
 	class UInputMappingContext* PauseMenuContext;
 
 	UPROPERTY(EditAnywhere)
 	class TSubclassOf<UUserWidget> GameOverScreenClass;
+	UPROPERTY() // UPROPERTY is needed to avoid garbage collection
 	class UUserWidget* GameOverScreen;
 	UPROPERTY(EditAnywhere)
 	class UInputMappingContext* GameOverContex;

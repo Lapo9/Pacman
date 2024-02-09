@@ -7,6 +7,7 @@
 #include "PacmanGameInstance.h"
 #include "PacmanPlayerController.h"
 
+
 APacmanGameMode::APacmanGameMode() {
 	GameStateClass = APacmanLevelState::StaticClass();
 	PlayerControllerClass = APacmanPlayerController::StaticClass();
@@ -23,7 +24,7 @@ void APacmanGameMode::StartPlay() {
 }
 
 
-// Initializes the games state and the mode manager.
+// Initializes the game state and the mode manager.
 void APacmanGameMode::Init() {
 	UE_LOG(LogTemp, Display, TEXT("Initializing Pacman game mode..."));
 	Cast<APacmanLevelState>(GameState)->Init();
@@ -37,7 +38,7 @@ void APacmanGameMode::Start() {
 	UE_LOG(LogTemp, Display, TEXT("Starting Pacman game mode..."));
 	Cast<APacmanLevelState>(GameState)->Start(); // Start the actors
 	TimeModeManager->Start(); // Start the schedules
-	UE_LOG(LogTemp, Display, TEXT("Starting phase done!"));
+	UE_LOG(LogTemp, Display, TEXT("Starting phase done! - Level %i started"), Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->GetLevel());
 }
 
 
@@ -95,6 +96,7 @@ void APacmanGameMode::NotifyGameOver() {
 	for (auto pawn : boardPawns) pawn->Stop();
 	
 	UiManager->ShowGameOverScreen();
+	Init();
 }
 
 
@@ -107,7 +109,6 @@ void APacmanGameMode::NotifyLevelCleared() {
 	TimeModeManager->NotifyLevelEnded(); // Basically stops all timers
 	Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->LevelEnded(true); // Notify the game instance
 
-	// Initialize mew level TODO
 	FTimerHandle timer;
 	GetWorld()->GetTimerManager().SetTimer(timer, [this]() {Init(); Start();}, 2.f, false);
 }
