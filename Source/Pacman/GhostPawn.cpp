@@ -1,5 +1,6 @@
 #include "GhostPawn.h"
 #include "GhostAiController.h"
+#include "LevelSettings.h"
 #include "BoardPawnMovementComponent.h"
 #include "GhostsTargetAcquisitions.h"
 #include "WalkableTile.h"
@@ -51,6 +52,12 @@ void AGhostPawn::OnNewTile(const AWalkableTile* tile) {
 		SetLocation2d(HomeTile->GetCenter());
 		SetMode(EGhostMode::HOME);
 	}
+}
+
+
+void AGhostPawn::SetSettings(FGhostScheduleItem& settings) {
+	Super::SetSettings(settings);
+	settings.Ghost = this;
 }
 
 

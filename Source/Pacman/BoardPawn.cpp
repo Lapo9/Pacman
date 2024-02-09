@@ -171,7 +171,7 @@ const AWalkableTile* ABoardPawn::GetSpawnTile() const {
 }
 
 
-// Sets the base speed of this BoardPawn.
+// Sets the settings for this ghost.
 void ABoardPawn::SetBaseSpeed(float speed) {
 	BaseSpeed = speed;
 }

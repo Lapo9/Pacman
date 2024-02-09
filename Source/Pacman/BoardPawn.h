@@ -11,6 +11,7 @@ class AWalkableTile;
 class ATeleportTile;
 class USphereComponent;
 class UBoardPawnMovementComponent;
+struct FGhostScheduleItem;
 
 
 // Tags identifying the various characters
@@ -86,7 +87,7 @@ public:
 	// Sets the new location, but leaves the Z component the same.
 	void SetLocation2d(const FVector& newPos);
 
-	// Sets the base speed of this BoardPawn.
+	// Sets the settings for this ghost.
 	void SetBaseSpeed(float speed);
 
 protected:

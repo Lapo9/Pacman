@@ -1,6 +1,5 @@
 #include "ActorPath.h"
 #include "PacmanSettings.h"
-#include "BaseGizmos/GizmoArrowComponent.h"
 
 
 // Sets default values for this component's properties

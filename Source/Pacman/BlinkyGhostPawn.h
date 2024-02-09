@@ -11,10 +11,15 @@ class PACMAN_API ABlinkyGhostPawn : public AGhostPawn
 	GENERATED_BODY()
 
 	virtual void SetMode(EGhostMode mode) override;
+
+	virtual void SetSettings(struct FGhostScheduleItem& settings) override;
 	
 protected:
 	virtual UGhostModeData* TranslateModeTagToMode(EGhostMode modeTag) const override;
 
-	UPROPERTY(EditAnywhere, Category = "Pacman|Movement", meta = (ClampMin = "0", ClampMax = "500")) // How much food must remain to activate cruise elroy mode.
-	unsigned int CruiseElroyFoodThreshold;
+	UPROPERTY(VisibleAnywhere, Category = "Pacman|Elroy") // How much food must remain to activate cruise elroy mode.
+	unsigned int ElroyModeFoodThreshold;
+
+	UPROPERTY(VisibleAnywhere, Category = "Pacman|Elroy") // Speed multiplier when in elroy mode
+	float ElroyModeSpeedMultiplier;
 };

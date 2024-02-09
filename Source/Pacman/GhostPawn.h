@@ -12,6 +12,7 @@ class AWalkableTile;
 class AGhostAiController;
 class UPrimitiveComponent;
 enum class EMovingDirection;
+struct FGhostScheduleItem;
 
 
 // A GhostPawn is a BoardPawn controlled by a basic AI algorithm.
@@ -36,6 +37,9 @@ public:
 
 	// Called to notify the pawn that it entered a new tile.
 	virtual void OnNewTile(const AWalkableTile* tile) override;
+
+	// Sets the settings for this ghost.
+	virtual void SetSettings(FGhostScheduleItem& settings);
 
 	// Sets the mode.
 	virtual void SetMode(EGhostMode mode);

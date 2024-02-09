@@ -37,6 +37,15 @@ struct FGhostScheduleItem {
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1000")) // The base speed of the ghost.
 	unsigned int BaseSpeed;
 
+	UPROPERTY(EditAnywhere)
+	bool bHasElroyMode;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bHasElroyMode", EditConditionHides, ClampMin = "0"))
+	unsigned int EloryModeFoodLeft;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bHasElroyMode", EditConditionHides, ClampMin = "0", ClampMax = "2"))
+	unsigned int ElroyModeSpeedMultiplier;
+
 	UPROPERTY(EditAnywhere) // The ghost to activate.
 	FString GhostId;
 
