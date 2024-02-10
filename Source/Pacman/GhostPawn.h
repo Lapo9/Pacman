@@ -11,6 +11,8 @@ class ATile;
 class AWalkableTile;
 class AGhostAiController;
 class UPrimitiveComponent;
+class UAudioComponent;
+class USoundBase;
 enum class EMovingDirection;
 struct FGhostScheduleItem;
 
@@ -62,6 +64,10 @@ public:
 	// Returns the unique identifier.
 	const FString GetId() const;
 
+	const void PlayDeathSound() const;
+
+	const void PlayPacmanEatenSound() const;
+
 protected:
 	UFUNCTION() // Wrapper that executes OnBeginOverlapImpl.
 	virtual void OnBeginOverlap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool fromSweep, const FHitResult& sweepResult);
@@ -106,4 +112,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Pacman") // An additional mesh that can be placed abve the ghost to indicate its mode.
 	UStaticMeshComponent* ModeIndicator;
+
+	UPROPERTY(EditAnywhere, Category = "Pacman|Sounds")
+	UAudioComponent* Audio;
+
+	UPROPERTY(EditAnywhere, Category = "Pacman|Sounds")
+	USoundBase* DeathSound;
+
+	UPROPERTY(EditAnywhere, Category = "Pacman|Sounds")
+	USoundBase* PacmanEatenSound;
 };

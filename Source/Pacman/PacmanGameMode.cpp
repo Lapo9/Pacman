@@ -9,9 +9,6 @@
 
 
 APacmanGameMode::APacmanGameMode() {
-	GameStateClass = APacmanLevelState::StaticClass();
-	PlayerControllerClass = APacmanPlayerController::StaticClass();
-
 	TimeModeManager = CreateDefaultSubobject<UTimeModeManager>(TEXT("TimeModeManager"));
 	UiManager = CreateDefaultSubobject<UUiManager>(TEXT("UiManager"));
 }
@@ -42,6 +39,15 @@ void APacmanGameMode::Start() {
 }
 
 
+void APacmanGameMode::NotifyPointsIncreased(int totalPoints, int newPoints) const {
+	auto levelSettings = Cast<APacmanSettings>(GetWorld()->GetWorldSettings());
+	for (int threshold : levelSettings->PointsForExtraLives) {
+		if (totalPoints - newPoints < threshold && totalPoints >= threshold) {
+			Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->AddExtraLife();
+		}
+	}
+}
+
 // Called when Pacman eats a power pellet, turns all ghosts into FRIGHTENED mode (unless they are in DEAD or HOME mode).
 void APacmanGameMode::NotifyPowerPelletEaten() const {
 	TimeModeManager->NotifyPowerPelletEaten();
@@ -58,8 +64,9 @@ void APacmanGameMode::NotifyGhostEaten(AGhostPawn& ghost) const {
 
 	gameState.AddPoints(200 * FMath::Pow(2.f, n-1));
 
-	// If all ghosts got eaten, end power pellet activation
+	// If all ghosts got eaten, end power pellet activation and add an extra life
 	if (n >= gameState.GetBoardPawns().Num()) {
+		Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->AddExtraLife();
 		TimeModeManager->NotifyPowerPelletEnded();
 	}
 }
@@ -92,6 +99,7 @@ void APacmanGameMode::NotifyPacmanDead() {
 
 void APacmanGameMode::NotifyGameOver() {
 	TimeModeManager->NotifyLevelEnded(); // Basically stops all timers
+	Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->LevelEnded(true); // Notify the game instance
 	auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
 	for (auto pawn : boardPawns) pawn->Stop();
 	

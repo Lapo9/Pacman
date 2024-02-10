@@ -6,6 +6,7 @@
 
 void UGhostOnCollideReactionKillPacman::React(GHOST_ON_COLLIDE_REACTION_PARAMS) const {
 	if (collidedWith->IsA<APacmanPawn>()) {
+		itself->PlayPacmanEatenSound();
 		Cast<APacmanLevelState>(itself->GetWorld()->GetGameState())->NotifyPacmanDead();
 	}
 }
@@ -13,6 +14,7 @@ void UGhostOnCollideReactionKillPacman::React(GHOST_ON_COLLIDE_REACTION_PARAMS) 
 
 void UGhostOnCollideReactionDie::React(GHOST_ON_COLLIDE_REACTION_PARAMS) const {
 	if (collidedWith->IsA<APacmanPawn>()) {
+		itself->PlayDeathSound();
 		Cast<APacmanLevelState>(itself->GetWorld()->GetGameState())->NotifyGhostEaten(*itself);
 	}
 }

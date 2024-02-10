@@ -5,10 +5,14 @@
 #include "AbstractMap.h"
 #include "PacmanGameInstance.h"
 #include "PacmanGameMode.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "UObject/Class.h"
 
 APacmanLevelState::APacmanLevelState() {
 	Map = CreateDefaultSubobject<UAbstractMap>(TEXT("Map"));
+
+	Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio"));
 }
 
 
@@ -30,13 +34,15 @@ void APacmanLevelState::Init() {
 // Starts the level by calling Start on all the actors that registered during BeginPlay.
 void APacmanLevelState::Start() {
 	UE_LOG(LogTemp, Display, TEXT("Starting Pacman level state..."))
+	Audio->Sound = StartSound;
+	Audio->Play();
 	for (auto toStart : ActorsToStart) toStart->Start();
 }
 
 
 // Should be called when a standard food is eaten by Pacman.
 void APacmanLevelState::NotifyStandardFoodEaten(unsigned int value) {
-	GameInstance->AddPoints(value);
+	AddPoints(value);
 	DecreaseStandardFood(); // Decreases the available food by 1 and notifies the game mode.
 	UE_LOG(LogTemp, Display, TEXT("Standard food eaten --> Remaining food: %i"), AvailableStandardFood);
 }
@@ -44,14 +50,14 @@ void APacmanLevelState::NotifyStandardFoodEaten(unsigned int value) {
 
 // Should be called when a fruit is eaten by Pacman.
 void APacmanLevelState::NotifyFruitEaten(unsigned int value) {
-	GameInstance->AddPoints(value);
+	AddPoints(value);
 	UE_LOG(LogTemp, Display, TEXT("Fruit eaten --> Remaining food: %i"), AvailableStandardFood);
 }
 
 
 // Should be called when a power pellet food is eaten by Pacman.
 void APacmanLevelState::NotifyPowerPelletEaten(unsigned int value) {
-	GameInstance->AddPoints(value);
+	AddPoints(value);
 	CurrentPowerPelletActivation.GhostsEatenInThisPowerPellet = 0; // Reset count
 	GameMode->NotifyPowerPelletEaten();
 	UE_LOG(LogTemp, Display, TEXT("Power pellet eaten --> Remaining food: %i"), AvailableStandardFood);
@@ -85,7 +91,8 @@ void APacmanLevelState::AddStandardFood(unsigned int quantity) {
 
 // Adds the specified amount of points
 void APacmanLevelState::AddPoints(unsigned int quantity) {
-	GameInstance->AddPoints(quantity);
+	int total = GameInstance->AddPoints(quantity);
+	GameMode->NotifyPointsIncreased(total, quantity);
 }
 
 

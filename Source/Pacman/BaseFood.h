@@ -8,6 +8,9 @@
 
 // Forward declarations
 class APacmanLevelState;
+class UAudioComponent;
+class USoundBase;
+
 
 // The base abstract class for food items.
 // A food item has the responsibility to detect when he is eaten by Pacman, and notify this to the PacmanLevelState.

@@ -12,12 +12,19 @@ void UPacmanGameInstance::LevelEnded(bool win) {
 	}
 	else {
 		CurrentLevel = 0;
+		Lives = 3;
 	}
 }
 
 
-void UPacmanGameInstance::AddPoints(unsigned int value) {
+int UPacmanGameInstance::AddPoints(unsigned int value) {
 	Points += value;
 	UE_LOG(LogTemp, Display, TEXT("Points: %i"), Points);
+	return Points;
+}
+
+
+void UPacmanGameInstance::AddExtraLife() {
+	Lives++;
 }
 

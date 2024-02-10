@@ -5,12 +5,16 @@
 #include "GhostsTargetAcquisitions.h"
 #include "WalkableTile.h"
 #include "Components/SphereComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "UObject/Class.h"
 
 
 AGhostPawn::AGhostPawn() : OnBeginOverlapImpl{ [](AActor* otherActor, UPrimitiveComponent* otherComponent) {} } {
 	ModeIndicator = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ModeIndicator"));
 	ModeIndicator->SetupAttachment(Mesh, TEXT("ModeIndicatorSocket"));
+
+	Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio"));
 }
 
 
@@ -83,6 +87,18 @@ const EGhostMode AGhostPawn::GetMode() const {
 
 const FString AGhostPawn::GetId() const {
 	return UniqueId;
+}
+
+
+const void AGhostPawn::PlayDeathSound() const {
+	Audio->Sound = DeathSound;
+	Audio->Play();
+}
+
+
+const void AGhostPawn::PlayPacmanEatenSound() const {
+	Audio->Sound = PacmanEatenSound;
+	Audio->Play();
 }
 
 

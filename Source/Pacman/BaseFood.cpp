@@ -3,6 +3,7 @@
 #include "PacmanUtilities.h"
 #include "Components/SphereComponent.h"
 
+
 ABaseFood::ABaseFood() {
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;

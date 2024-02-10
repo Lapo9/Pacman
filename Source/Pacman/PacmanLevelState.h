@@ -15,6 +15,8 @@ class APacmanGameMode;
 class IInitializable;
 class IStartableStoppable;
 class UAbstractMap;
+class UAudioComponent;
+class USoundBase;
 class UPacmanGameInstance;
 enum class EMovingDirection;
 enum class ECharacterTag;
@@ -90,6 +92,10 @@ protected:
 	// Decreases AvailableStandardFood and notify this to the game mode.
 	void DecreaseStandardFood(unsigned int quantity = 1);
 
+	UAudioComponent* Audio; // Used to play level sounds
+
+	UPROPERTY(EditAnywhere, Category = "Pacman|Sounds") // Sound to play at level start
+	USoundBase* StartSound;
 
 	UAbstractMap* Map; // Object keeping track of the tiles of the map and the position of the board pawns.
 	TArray<ABoardPawn*> BoardPawns; // List of the board pawns present in the level.	

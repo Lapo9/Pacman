@@ -28,6 +28,9 @@ public:
 	// Starts the level (e.g. starts the timers, pawn start moving, ...)
 	virtual void Start();
 
+	// Called when Pacman gets some points by eating something.
+	virtual void NotifyPointsIncreased(int totalPoints, int newPoints) const;
+
 	// Called when Pacman eats a power pellet, turns all ghosts into FRIGHTENED mode (unless they are in DEAD or HOME mode).
 	virtual void NotifyPowerPelletEaten() const;
 

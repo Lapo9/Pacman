@@ -41,5 +41,3 @@ void APacmanPawn::TurnDirection(EMovingDirection dir) {
 	}
 }
 
-
-

@@ -21,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere) // The size of the central triggers (the smaller the better, but we don't want to miss collisions).
 	float PointLikeTriggersRadius;
 
+	UPROPERTY(EditAnywhere) // Score to reach to get an extra life.
+	TArray<unsigned int> PointsForExtraLives;
+
 	UPROPERTY(EditAnywhere)
 	TArray<ULevelSettings*> LevelsSettings;
 };
