@@ -3,6 +3,8 @@
 #include "PacmanLevelState.h"
 #include "GhostPawn.h"
 #include "PacmanPawn.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
+#include "Materials/MaterialParameterCollection.h"
 #include "UObject/Class.h"
 
 
@@ -35,8 +37,7 @@ void UTimeModeManager::Init(ULevelSettings* settings) {
 		if (auto ghost = Cast<AGhostPawn>(*pawn); ghost) {
 			auto ghostItem = CurrentLevelSettings->GhostsSchedule.FindByPredicate([&ghost](const auto& ghostItem) { return ghostItem.GhostId == ghost->GetId(); });
 			verifyf(ghostItem, TEXT("Cannot find a ghost with UniqueId = %s"), *ghost->GetId());
-			ghostItem->Ghost = ghost;
-			ghost->SetBaseSpeed(ghostItem->BaseSpeed);
+			ghost->SetSettings(*ghostItem);
 		}
 		else if (auto pacman = Cast<APacmanPawn>(*pawn); pacman) pacman->SetBaseSpeed(CurrentLevelSettings->PacmanBaseSpeed);
 	}
@@ -105,7 +106,29 @@ void UTimeModeManager::NotifyStandardFoodDecreasedBy1(unsigned int remainingFood
 // Should be called when Pacman eats a power pellet, turns all ghosts into FRIGHTENED mode (unless they are in DEAD or HOME mode).
 void UTimeModeManager::NotifyPowerPelletEaten() {
 	GameMode->SetGhostsModeUnless(EGhostMode::FRIGHTENED, { EGhostMode::DEAD, EGhostMode::HOME });
-	GetWorld()->GetTimerManager().SetTimer(PowerPelletTimer, this, &UTimeModeManager::NotifyPowerPelletEnded, CurrentLevelSettings->PowerPelletDuration, false);
+
+	// First set the timer until it is time to notify that the power pellet is ending
+	if (CurrentLevelSettings->PowerPelletEndingTimeRemaining > 0.f && CurrentLevelSettings->PowerPelletDuration > CurrentLevelSettings->PowerPelletEndingTimeRemaining) {
+		GetWorld()->GetTimerManager().SetTimer(PowerPelletTimer, [this]() {
+			auto frightenedParams = GetWorld()->GetParameterCollectionInstance(CurrentLevelSettings->FrightenedModeMaterialVisualHintParams);
+			frightenedParams->SetScalarParameterValue(TEXT("Blink"), 1.f);
+			// Now set the timer to end the power pellet with the remaining time
+			GetWorld()->GetTimerManager().SetTimer(PowerPelletTimer, this, &UTimeModeManager::NotifyPowerPelletEnded, CurrentLevelSettings->PowerPelletEndingTimeRemaining, false);
+											   },
+											   CurrentLevelSettings->PowerPelletDuration - CurrentLevelSettings->PowerPelletEndingTimeRemaining, false);
+	}
+
+	// If the notification time is bigger than the duration of the power pellet, notify immediately that the power pellet is ending
+	else if (CurrentLevelSettings->PowerPelletDuration <= CurrentLevelSettings->PowerPelletEndingTimeRemaining) {
+		auto frightenedParams = GetWorld()->GetParameterCollectionInstance(CurrentLevelSettings->FrightenedModeMaterialVisualHintParams);
+		frightenedParams->SetScalarParameterValue(TEXT("Blink"), 1.f);
+		GetWorld()->GetTimerManager().SetTimer(PowerPelletTimer, this, &UTimeModeManager::NotifyPowerPelletEnded, CurrentLevelSettings->PowerPelletDuration, false);
+	}
+
+	// If the notification time is 0, just set the timer to end the power pellet
+	else {
+		GetWorld()->GetTimerManager().SetTimer(PowerPelletTimer, this, &UTimeModeManager::NotifyPowerPelletEnded, CurrentLevelSettings->PowerPelletDuration, false);
+	}
 }
 
 
@@ -113,6 +136,8 @@ void UTimeModeManager::NotifyPowerPelletEaten() {
 void UTimeModeManager::NotifyPowerPelletEnded() {
 	UE_LOG(LogTemp, Display, TEXT("Power pellet ended"));
 	GameMode->SetGhostsModeUnless(GetCurrentMode(), { EGhostMode::DEAD, EGhostMode::HOME }); // Resume the current mode for all the ghosts (unless they are in DEAD or HOME mode)
+	auto frightenedParams = GetWorld()->GetParameterCollectionInstance(CurrentLevelSettings->FrightenedModeMaterialVisualHintParams);
+	frightenedParams->SetScalarParameterValue(TEXT("Blink"), 0.f);
 }
 
 

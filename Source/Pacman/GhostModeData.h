@@ -26,6 +26,7 @@ class PACMAN_API UGhostModeData : public UDataAsset {
 	GENERATED_BODY()
 
 public:
+
 	UPROPERTY(EditAnywhere)
 	EGhostMode Mode;
 
@@ -42,7 +43,7 @@ public:
 	USkeletalMesh* Mesh;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (EditCondition = "Mode != EGhostMode::CHASE", EditConditionHides))
-	TArray<UMaterial*> Materials;
+	TArray<UMaterialInterface*> Materials;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGhostOnCollideReactionBase> OnCollideReactionClass;

@@ -56,7 +56,7 @@ void AGhostPawn::OnNewTile(const AWalkableTile* tile) {
 
 
 void AGhostPawn::SetSettings(FGhostScheduleItem& settings) {
-	Super::SetSettings(settings);
+	BaseSpeed = settings.BaseSpeed;
 	settings.Ghost = this;
 }
 

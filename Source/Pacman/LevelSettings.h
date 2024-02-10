@@ -6,6 +6,7 @@
 #include "Tile.h"
 #include "FruitFood.h"
 #include "WalkableTile.h"
+#include "Materials/MaterialParameterCollection.h"
 #include "Engine/DataAsset.h"
 #include "LevelSettings.generated.h"
 
@@ -44,7 +45,7 @@ struct FGhostScheduleItem {
 	unsigned int EloryModeFoodLeft;
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bHasElroyMode", EditConditionHides, ClampMin = "0", ClampMax = "2"))
-	unsigned int ElroyModeSpeedMultiplier;
+	float ElroyModeSpeedMultiplier;
 
 	UPROPERTY(EditAnywhere) // The ghost to activate.
 	FString GhostId;
@@ -82,18 +83,26 @@ class PACMAN_API ULevelSettings : public UDataAsset {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, Category = "Pacman|Schedule")
+	UPROPERTY(EditAnywhere, Category = "Schedule")
 	TArray<FModeScheduleItem> ModesSchedule;
 
-	UPROPERTY(EditAnywhere, Category = "Pacman|Schedule")
+	UPROPERTY(EditAnywhere, Category = "Schedule")
 	TArray<FGhostScheduleItem> GhostsSchedule;
 
-	UPROPERTY(EditAnywhere, Category = "Pacman|Schedule")
+	UPROPERTY(EditAnywhere, Category = "Schedule")
 	TArray<FFruitScheduleItem> FruitsSchedule;
 
-	UPROPERTY(EditAnywhere, Category = "Pacman", meta = (ClampMin = "0", ClampMax = "1000"))
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1000"))
 	unsigned int PacmanBaseSpeed;
 
-	UPROPERTY(EditAnywhere, Category = "Pacman", meta = (ClampMin = "0.1", ClampMax = "20.0"))
+	UPROPERTY(EditAnywhere, Category = "Power pellet", meta = (ClampMin = "0", ClampMax = "20.0"))
 	float PowerPelletDuration;
+
+	// When to show the visual hint that the power pellet is ending. If the value is bigger than Power Pellet Duration, the hint will be showed right away.
+	UPROPERTY(EditAnywhere, Category = "Power pellet", meta = (ClampMin = "0", ClampMax = "20.0"))
+	float PowerPelletEndingTimeRemaining;
+
+	// Object used to globally change some parameters of the material of the FRIGHTENED ghosts, in order to provide a cisual hint for when the ghost is ending its FRIGHTENED mode.
+	UPROPERTY(EditAnywhere, Category = "Power pellet")
+	UMaterialParameterCollection* FrightenedModeMaterialVisualHintParams;
 };
