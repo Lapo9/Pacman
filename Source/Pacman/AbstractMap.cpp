@@ -67,7 +67,7 @@ const AWalkableTile& UAbstractMap::GetCharacterTile(const ABoardPawn& pawn) cons
 const AWalkableTile* UAbstractMap::UpdateCharacterTile(const ABoardPawn& pawn, const FVector& position) {
 	auto newTileIndex = PositionToIndex(position);
 	auto newTile = Map[newTileIndex.Col][newTileIndex.Row];
-	if (!newTile->IsA(AWalkableTile::StaticClass())) {
+	if (!newTile || !newTile->IsA(AWalkableTile::StaticClass())) {
 		UE_LOG(LogTemp, Error, TEXT("A board pawn tried to go on a non-walkable tile at position <%f, %f>. Movement not registered on abstract map"), position.X, position.Y);
 		return nullptr;
 	}

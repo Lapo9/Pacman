@@ -78,7 +78,7 @@ void ABoardPawn::Init() {
 	FullCollider->SetGenerateOverlapEvents(false);
 	MovementComponent->bCanMove = false;
 
-	SetLocation2d(CurrentTile->GetCenter()); // Move the pawn to the spawn tile center (don't touch Z component)
+	SetLocation2d(SpawnTile->GetCenter()); // Move the pawn to the spawn tile center (don't touch Z component)
 }
 
 
@@ -115,13 +115,16 @@ void ABoardPawn::OnLeftTileCenter(const AWalkableTile& tile) {
 
 // Called to notify the pawn that it entered a new tile.
 void ABoardPawn::OnNewTile(const AWalkableTile* tile) {
-	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on new tile %s"), *GetName(), *tile->GetName());
 	// If the new tile is null, it means there was a problem, therefore go back to the last tile
-	if (!tile) SetLocation2d(CurrentTile->GetCenter());
+	if (!tile) {
+		SetLocation2d(CurrentTile->GetCenter());
+		UE_LOG(LogTemp, Error, TEXT("Board pawn %s tried to go on a non walkable tile. Brought back to the center of the last known tile %s"), *GetName(), *CurrentTile->GetName());
+	}
 	// Register the new tile and change speed.
 	else CurrentTile = tile;
 
-	MovementComponent->SetSpeed(GetActualSpeed(*tile));
+	MovementComponent->SetSpeed(GetActualSpeed(*CurrentTile));
+	UE_LOG(LogTemp, Display, TEXT("Board pawn %s on new tile %s"), *GetName(), *CurrentTile->GetName());
 }
 
 

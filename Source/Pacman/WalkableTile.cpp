@@ -29,6 +29,9 @@ AWalkableTile::AWalkableTile(ETileType type) : Super{ type } {
 void AWalkableTile::BeginPlay() {
 	Super::BeginPlay();
 
+	auto& levelState = *Cast<APacmanLevelState>(GetWorld()->GetGameState());
+	levelState.RegisterForStartAndStop(*this); // Register to receive the start call
+
 	// Initialize triggers
 	CentralTrigger->Init(*this);
 	FullTrigger->Init(*this);
@@ -37,9 +40,20 @@ void AWalkableTile::BeginPlay() {
 
 void AWalkableTile::Init() {
 	Super::Init();
-	// Spawn the food (if required)
-	if (SpawnedFood && !SpawnedFood->IsValidLowLevel()) SpawnedFood->Destroy();
+	// Delete old food (if present)
+	if (SpawnedFood && SpawnedFood->GetName() != TEXT("none")) SpawnedFood->Destroy(); 
+	// TODO Idk why but sometimes the food seems in a non valid state, and calling destroy on it crashes the game.
+	// A call on IsBeingDestroyed or IsValidLowLevel doesn't catch this problem, but the food name is none if it is in this weird state.
+}
+
+
+void AWalkableTile::Start() {
+	// Spawn new food
 	SpawnFood();
+}
+
+
+void AWalkableTile::Stop() {
 }
 
 

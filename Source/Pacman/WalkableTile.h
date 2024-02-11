@@ -19,8 +19,7 @@ class UTileFullTrigger;
 // The collider to represent the center of the WalkableTile is a sphere, whose radius is governed by the PointLikeTriggersRadius variable in PacmanSettings.
 // WalkableTiles can be placed at any height on the Z coordinate, but their "logical height" (the height of the colliders) is determined by the FloorHeight variable in PacmanSettings.
 UCLASS(ClassGroup = Pacman)
-class PACMAN_API AWalkableTile : public ATile
-{
+class PACMAN_API AWalkableTile : public ATile, public IStartableStoppable {
 	GENERATED_BODY()
 
 public:
@@ -33,8 +32,13 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	// Spawns the food (if this tile has a food item to spawn on itself)
+	// If there was a food on the tile, destroy it
 	virtual void Init() override;
+
+	// Spawn the new food
+	virtual void Start() override;
+
+	virtual void Stop() override;
 
 	// Should be called by the central trigger when a pawn hit it.
 	virtual void PawnOnTileCenter(ABoardPawn& pawn) const;
