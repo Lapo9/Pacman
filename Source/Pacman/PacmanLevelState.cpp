@@ -24,6 +24,8 @@ void APacmanLevelState::Init() {
 	GameInstance = Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance());
 	GameMode = Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode());
 
+	AvailableStandardFood = 0;
+
 	Map->Init(); // Fill the abstract map based on the tiles in the level
 
 	// Initialize all the actors that registered during BeginPlay
