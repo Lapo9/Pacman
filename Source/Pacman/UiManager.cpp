@@ -69,4 +69,5 @@ void UUiManager::ShowMainMenu() {
 	auto* playerController = Cast<APacmanPlayerController>(GetWorld()->GetFirstPlayerController());
 	playerController->ChangeInputMappingContext(MainMenuContext); // Set the input mapping context
 	playerController->bShowMouseCursor = true;
+	Cast<APacmanGameMode>(GetWorld()->GetAuthGameMode())->Init(true);
 }

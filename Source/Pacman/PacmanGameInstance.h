@@ -5,6 +5,7 @@
 #include "PacmanGameInstance.generated.h"
 
 
+// Stores some global variables, such as the lives, the score and the current level.
 UCLASS()
 class PACMAN_API UPacmanGameInstance : public UGameInstance
 {
@@ -12,8 +13,15 @@ class PACMAN_API UPacmanGameInstance : public UGameInstance
 	
 public:
 	virtual unsigned int GetLevel() const;
-	virtual void LevelEnded(bool win);
+
+	// Initializes the lives, score and level
+	virtual void StartNewGame();
+
+	// Sets the level to the next one
+	virtual void StartNextLevel();
+
 	virtual int AddPoints(unsigned int value);
+
 	virtual void AddExtraLife();
 
 	UPROPERTY(BlueprintReadOnly)

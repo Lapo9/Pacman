@@ -4,14 +4,17 @@
 #include "GhostPawn.h"
 #include "BlinkyGhostPawn.generated.h"
 
+
 // Blinky has a slightly different behavior than other ghosts, because, when the remaining food is low, its speed increases and his scatter mode is never activated.
 UCLASS()
 class PACMAN_API ABlinkyGhostPawn : public AGhostPawn
 {
 	GENERATED_BODY()
 
+	// Calls the AGhostPawn::SetMode method, but, if the returned mode is SCATTER and the food is below ElroyModeFoodThreshold activates CHASE mode and increases speed. 
 	virtual void SetMode(EGhostMode mode) override;
 
+	// Calls the AGhostPawn::SetMode method and also sets the Elroy mode related variables
 	virtual void SetSettings(struct FGhostScheduleItem& settings) override;
 	
 protected:

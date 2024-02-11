@@ -5,7 +5,7 @@
 #include "GameFramework/WorldSettings.h"
 #include "PacmanSettings.generated.h"
 
-// Settings for Pacman.
+// Stores the global settings of Pacman (the ones that are not level related).
 UCLASS()
 class PACMAN_API APacmanSettings : public AWorldSettings
 {
@@ -24,6 +24,6 @@ public:
 	UPROPERTY(EditAnywhere) // Score to reach to get an extra life.
 	TArray<unsigned int> PointsForExtraLives;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere) // List of data assets containing level-related settings.
 	TArray<ULevelSettings*> LevelsSettings;
 };

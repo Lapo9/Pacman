@@ -5,6 +5,7 @@
 #include "UiManager.generated.h"
 
 
+// The UUiManager has the task to show on the viewport the selected menu, and to switch the UInputMappingContext to the context relative to the shown menu in the APacmanPlayerController.
 UCLASS()
 class PACMAN_API UUiManager : public UActorComponent {
 	GENERATED_BODY()

@@ -34,7 +34,6 @@ void UAbstractMap::Reset() {
 // Returns the surrounding tiles of a character.
 TMap<EMovingDirection, const ATile*> UAbstractMap::GetSurroundingTiles(const ABoardPawn& pawn) const {
 	using MD = EMovingDirection;
-	using TT = ETileType;
 	
 	TMap<EMovingDirection, const ATile*> res{};
 	auto [iCol, iRow] = GetCharacterTileIndex(pawn);
@@ -69,7 +68,7 @@ const AWalkableTile* UAbstractMap::UpdateCharacterTile(const ABoardPawn& pawn, c
 	auto newTileIndex = PositionToIndex(position);
 	auto newTile = Map[newTileIndex.Col][newTileIndex.Row];
 	if (!newTile->IsA(AWalkableTile::StaticClass())) {
-		UE_LOG(LogTemp, Error, TEXT("A board pawn tried to go on a non-walkable tile at position <%f, %f>"), position.X, position.Y);
+		UE_LOG(LogTemp, Error, TEXT("A board pawn tried to go on a non-walkable tile at position <%f, %f>. Movement not registered on abstract map"), position.X, position.Y);
 		return nullptr;
 	}
 	CharactersPositions[&pawn] = newTileIndex;

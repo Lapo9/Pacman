@@ -38,7 +38,7 @@ EMovingDirection AGhostAiController::ComputeBestDirection() const {
 	auto ghost = Cast<AGhostPawn>(GetPawn());
 	auto state = Cast<APacmanLevelState>(GetWorld()->GetGameState());
 
-	auto surroundingTiles = state->GetSurroundingTiles(*ghost);
+	auto surroundingTiles = state->GetAbstractMap().GetSurroundingTiles(*ghost);
 	auto movingDir = ghost->GetMovingDirection();
 
 	surroundingTiles.FindAndRemoveChecked(Util::Opposite(movingDir)); // The ghost cannot do a U turn

@@ -9,7 +9,7 @@
 class AWalkableTile;
 
 
-// Trigger responsible to detect when a BoardPawn has reached the center of the Tile.
+// Trigger responsible to detect when a ABoardPawn has reached the center of the ATile.
 UCLASS(ClassGroup = Pacman)
 class PACMAN_API UTileCentralTrigger : public USphereComponent {
 	GENERATED_BODY()

@@ -14,6 +14,8 @@ struct HPathPointVisProxy : public HComponentVisProxy {
 };
 
 
+// The FActorPathVisualizer is an editor only component that is responsible to show the path set on a UActorPath component.
+// It is also possible to modify the position of the points of the path by directly moving them.
 class PACMANEDITOR_API FActorPathVisualizer : public FComponentVisualizer {
 public:
 

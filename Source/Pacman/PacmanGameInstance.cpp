@@ -6,14 +6,15 @@ unsigned int UPacmanGameInstance::GetLevel() const {
 }
 
 
-void UPacmanGameInstance::LevelEnded(bool win) {
-	if (win) {
-		CurrentLevel++;
-	}
-	else {
-		CurrentLevel = 0;
-		Lives = 3;
-	}
+void UPacmanGameInstance::StartNewGame() {
+	CurrentLevel = 0;
+	Lives = 3;
+	Points = 0;
+}
+
+
+void UPacmanGameInstance::StartNextLevel() {
+	CurrentLevel++;
 }
 
 

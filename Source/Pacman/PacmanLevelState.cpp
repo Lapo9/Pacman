@@ -92,14 +92,14 @@ void APacmanLevelState::AddStandardFood(unsigned int quantity) {
 // Adds the specified amount of points
 void APacmanLevelState::AddPoints(unsigned int quantity) {
 	int total = GameInstance->AddPoints(quantity);
-	GameMode->NotifyPointsIncreased(total, quantity);
+	GameMode->NotifyPointsIncreased(total, quantity); // Must be done because it is possible to gain extra lives on certain thresholds
 }
 
 
 // Decreases AvailableStandardFood and notify this to the game mode.
 void APacmanLevelState::DecreaseStandardFood(unsigned int quantity) {
 	AvailableStandardFood -= quantity;
-	GameMode->NotifyAvailableFoodDecreasedBy1(AvailableStandardFood);
+	GameMode->NotifyAvailableFoodDecreasedBy1(AvailableStandardFood); // Used mainly by the UTimeModeManager to spawn the fruits, and to notify Blinky for elroy mode
 	if (AvailableStandardFood <= 0) GameMode->NotifyLevelCleared();
 }
 
@@ -154,12 +154,6 @@ APacmanLevelState::PowerPelletActivation& APacmanLevelState::GetCurrentPowerPell
 // Returns the first board pawn with the specified tag (if present)
 ABoardPawn* APacmanLevelState::GetBoardPawn(ECharacterTag tag) const {
 	return *BoardPawns.FindByPredicate([tag](auto pawn) {return pawn->GetTag() == tag; });
-}
-
-
-// Returns the surrounding tiles on the map of the specified pawn.
-TMap<EMovingDirection, const class ATile*> APacmanLevelState::GetSurroundingTiles(const ABoardPawn& pawn) const {
-	return Map->GetSurroundingTiles(pawn);
 }
 
 

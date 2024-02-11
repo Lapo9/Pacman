@@ -22,6 +22,9 @@ enum class EMovingDirection;
 enum class ECharacterTag;
 
 
+// APacmanLevelState is responsible to get updates from the game actors (e.g. a food eaten, Pacman's death, ...), store the data of the event (e.g. +1 points, ...) and notify the event to APacmanGameMode (or to the game instance).
+// It is also responsible to initialize and send the start event to the registered actors.
+// Most of the data of APacmanLevelState can be queried with the approprieate functions (generally it is queried by the APacmanGameMode).
 UCLASS()
 class PACMAN_API APacmanLevelState : public AGameStateBase {
 	GENERATED_BODY()
@@ -64,9 +67,6 @@ public:
 
 	// Functions to retrieve information about the level state.
 
-	// Returns the surrounding tiles on the map of the specified pawn.
-	TMap<EMovingDirection, const ATile*> GetSurroundingTiles(const ABoardPawn& pawn) const;
-
 	// Returns the abstract map itslef.
 	const UAbstractMap& GetAbstractMap() const;
 
@@ -82,8 +82,10 @@ public:
 	// Returns the available food
 	unsigned int GetAvailableFood() const;
 
+	// Adds the component to the ones to send an initialization event to.
 	void RegisterForInitialization(IInitializable& actor, bool unregister = false) const;
 
+	// Adds the component to the ones to send a start event to.
 	void RegisterForStartAndStop(IStartableStoppable& actor, bool unregister = false) const;
 
 	void RegisterBoardPawn(ABoardPawn& boardPawn);

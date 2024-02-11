@@ -17,6 +17,8 @@ UENUM()
 enum class ETileType { WALKABLE, WALL, TUNNEL, TELEPORT, HUT };
 
 
+// The UAbstractMap has the task to gather and store information about the Pacman maze (i.e. the layout of the tiles in the level) and the position of the ABoardPawns.
+// This makes it easier for other components to get information about the environment andmake decisions based on it.
 UCLASS(ClassGroup=(Pacman), meta=(BlueprintSpawnableComponent))
 class PACMAN_API UAbstractMap : public UActorComponent {
 	GENERATED_BODY()
@@ -46,6 +48,9 @@ public:
 	// A string representation of the Map.
 	FString ToString() const;
 
+	// Given a position, returns the index of the corresponding tile.
+	FTileIndex PositionToIndex(const FVector& pos) const;
+
 	// Given a position, returns the corresponding tile.
 	const ATile* PositionToTile(const FVector& pos) const;
 
@@ -59,8 +64,6 @@ private:
 	// Fills the map containing the characters positions.
 	void FillCharactersStartingPositions();
 
-	// Given a position, returns the index of the corresponding tile.
-	FTileIndex PositionToIndex(const FVector& pos) const;
 
 	// The abstract map
 	TArray<TArray<const ATile*>> Map;

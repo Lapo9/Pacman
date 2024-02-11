@@ -5,6 +5,8 @@
 #include "PacmanPlayerController.generated.h"
 
 
+// Reacts to input events and perform the corresponding action based on the UInputMappingContext.
+// It is also possible to change the UInputMappingContext.
 UCLASS()
 class PACMAN_API APacmanPlayerController : public APlayerController
 {

@@ -5,6 +5,7 @@
 #include "StandardFood.generated.h"
 
 
+// The standard food Pacman eats.
 UCLASS()
 class PACMAN_API AStandardFood : public ABaseFood {
 	GENERATED_BODY()

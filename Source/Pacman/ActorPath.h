@@ -5,6 +5,7 @@
 #include "ActorPath.generated.h"
 
 
+// Represents one of the points of the UActorPath. Each FPathPoint stores the data of the segment whose has this point as starting point.
 USTRUCT()
 struct PACMAN_API FPathPoint {
 	GENERATED_USTRUCT_BODY()
@@ -31,19 +32,22 @@ struct PACMAN_API FPathPoint {
 
 
 
+// Represents a static linear path an actor must follow.
+// Its tasks are to store tha path itself and to actually move the owned actor on the path.
 UCLASS(ClassGroup = (Pacman), meta = (BlueprintSpawnableComponent))
 class PACMAN_API UActorPath : public UActorComponent {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UActorPath();
 
 	// Called every frame
 	virtual void TickComponent(float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) override;
 
+	// Returns the color of the gizmo representing this path
 	const FLinearColor& GetGizmoColor() const;
 
+	// Returns the point that is considered the origin of the reference cartesian system of the points of this path.
 	FVector GetPathOrigin() const;
 	
 #if WITH_EDITOR
@@ -54,7 +58,7 @@ public:
 	mutable TArray<FPathPoint> PathPoints;
 
 protected:
-	// Called when the game starts
+	// Finishes the initialization of the FPathPoints (e.g. stores the distance to the next point), and other variables.
 	virtual void BeginPlay() override;
 
 	// Tick function when the actor is going forward.
@@ -68,6 +72,7 @@ protected:
 
 	// Called when the actor must move again after he woke up from the rest on a path point
 	virtual void ResumeAfterRest(int index);
+
 	
 	UPROPERTY(EditAnywhere)
 	bool bInObjectLocalSpace; // Whether the path points are in world space or in local space.

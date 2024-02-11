@@ -38,7 +38,7 @@ void AWalkableTile::BeginPlay() {
 void AWalkableTile::Init() {
 	Super::Init();
 	// Spawn the food (if required)
-	if (SpawnedFood && !SpawnedFood->IsActorBeingDestroyed()) SpawnedFood->AutoDestroy();
+	if (SpawnedFood && !SpawnedFood->IsValidLowLevel()) SpawnedFood->Destroy();
 	SpawnFood();
 }
 

@@ -5,7 +5,7 @@
 #include "PowerPelletFood.generated.h"
 
 
-// Power pellets that turn ghosts into frightened mode for a given amount of seconds when eaten.
+// Power pellets that turn ghosts into FRIGHTENED mode for a given amount of seconds when eaten.
 UCLASS()
 class PACMAN_API APowerPelletFood : public ABaseFood {
 	GENERATED_BODY()

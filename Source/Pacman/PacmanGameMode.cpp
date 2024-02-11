@@ -17,13 +17,16 @@ APacmanGameMode::APacmanGameMode() {
 void APacmanGameMode::StartPlay() {
 	UE_LOG(LogTemp, Display, TEXT("APacmanGameMode::StartPlay called"));
 	Super::StartPlay(); // This will call all the BeginPlay() functions
-	Init(); // Initialize the state and the mode manager (here we are sure that BeginPlay has already been executed on everything)
+	Init(true); // Initialize the state and the mode manager (here we are sure that BeginPlay has already been executed on everything)
 }
 
 
 // Initializes the game state and the mode manager.
-void APacmanGameMode::Init() {
+void APacmanGameMode::Init(bool newGame) {
 	UE_LOG(LogTemp, Display, TEXT("Initializing Pacman game mode..."));
+	if (newGame) Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->StartNewGame();
+	else Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->StartNextLevel();
+
 	Cast<APacmanLevelState>(GameState)->Init();
 	auto& levelsSettings = Cast<APacmanSettings>(GetWorld()->GetWorldSettings())->LevelsSettings;
 	TimeModeManager->Init(levelsSettings[FMath::Min(levelsSettings.Num() - 1, (int)Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->GetLevel())]);
@@ -99,12 +102,10 @@ void APacmanGameMode::NotifyPacmanDead() {
 
 void APacmanGameMode::NotifyGameOver() {
 	TimeModeManager->NotifyLevelEnded(); // Basically stops all timers
-	Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->LevelEnded(true); // Notify the game instance
 	auto& boardPawns = Cast<APacmanLevelState>(GameState)->GetBoardPawns();
 	for (auto pawn : boardPawns) pawn->Stop();
 	
 	UiManager->ShowGameOverScreen();
-	Init();
 }
 
 
@@ -115,10 +116,9 @@ void APacmanGameMode::NotifyLevelCleared() {
 	}
 
 	TimeModeManager->NotifyLevelEnded(); // Basically stops all timers
-	Cast<UPacmanGameInstance>(GetWorld()->GetGameInstance())->LevelEnded(true); // Notify the game instance
 
 	FTimerHandle timer;
-	GetWorld()->GetTimerManager().SetTimer(timer, [this]() {Init(); Start();}, 2.f, false);
+	GetWorld()->GetTimerManager().SetTimer(timer, [this]() {Init(false); Start();}, 2.f, false);
 }
 
 

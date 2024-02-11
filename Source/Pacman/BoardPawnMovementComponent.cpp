@@ -70,7 +70,7 @@ void UBoardPawnMovementComponent::OnTileCenter(const AWalkableTile& tile) {
 	OnTileCenterInfo.DistFromCenter = deltaToCenter.GetAbsMax() * dirToCenter;
 
 	// If there is an obstacle in the moving direction, stop the pawn
-	auto surroundingTiles = Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetSurroundingTiles(*Cast<ABoardPawn>(GetOwner()));
+	auto surroundingTiles = Cast<APacmanLevelState>(GetWorld()->GetGameState())->GetAbstractMap().GetSurroundingTiles(*Cast<ABoardPawn>(GetOwner()));
 	if (!PacmanUtilities::IsTileWalkable(surroundingTiles[MovingDirection])) {
 		Speed = 0.f;
 	}

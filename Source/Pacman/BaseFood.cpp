@@ -26,5 +26,4 @@ void ABaseFood::AutoDestroy() {
 	auto name = GetName();
 	verifyf(Destroy(), TEXT("Food %s could not be destroyed for unknown reasons."), *name);
 	UE_LOG(LogTemp, Display, TEXT("Food %s destroyed"), *name);
-	// TODO particle effect
 }

@@ -12,6 +12,9 @@ class AGhostPawn;
 enum class EGhostMode;
 
 
+// APacmanGameMode is responsible to receive updates from APacmanLevelState and, baesd on the data stored in APacmanLevelState, apply most of the rules of Pacman.
+// It is also responsible to start the initialization and starting process of a Pacman level when necessary.
+// It also holds references to UTimeModeManager (to manage the time-based events of the game) and UUiManager (to decide which UI to show and the associated input mapping contex).
 UCLASS()
 class PACMAN_API APacmanGameMode : public AGameModeBase {
 	GENERATED_BODY()
@@ -23,7 +26,7 @@ public:
 	virtual void StartPlay() override;
 
 	// Initializes the game state and the mode manager.
-	virtual void Init();
+	virtual void Init(bool newGame);
 	
 	// Starts the level (e.g. starts the timers, pawn start moving, ...)
 	virtual void Start();

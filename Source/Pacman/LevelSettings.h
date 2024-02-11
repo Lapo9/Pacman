@@ -77,7 +77,7 @@ struct FFruitScheduleItem {
 
 
 // Data object that holds the modes, ghost activation and fruit spawning schedules for a level.
-// This object can be bound to a TimeModeManager, and the TimeModeManager will execute these schedules.
+// This object can be bound to a UTimeModeManager, and the UTimeModeManager will execute these schedules.
 UCLASS()
 class PACMAN_API ULevelSettings : public UDataAsset {
 	GENERATED_BODY()

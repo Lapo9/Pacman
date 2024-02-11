@@ -13,7 +13,7 @@ class USoundBase;
 
 
 // The base abstract class for food items.
-// A food item has the responsibility to detect when he is eaten by Pacman, and notify this to the PacmanLevelState.
+// A food item has the responsibility to detect when he is eaten by APacmanPawn, and notify this to the APacmanLevelState.
 UCLASS(Abstract)
 class PACMAN_API ABaseFood : public AActor {
 	GENERATED_BODY()
@@ -21,7 +21,7 @@ class PACMAN_API ABaseFood : public AActor {
 public:
 	ABaseFood();
 
-	// Destroys this actor (with an animation/particle effect)
+	// Destroys this actor (potentially could perform other actions like a particle effect/sound)
 	virtual void AutoDestroy();
 
 protected:

@@ -11,7 +11,7 @@ AFruitFood::AFruitFood() {
 
 
 void AFruitFood::Tick(float deltaTime) {
-	AddActorLocalRotation(FRotator{ 0.f, deltaTime * RotationSpeed, 0.f }); // Rotate the fruit (just an animation)
+	AddActorLocalRotation(FRotator{ 0.f, deltaTime * RotationSpeed, 0.f }); // Rotate the fruit (just an animation, could be done in the shader maybe)
 }
 
 

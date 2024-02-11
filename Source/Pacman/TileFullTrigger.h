@@ -9,7 +9,7 @@
 class AWalkableTile;
 
 
-// Trigger responsible to notify when a BoardPawns leaves a Tile.
+// Trigger responsible to notify when a ABoardPawns leaves a ATile.
 UCLASS(ClassGroup = Pacman)
 class PACMAN_API UTileFullTrigger : public USphereComponent {
 	GENERATED_BODY()

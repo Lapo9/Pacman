@@ -33,6 +33,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	// Spawns the food (if this tile has a food item to spawn on itself)
 	virtual void Init() override;
 
 	// Should be called by the central trigger when a pawn hit it.

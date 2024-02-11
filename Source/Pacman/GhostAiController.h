@@ -16,7 +16,8 @@ enum class EMovingDirection;
 using GhostAcquireNewTargetSignature = struct FTileIndex(GHOST_TARGET_ACQUISITION_PARAMS);
 
 
-// Responsible to decide how a GhostPawn moves on the maze.
+// Responsible to decide how a AGhostPawn moves in the maze.
+// Base on the mode a AGhostPawn is into, the AcquireNewTarget function will be bound to a different UGhostTargetAcquisitionBase::AcquireTarget function.
 UCLASS()
 class PACMAN_API AGhostAiController : public AAIController {
 	GENERATED_BODY()
