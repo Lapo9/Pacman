@@ -41,9 +41,11 @@ void AWalkableTile::BeginPlay() {
 void AWalkableTile::Init() {
 	Super::Init();
 	// Delete old food (if present)
-	if (SpawnedFood && SpawnedFood->GetName() != TEXT("none")) SpawnedFood->Destroy(); 
+	if (SpawnedFood && SpawnedFood->IsPendingKillPending()) SpawnedFood->Destroy(); 
+	else { UE_LOG(LogTemp, Warning, TEXT("Trying to destroy a food already destroyed on tile %s"), *GetName()); }
 	// TODO Idk why but sometimes the food seems in a non valid state, and calling destroy on it crashes the game.
-	// A call on IsBeingDestroyed or IsValidLowLevel doesn't catch this problem, but the food name is none if it is in this weird state.
+	// A call on IsBeingDestroyed or IsValidLowLevel doesn't catch this problem, IsPendingKillPending seems to work (weird since its implementation looks like a combination of the previous two).
+	// In case this bug cannot be solved in an easier way, I suggest to set SpawnedFood to nullptr manually (the food should call a function on the corresponding tile to nullptr it).
 }
 
 

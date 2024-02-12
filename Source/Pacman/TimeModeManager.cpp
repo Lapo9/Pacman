@@ -107,6 +107,10 @@ void UTimeModeManager::NotifyStandardFoodDecreasedBy1(unsigned int remainingFood
 void UTimeModeManager::NotifyPowerPelletEaten() {
 	GameMode->SetGhostsModeUnless(EGhostMode::FRIGHTENED, { EGhostMode::DEAD, EGhostMode::HOME });
 
+	// Reset the blinking (since it is possible that a new power pellet is eaten before the previous one is done)
+	auto frightenedParams = GetWorld()->GetParameterCollectionInstance(CurrentLevelSettings->FrightenedModeMaterialVisualHintParams);
+	frightenedParams->SetScalarParameterValue(TEXT("Blink"), 0.f);
+
 	// First set the timer until it is time to notify that the power pellet is ending
 	if (CurrentLevelSettings->PowerPelletEndingTimeRemaining > 0.f && CurrentLevelSettings->PowerPelletDuration > CurrentLevelSettings->PowerPelletEndingTimeRemaining) {
 		GetWorld()->GetTimerManager().SetTimer(PowerPelletTimer, [this]() {
@@ -120,7 +124,6 @@ void UTimeModeManager::NotifyPowerPelletEaten() {
 
 	// If the notification time is bigger than the duration of the power pellet, notify immediately that the power pellet is ending
 	else if (CurrentLevelSettings->PowerPelletDuration <= CurrentLevelSettings->PowerPelletEndingTimeRemaining) {
-		auto frightenedParams = GetWorld()->GetParameterCollectionInstance(CurrentLevelSettings->FrightenedModeMaterialVisualHintParams);
 		frightenedParams->SetScalarParameterValue(TEXT("Blink"), 1.f);
 		GetWorld()->GetTimerManager().SetTimer(PowerPelletTimer, this, &UTimeModeManager::NotifyPowerPelletEnded, CurrentLevelSettings->PowerPelletDuration, false);
 	}
